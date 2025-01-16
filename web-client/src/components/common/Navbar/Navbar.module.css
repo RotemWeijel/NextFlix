@@ -1,0 +1,83 @@
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--navbar-bg);
+    border-bottom: 1px solid var(--navbar-border);
+    z-index: 1000;
+    transition: background-color 0.3s ease;
+  }
+  
+  .navContent {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .logo {
+    height: 25px;
+    width: auto;
+  }
+  
+  .navLinks {
+    display: flex;
+    gap: 1.5rem;
+    margin-left: 2rem;
+  }
+  
+  .navLinks a {
+    color: var(--navbar-text);
+    text-decoration: none;
+    font-size: 14px;
+    transition: opacity 0.2s ease;
+  }
+  
+  .navLinks a:hover {
+    opacity: 0.8;
+  }
+  
+  .rightSection {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .profileImage {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .dropdownMenu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: var(--navbar-bg);
+    border: 1px solid var(--navbar-border);
+    border-radius: 4px;
+    padding: 0.5rem 0;
+    min-width: 200px;
+  }
+  
+  .dropdownMenu a,
+  .dropdownMenu button {
+    display: block;
+    padding: 0.5rem 1rem;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    color: var(--navbar-text);
+    cursor: pointer;
+  }
+  
+  .dropdownMenu a:hover,
+  .dropdownMenu button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
