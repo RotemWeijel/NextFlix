@@ -1,0 +1,17 @@
+{
+    "name": "netflix-web-server",
+    "version": "1.0.0",
+    "description": "Web server for Netflix-like application",
+    "main": "server.js",
+    "scripts": {
+      "start": "node server.js"
+    },
+    "dependencies": {
+      "dotenv": "^16.0.3",
+      "express": "^4.18.2",
+      "mongoose": "^7.0.3",
+      "jsonwebtoken": "^9.0.0",
+      "bcryptjs": "^2.4.3",
+      "cors": "^2.8.5"
+    }
+  }
