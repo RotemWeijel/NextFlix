@@ -10,6 +10,7 @@ const BrowseScreen = ({ }) => {
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);
     const [randomMovie, setRandomMovie] = useState(null);
+    const videoRef = useRef(null);
 
     useEffect(() => {
         const fetchMovies = async () => {
@@ -39,9 +40,9 @@ const BrowseScreen = ({ }) => {
                     randomMovie && (
                         <VideoPlayer
                             videoUrl={"/video_480.mp4"}
-                            onPlayPauseChange={() => { }}
-                            onMuteChange={() => { }}
+                            ref={videoRef}
                         />
+
                     )
                 )}
             </div>
