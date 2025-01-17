@@ -8,7 +8,7 @@ export const Navbar = ({ isLoggedIn, userProfile, onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <nav 
+    <nav
       className={styles.navbar}
       style={{
         '--navbar-bg': colors.background.primary,
@@ -19,9 +19,9 @@ export const Navbar = ({ isLoggedIn, userProfile, onLogout }) => {
       <div className={styles.navContent}>
         {/* Logo */}
         <div className={styles.logoSection}>
-          <img 
-            src="/netflix-logo.svg" 
-            alt="Netflix Logo" 
+          <img
+            src="/netflix-home.png"
+            alt="Netflix Logo"
             className={styles.logo}
           />
         </div>
@@ -40,7 +40,7 @@ export const Navbar = ({ isLoggedIn, userProfile, onLogout }) => {
         {/* Right Section */}
         <div className={styles.rightSection}>
           {/* Theme Toggle */}
-          <button 
+          <button
             onClick={toggleTheme}
             className={styles.themeToggle}
           >
@@ -49,14 +49,14 @@ export const Navbar = ({ isLoggedIn, userProfile, onLogout }) => {
 
           {isLoggedIn ? (
             <div className={styles.userSection}>
-              <div 
+              <div
                 className={styles.profileDropdown}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
-                <img 
-                  src={userProfile.avatar || '/default-avatar.png'} 
-                  alt="Profile" 
-                  className={styles.profileImage}
+                <img
+                  src={"/profile.png" || '/default - avatar.png'}
+                alt="Profile"
+                className={styles.profileImage}
                 />
                 {isMenuOpen && (
                   <div className={styles.dropdownMenu}>
