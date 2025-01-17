@@ -1,0 +1,37 @@
+.movie-list-container {
+    margin: 3vw 0;
+}
+
+.category-title {
+    color: white;
+    font-size: 1.4vw;
+    font-weight: 500;
+    margin: 0 0 0.5em 4%;
+    
+    text-align: left;
+    
+    padding-right: 4%;
+    
+}
+
+.movies-row {
+    position: relative;
+    padding: 0 4%;
+}
+
+.movies-slider {
+    display: flex;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    gap: 8px;
+}
+
+/* Hide scrollbar */
+.movies-slider::-webkit-scrollbar {
+    display: none;
+}
+
+.movies-slider {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

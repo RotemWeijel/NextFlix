@@ -4,11 +4,14 @@ import './index.css';
 import App from './App';
 import BrowseScreen from './screens/main/BrowseScreen';
 import reportWebVitals from './reportWebVitals';
+import { BrowserRouter } from 'react-router-dom';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <BrowseScreen />
+    <BrowserRouter>
+      <BrowseScreen />
+    </BrowserRouter>
   </React.StrictMode>
 );
 
