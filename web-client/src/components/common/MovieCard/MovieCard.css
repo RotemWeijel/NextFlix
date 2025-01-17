@@ -1,0 +1,69 @@
+.movie-card {
+  position: relative;
+  width: 220px;
+  /* Netflix-like width */
+  height: 120px;
+  /* Adjusted for Netflix-like aspect ratio */
+  border-radius: 3px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  margin: 0 4px;
+  background-color: #141414;
+}
+
+.image-container {
+  width: 100%;
+  height: 100%;
+}
+
+.movie-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gradient-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg,
+      rgba(0, 0, 0, 0.8) 0%,
+      transparent 50%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.title-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.2s ease;
+}
+
+.movie-title {
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Hover effects */
+.movie-card:hover {
+  transform: scale(1.02);
+}
+
+.movie-card:hover .gradient-overlay,
+.movie-card:hover .title-container {
+  opacity: 1;
+}
+
+.movie-card:hover .title-container {
+  transform: translateY(0);
+}
