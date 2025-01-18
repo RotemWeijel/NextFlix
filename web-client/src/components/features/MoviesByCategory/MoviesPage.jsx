@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import MovieList from '../../common/MovieList/MovieList';
-import { useTheme } from '../../../hooks/useTheme'; 
+import { useTheme } from '../../../hooks/useTheme';
 import './MoviesPage.css';
 
 const MoviesPage = () => {
@@ -30,9 +30,39 @@ const MoviesPage = () => {
             id: 5,
             title: "The Crown",
             imageUrl: "/api/placeholder/256/144"
+        },
+        {
+            id: 5,
+            title: "The Crown",
+            imageUrl: "/api/placeholder/256/144"
+        },
+        {
+            id: 5,
+            title: "The Crown",
+            imageUrl: "/api/placeholder/256/144"
+        },
+        {
+            id: 5,
+            title: "The Crown",
+            imageUrl: "/api/placeholder/256/144"
+        },
+        {
+            id: 5,
+            title: "The Crown",
+            imageUrl: "/api/placeholder/256/144"
+        },
+        {
+            id: 5,
+            title: "The Crown",
+            imageUrl: "/api/placeholder/256/144"
+        },
+        {
+            id: 5,
+            title: "The Crown",
+            imageUrl: "/api/placeholder/256/144"
         }
     ];
-    const { colors } = useTheme(); 
+    const { colors } = useTheme();
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -77,9 +107,9 @@ const MoviesPage = () => {
 
             {!loading && categories.map((category) => (
                 <MovieList
-                    key={category.id}
-                    title={category.name}
-                    movies={category.movies}
+                    title="Trending Now"
+                    movies={trendingMovies}
+                    colors={colors}  // Pass theme colors to MovieList
                 />
             ))}
         </div>

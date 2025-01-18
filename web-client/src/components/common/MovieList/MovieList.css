@@ -1,5 +1,6 @@
 .movie-list-container {
   margin: 3vw 0;
+  position: relative;
 }
 
 .category-title {
@@ -29,4 +30,62 @@
 .movies-slider {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+.movie-item {
+  flex-shrink: 0;
+  width: 250px;
+  transition: transform 0.3s ease;
+}
+
+.movie-item:hover {
+  transform: scale(1.05);
+  z-index: 1;
+}
+
+/* Navigation Arrows */
+.slider-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  font-size: 30px;
+  opacity: 0;
+  transition: opacity 0.3s ease, background-color 0.3s ease;
+}
+
+.movies-row:hover .slider-arrow {
+  opacity: 1;
+}
+
+.slider-arrow:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.slider-arrow-left {
+  left: 1%;
+}
+
+.slider-arrow-right {
+  right: 1%;
+}
+
+/* Remove default button styles */
+.slider-arrow:focus {
+  outline: none;
+}
+
+/* Optional: Add focus indicator for accessibility */
+.slider-arrow:focus-visible {
+  box-shadow: 0 0 0 2px white;
 }
