@@ -1,18 +1,19 @@
-.movie-list-container {
-    margin: 3vw 0;
+.movies-page {
+    background-color: var(--background-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease;
 }
 
 .category-title {
-    color: white;
+    color: var(--text-primary);
     font-size: 1.4vw;
     font-weight: 500;
     margin: 0 0 0.5em 4%;
-    
     text-align: left;
-    
     padding-right: 4%;
-    
 }
+
+
 
 .movies-row {
     position: relative;

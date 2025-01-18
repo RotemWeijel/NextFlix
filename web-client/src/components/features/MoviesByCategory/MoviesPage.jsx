@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import MovieList from '../../common/MovieList/MovieList';
+import { useTheme } from '../../../hooks/useTheme'; 
 import './MoviesPage.css';
 
 const MoviesPage = () => {
-    
+
     const trendingMovies = [
         {
             id: 1,
@@ -31,7 +32,7 @@ const MoviesPage = () => {
             imageUrl: "/api/placeholder/256/144"
         }
     ];
-
+    const { colors } = useTheme(); 
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -68,7 +69,10 @@ const MoviesPage = () => {
     }, []);
 
     return (
-        <div className="movies-page">
+        <div className="movies-page" style={{
+            '--background-primary': colors.background.primary,
+            '--text-primary': colors.text.primary
+        }}>
             <MovieList title="Trending Now" movies={trendingMovies} />
 
             {!loading && categories.map((category) => (
