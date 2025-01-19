@@ -1,23 +1,40 @@
-import logo from './logo.svg';
+import { ThemeProvider, useTheme } from './hooks/useTheme';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Landing from './screens/auth/Landing/Landing';
+import Login from './screens/auth/Login/Login';
+import Register from './screens/auth/Register/Register';
+import TestComponents from './TestComponents';
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <ThemeProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </ThemeProvider>
+  );
+}
+
+function AppContent() {
+  const { colors } = useTheme();
+
+  return (
+    <div 
+      style={{
+        '--app-bg': colors.background.primary,
+        '--app-text': colors.text.primary,
+        minHeight: '100vh',
+        backgroundColor: colors.background.primary,
+        color: colors.text.primary
+      }}
+    >
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/test" element={<TestComponents />} />
+      </Routes>
     </div>
   );
 }
