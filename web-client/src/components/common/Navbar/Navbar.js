@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../../hooks/useTheme';
 import { Button } from '../Button/Button';
 import styles from './Navbar.module.css';
@@ -6,6 +7,7 @@ import styles from './Navbar.module.css';
 export const Navbar = ({ isLoggedIn, userProfile, onLogout }) => {
   const { colors, isDarkMode, toggleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();  // Add this hook
 
   return (
     <nav 
@@ -19,21 +21,23 @@ export const Navbar = ({ isLoggedIn, userProfile, onLogout }) => {
       <div className={styles.navContent}>
         {/* Logo */}
         <div className={styles.logoSection}>
-          <img 
-            src="/netflix-logo.svg" 
-            alt="Netflix Logo" 
-            className={styles.logo}
-          />
+          <Link to="/">
+            <img 
+              src="/netflix-logo.svg" 
+              alt="Netflix Logo" 
+              className={styles.logo}
+            />
+          </Link>
         </div>
 
         {/* Navigation Links */}
         {isLoggedIn && (
           <div className={styles.navLinks}>
-            <a href="/browse">Home</a>
-            <a href="/series">TV Shows</a>
-            <a href="/movies">Movies</a>
-            <a href="/new">New & Popular</a>
-            <a href="/my-list">My List</a>
+            <Link to="/browse">Home</Link>
+            <Link to="/series">TV Shows</Link>
+            <Link to="/movies">Movies</Link>
+            <Link to="/new">New & Popular</Link>
+            <Link to="/my-list">My List</Link>
           </div>
         )}
 
@@ -60,8 +64,8 @@ export const Navbar = ({ isLoggedIn, userProfile, onLogout }) => {
                 />
                 {isMenuOpen && (
                   <div className={styles.dropdownMenu}>
-                    <a href="/profile">Profile</a>
-                    <a href="/account">Account</a>
+                    <Link to="/profile">Profile</Link>
+                    <Link to="/account">Account</Link>
                     <button onClick={onLogout}>Sign Out</button>
                   </div>
                 )}
@@ -69,7 +73,11 @@ export const Navbar = ({ isLoggedIn, userProfile, onLogout }) => {
             </div>
           ) : (
             <div className={styles.authButtons}>
-              <Button variant="secondary" size="small" href="/login">
+              <Button 
+                variant="secondary" 
+                size="small" 
+                onClick={() => navigate('/login')}
+              >
                 Sign In
               </Button>
             </div>
@@ -79,3 +87,5 @@ export const Navbar = ({ isLoggedIn, userProfile, onLogout }) => {
     </nav>
   );
 };
+
+export default Navbar;
