@@ -8,11 +8,8 @@ import MoviesPage from '../../components/features/MoviesByCategory/MoviesPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './BrowseScreen.css';
 
-const BrowseScreen = () => {
-    const { loading, error } = PlayerHome();
-    if (error) {
-        return <div>Error loading movies: {error.message}</div>;
-    }
+const BrowseScreen = ({ tokenUser }) => {
+    const [error, setError] = useState(null);
 
     return (
         <ThemeProvider>
@@ -22,15 +19,9 @@ const BrowseScreen = () => {
                     userProfile={{ avatar: '/user.png' }}
                     onLogout={() => { }}
                 />
-                {loading ? (
-                    <LoadingSpinner />
-                ) : (
-                    <>
-                        <PlayerHome />
-                        <MoviesPage />
-                        <Footer />
-                    </>
-                )}
+                <PlayerHome tokenUser={tokenUser} />
+                <MoviesPage tokenUser={tokenUser} />
+                <Footer />
             </div>
         </ThemeProvider>
     );

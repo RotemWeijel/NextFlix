@@ -11,7 +11,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-    <BrowseScreen/>
+      <BrowseScreen tokenUser={'97f3f30c7512f8f507057e9c5752256a'} />
     </BrowserRouter>
   </React.StrictMode>
 );

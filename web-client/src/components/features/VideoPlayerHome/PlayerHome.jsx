@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import VideoPlayer from '../../common/player/VideoPlayer';
 import './PlayerHome.css';
 
-const PlayerHome = () => {
+const PlayerHome = ({ tokenUser, }) => {
     const navigate = useNavigate();
     const videoRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -12,25 +12,45 @@ const PlayerHome = () => {
     const [randomMovie, setRandomMovie] = useState(null);
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false)
 
     useEffect(() => {
         const fetchMovies = async () => {
             try {
-                const token = '97f3f30c7512f8f507057e9c5752256a';
+
                 const headers = {
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${tokenUser}`,
                     'Content-Type': 'application/json'
                 };
                 const response = await fetch('http://localhost:4000/api/movies', {
                     headers: headers
                 });
                 const data = await response.json();
-                setMovies(data);
-                const randomIndex = Math.floor(Math.random() * data.length);
-                setRandomMovie(data[randomIndex]);
+                const allMovies = data.reduce((acc, category) => {
+                    return [...acc, ...category.movies];
+                }, []);
+
+                setMovies(allMovies);
+
+                if (allMovies.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * allMovies.length);
+                    const selectedMovie = allMovies[randomIndex];
+                    const normalizedVideoUrl = selectedMovie.videoUrl ||
+                        selectedMovie['videoUrl'] ||
+                        selectedMovie[' videoUrl'] ||
+                        selectedMovie['"videoUrl"'] ||
+                        "/video_480.mp4";
+
+
+                    setRandomMovie({
+                        ...selectedMovie,
+                        ageRating: selectedMovie.ageAllow + "+",
+                        videoUrl: normalizedVideoUrl
+                    });
+                }
                 setLoading(false);
             } catch (error) {
-                console.error('Error fetching movies:', error);
+                setError(error)
                 setRandomMovie({
                     id: 1,
                     title: "Default Movie",
@@ -39,22 +59,50 @@ const PlayerHome = () => {
                 });
                 setLoading(false);
             }
-        };
-        fetchMovies();
-    }, []);
-
-    useEffect(() => {
-        let autoplayTimer;
-        if (isHovered && videoRef.current && !isPlaying) {
-            autoplayTimer = setTimeout(() => {
-                videoRef.current.play();
-                setIsPlaying(true);
-            }, 100);
+        }; if (tokenUser) {
+            fetchMovies();
         }
+    }, [tokenUser, setLoading, setError]);
+    useEffect(() => {
+        let playTimeout;
+
+        if (isHovered && videoRef.current && !isPlaying) {
+            playTimeout = setTimeout(async () => {
+                try {
+                    if (videoRef.current) {
+                        await videoRef.current.play();
+                        setIsPlaying(true);
+                    }
+                } catch (error) {
+                    console.log('Video playback failed:', error);
+                }
+            }, 200);
+        }
+
         return () => {
-            if (autoplayTimer) clearTimeout(autoplayTimer);
+            clearTimeout(playTimeout);
+            if (videoRef.current && isPlaying) {
+
+                try {
+                    videoRef.current.pause();
+                } catch (error) {
+                    console.log('Video pause failed:', error);
+                }
+                setIsPlaying(false);
+            }
         };
-    }, [isHovered]);
+    }, [isHovered, isPlaying]);
+    /* divide the title to two */
+    const formatTitle = (title) => {
+        const words = title.split(' ');
+        if (words.length > 5) {
+            const firstHalfLength = Math.ceil(words.length / 2);
+            const firstLine = words.slice(0, firstHalfLength).join(' ');
+            const secondLine = words.slice(firstHalfLength).join(' ');
+            return [firstLine, secondLine];
+        }
+        return [title];
+    };
 
     const handlePlayPause = () => {
         navigate('/player', { state: { movieId: randomMovie?.id } });
@@ -78,10 +126,6 @@ const PlayerHome = () => {
     const handleMouseEnter = () => setIsHovered(true);
     const handleMouseLeave = () => {
         setIsHovered(false);
-        if (videoRef.current && isPlaying) {
-            videoRef.current.pause();
-            setIsPlaying(false);
-        }
     };
 
     return (
@@ -93,7 +137,7 @@ const PlayerHome = () => {
             >
                 <VideoPlayer
                     ref={videoRef}
-                    videoUrl={randomMovie?.videoUrl || "/video_480.mp4"}
+                    videoUrl={randomMovie?.videoUrl}
                     onPlayPauseChange={setIsPlaying}
                     onMuteChange={setIsMuted}
                 />
@@ -101,14 +145,16 @@ const PlayerHome = () => {
                 <div className="movie-content">
                     <div className="movie-metadata">
                         <div className="netflix-title-container">
-                            <h1 className="netflix-title">
-                                {(randomMovie?.title || "Default Movie Title").split(' ').map((word, index, array) => (
-                                    <span key={index} className="title-word">
-                                        {word}
-                                        {index < array.length - 1 ? ' ' : ''}
-                                    </span>
-                                ))}
-                            </h1>
+                            {randomMovie?.name && (
+                                <h1 className="netflix-title">
+                                    {randomMovie.name.split(' ').map((word, index, array) => (
+                                        <span key={index} className="title-word">
+                                            {word}
+                                            {index < array.length - 1 ? ' ' : ''}
+                                        </span>
+                                    ))}
+                                </h1>
+                            )}
                         </div>
                     </div>
                     <div className="controls-container">

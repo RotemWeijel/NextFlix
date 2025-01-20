@@ -3,18 +3,18 @@ import MovieList from '../../common/MovieList/MovieList';
 import { useTheme } from '../../../hooks/useTheme';
 import './MoviesPage.css';
 
-const MoviesPage = () => {
+const MoviesPage = ({ tokenUser }) => {
     const { colors } = useTheme();
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
-
+    const MAX_CATEGORIES = 5;
 
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const token = '97f3f30c7512f8f507057e9c5752256a';
+
                 const headers = {
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${tokenUser}`,
                     'Content-Type': 'application/json'
                 };
 
@@ -23,18 +23,22 @@ const MoviesPage = () => {
                 });
                 const categoriesData = await categoriesResponse.json();
 
+                const priorityCategories = categoriesData.slice(0, MAX_CATEGORIES);
+
                 const categoriesWithMovies = await Promise.all(
-                    categoriesData.map(async (category) => {
+                    priorityCategories.map(async (category) => {
                         const response = await fetch(
                             `http://localhost:4000/api/categories/${category._id}`,
                             { headers: headers }
                         );
                         const categoryData = await response.json();
 
+                        const limitedMovies = categoryData.movies.slice(0, 20);
+
                         return {
                             id: categoryData._id,
                             name: categoryData.name,
-                            movies: categoryData.movies.map((movieTitle, index) => ({
+                            movies: limitedMovies.map((movieTitle, index) => ({
                                 id: index,
                                 title: movieTitle,
                                 imageUrl: "/api/placeholder/256/144"
@@ -43,17 +47,31 @@ const MoviesPage = () => {
                     })
                 );
 
-                setCategories(categoriesWithMovies);
+                const organizedCategories = organizeCategories(categoriesWithMovies);
+                setCategories(organizedCategories);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching data:', error);
                 setLoading(false);
             }
         };
+        if (tokenUser) {
+            fetchCategories();
+        }
+    }, [tokenUser]);
 
+    const organizeCategories = (categories) => {
+        return categories.sort((a, b) => {
+            const priorityOrder = {
+                'Popular': 1,
+                'Trending': 2,
+                'Continue Watching': 3,
+                'New Releases': 4,
+            };
 
-        fetchCategories();
-    }, []);
+            return (priorityOrder[a.name] || 999) - (priorityOrder[b.name] || 999);
+        });
+    };
 
     return (
         <div className="movies-page" style={{
@@ -63,6 +81,7 @@ const MoviesPage = () => {
 
             {!loading && categories.map((category) => (
                 <MovieList
+                    key={category.id}
                     title={category.name}
                     movies={category.movies}
                 />
