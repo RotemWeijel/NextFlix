@@ -201,15 +201,15 @@ const getMovies = async (userId) => {
     try {
         const categories = await Category.find({ promoted: true });
         const moviesUser = await getMoviesByUser(userId);
-        const moviesUserId = moviesUser.map(movie => movie._id);
+        const moviesUserId = moviesUser.map(movie => movie.name);
 
         const results = [];
 
         for (const category of categories) {
             const moviefit = await Movie.aggregate([{
                 $match: {
-                    categories: category._id,
-                    _id: { $nin: moviesUserId }
+                    categories: category.name,
+                    name: { $nin: moviesUserId }
                 }
             }, { $sample: { size: 20 } }]);
 
