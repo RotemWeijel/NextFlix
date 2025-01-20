@@ -62,6 +62,63 @@ const MoviesPage = () => {
             imageUrl: "/api/placeholder/256/144"
         }
     ];
+    const moMovies = [
+        {
+            id: 1,
+            title: "Money Heist",
+            imageUrl: "/api/placeholder/256/144"
+        },
+        {
+            id: 2,
+            title: "Squid Game",
+            imageUrl: "/api/placeholder/256/144"
+        },
+        {
+            id: 3,
+            title: "Stranger Things",
+            imageUrl: "/api/placeholder/256/144"
+        },
+        {
+            id: 4,
+            title: "Breaking Bad",
+            imageUrl: "/api/placeholder/256/144"
+        },
+        {
+            id: 5,
+            title: "The Crown",
+            imageUrl: "/api/placeholder/256/144"
+        },
+        {
+            id: 5,
+            title: "The Crown",
+            imageUrl: "/api/placeholder/256/144"
+        },
+        {
+            id: 5,
+            title: "The Crown",
+            imageUrl: "/api/placeholder/256/144"
+        },
+        {
+            id: 5,
+            title: "The Crown",
+            imageUrl: "/api/placeholder/256/144"
+        },
+        {
+            id: 5,
+            title: "The Crown",
+            imageUrl: "/api/placeholder/256/144"
+        },
+        {
+            id: 5,
+            title: "The Crown",
+            imageUrl: "/api/placeholder/256/144"
+        },
+        {
+            id: 5,
+            title: "The Crown",
+            imageUrl: "/api/placeholder/256/144"
+        }
+    ];
     const { colors } = useTheme();
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -104,12 +161,12 @@ const MoviesPage = () => {
             '--text-primary': colors.text.primary
         }}>
             <MovieList title="Trending Now" movies={trendingMovies} />
+            <MovieList title="Trending not Now" movies={trendingMovies} />
 
             {!loading && categories.map((category) => (
                 <MovieList
-                    title="Trending Now"
-                    movies={trendingMovies}
-                    colors={colors}  // Pass theme colors to MovieList
+                    title={category.name}
+                    movies={category.movies}
                 />
             ))}
         </div>

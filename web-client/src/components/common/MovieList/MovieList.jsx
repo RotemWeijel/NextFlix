@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import MovieCard from "../MovieCard/MovieCard"
 import './MovieList.css'
-const CategoryRow = ({ title, movies }) => {
+const MovieList = ({ title, movies }) => {
     const [scrollPosition, setScrollPosition] = useState(0);
     const handleScroll = (direction) => {
         const slider = document.querySelector(`#slider-${title.replace(/\s+/g, '-')}`);
@@ -64,4 +64,4 @@ const CategoryRow = ({ title, movies }) => {
 
 
 
-export default CategoryRow
+export default MovieList
