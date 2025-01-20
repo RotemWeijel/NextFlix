@@ -1,5 +1,7 @@
 import { ThemeProvider, useTheme } from './hooks/useTheme';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import { ProtectedRoute, AdminRoute } from './components/routing/ProtectedRoutes';
 import Landing from './screens/auth/Landing/Landing';
 import Login from './screens/auth/Login/Login';
 import Register from './screens/auth/Register/Register';
@@ -9,11 +11,15 @@ import './App.css';
 
 function App() {
   return (
+  
     <ThemeProvider>
-      <Router>
-        <AppContent />
-      </Router>
+      <AuthProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </AuthProvider>
     </ThemeProvider>
+    
   );
 }
 
@@ -31,11 +37,23 @@ function AppContent() {
       }}
     >
       <Routes>
+        {/* Public routes */}
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register normalImage="/images/Register/3D-glasses.jpg" sunglassesImage="/images/Register/sunglasses.png" />} />
-        <Route path="/registration-success" element={<RegistrationSuccess />} />
-        <Route path="/test" element={<TestComponents />} />
+
+        {/* Protected routes for authenticated users */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/registration-success" element={<RegistrationSuccess />} />
+          <Route path="/test" element={<TestComponents />} />
+        </Route>
+
+        {/* Protected routes for admin users */}
+        <Route element={<AdminRoute />}>
+          {/* <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/movies" element={<MovieManagement />} />
+          <Route path="/admin/categories" element={<CategoryManagement />} /> */}
+        </Route>
       </Routes>
     </div>
   );

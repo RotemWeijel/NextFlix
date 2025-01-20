@@ -14,11 +14,19 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: 'Invalid username or password' }); // Authentication failed
     }
 
-    const token = new Token({ userId: user._id, token: generateToken() }); // Generate a new token
-    await token.save();
+    const token = generateToken(user);
 
-    res.status(200).json({ userId: user._id, token: token.token }); // Return the token
+    res.status(200).json({
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        isAdmin: user.isAdmin,
+        full_name: user.full_name,
+        picture: user.picture
+      }
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message }); // Handle unexpected errors
+    res.status(500).json({ error: error.message });
   }
 };

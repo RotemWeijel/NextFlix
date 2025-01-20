@@ -1,0 +1,31 @@
+services:
+  app:
+    build: .
+    ports:
+      - "${WEB_PORT}:${WEB_PORT}"
+      - "${RECOMMEND_PORT}:${RECOMMEND_PORT}"
+    environment:
+      - PORT=${WEB_PORT}
+      - RECOMMENDATION_SERVER_PORT=${RECOMMEND_PORT}
+      - RECOMMENDATION_SERVER_HOST=host.docker.internal
+      - MONGODB_URI=mongodb://mongodb:27017/netflix-server
+    depends_on:
+      - mongodb
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+  mongodb:
+    image: mongo:latest
+    command: mongod --quiet --logpath /dev/null
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    logging:
+      driver: "none"
+
+volumes:
+  mongodb_data:

@@ -50,7 +50,8 @@ class UserService {
       username: userData.username,
       password: userData.password,
       name: userData.name,
-      picture: userData.picture
+      picture: userData.picture,
+      isAdmin: null
     });
 
     return await newUser.save();

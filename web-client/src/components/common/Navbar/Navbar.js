@@ -1,13 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../../hooks/useTheme';
 import { Button } from '../Button/Button';
+import { getStoredUser, clearAuthData } from '../../../utils/auth';
 import styles from './Navbar.module.css';
 
-export const Navbar = ({ isLoggedIn, userProfile, onLogout }) => {
+export const Navbar = () => {
   const { colors, isDarkMode, toggleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const navigate = useNavigate();  // Add this hook
+  const [imageError, setImageError] = useState(false);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  // Initialize user data from storage
+  useEffect(() => {
+    const storedUser = getStoredUser();
+    setUser(storedUser);
+  }, []);
+
+  const handleLogout = () => {
+    // Clear auth data from storage
+    clearAuthData();
+    // Clear user state
+    setUser(null);
+    // Close dropdown menu
+    setIsMenuOpen(false);
+    // Redirect to login page
+    navigate('/login');
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
+  // Check if user is logged in
+  const isLoggedIn = !!user;
 
   return (
     <nav 
@@ -20,15 +47,13 @@ export const Navbar = ({ isLoggedIn, userProfile, onLogout }) => {
     >
       <div className={styles.navContent}>
         {/* Logo */}
-        <div className={styles.logoSection}>
-          <Link to="/">
-            <img 
-              src="/netflix-logo.svg" 
-              alt="Netflix Logo" 
-              className={styles.logo}
-            />
-          </Link>
-        </div>
+        <Link to="/" className={styles.logoSection}>
+          <img 
+            src="/NextFlix_icon.png" 
+            alt="NextFlix Logo" 
+            className={styles.logo}
+          />
+        </Link>
 
         {/* Navigation Links */}
         {isLoggedIn && (
@@ -38,6 +63,9 @@ export const Navbar = ({ isLoggedIn, userProfile, onLogout }) => {
             <Link to="/movies">Movies</Link>
             <Link to="/new">New & Popular</Link>
             <Link to="/my-list">My List</Link>
+            {user?.isAdmin && (
+              <Link to="/admin/dashboard" className={styles.adminLink}>Admin</Link>
+            )}
           </div>
         )}
 
@@ -47,6 +75,7 @@ export const Navbar = ({ isLoggedIn, userProfile, onLogout }) => {
           <button 
             onClick={toggleTheme}
             className={styles.themeToggle}
+            aria-label="Toggle theme"
           >
             {isDarkMode ? '☀️' : '🌙'}
           </button>
@@ -58,15 +87,41 @@ export const Navbar = ({ isLoggedIn, userProfile, onLogout }) => {
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
                 <img 
-                  src={userProfile.avatar || '/default-avatar.png'} 
-                  alt="Profile" 
+                  src={!imageError ? (user?.picture || '/default-avatar.png') : '/default-avatar.png'}
+                  alt={`${user?.full_name || 'User'}'s profile`}
                   className={styles.profileImage}
+                  onError={handleImageError}
                 />
                 {isMenuOpen && (
                   <div className={styles.dropdownMenu}>
-                    <Link to="/profile">Profile</Link>
-                    <Link to="/account">Account</Link>
-                    <button onClick={onLogout}>Sign Out</button>
+                  <div className={styles.userInfo}>
+                    <table className={styles.userTable}>
+                      <tbody>
+                        <tr>
+                          <td className={styles.userLabel}>Username:</td>
+                          <td className={styles.userName}>{user?.username}</td>
+                        </tr>
+                        <tr>
+                          <td className={styles.userLabel}>Role:</td>
+                          <td className={styles.userRole}>{user?.isAdmin ? 'Administrator' : 'User'}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <img 
+                      src={!imageError ? (user?.picture || '/default-avatar.png') : '/default-avatar.png'}
+                      alt="Profile" 
+                      className={styles.userInfoImage}
+                      onError={handleImageError}
+                    />
+                  </div>
+                    <Link to="/profile" onClick={() => setIsMenuOpen(false)}>Profile</Link>
+                    <Link to="/account" onClick={() => setIsMenuOpen(false)}>Account</Link>
+                    <button 
+                      onClick={handleLogout}
+                      className={styles.signOutButton}
+                    >
+                      Sign Out
+                    </button>
                   </div>
                 )}
               </div>
