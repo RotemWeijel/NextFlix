@@ -38,7 +38,7 @@ const RegistrationSuccess = () => {
       />
       <div className={styles.contentWrapper}>
         <div className={styles.content}>
-          <h1 className={styles.title}>Welcome to Streamflix!</h1>
+          <h1 className={styles.title}>Welcome to NextFlix!</h1>
           <p className={styles.message}>
             Registration successful! Logging you in...
           </p>

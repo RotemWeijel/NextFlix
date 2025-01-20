@@ -55,6 +55,7 @@
 
 .avatarButton.selected::before {
   border-color: rgba(229, 9, 20);
+  border-width: 4px;
   box-shadow: 0 0 5px var(--primary-color);
 }
 

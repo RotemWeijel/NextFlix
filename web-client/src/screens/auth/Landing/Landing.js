@@ -28,7 +28,7 @@ const Landing = () => {
     <div className={styles.container}>
       <div className={styles.content}>
         <div className={styles.heroSection}>
-          <h1 className={styles.mainTitle}>STREAMFLIX</h1>
+          <h1 className={styles.mainTitle}>NEXTFLIX</h1>
           <h2 className={styles.title}>Unlimited movies, TV shows, and more</h2>
           <p className={styles.subtitle}>Watch anywhere. Completely free.</p>
         </div>
