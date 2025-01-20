@@ -60,6 +60,11 @@ const moviesScheme = new mongoose.Schema({
     trailerUrl: {
         type: String,
         trim: true
+    },
+    videoUrl: {
+        type: String,
+        require: true,
+        trim: true
     }
 })
 moviesScheme.index({
