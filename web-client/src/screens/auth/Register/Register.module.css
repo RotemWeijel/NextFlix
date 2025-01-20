@@ -57,8 +57,9 @@
   color: #f90303;
   padding: 12px;
   border-radius: 4px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   text-align: center;
+  font-size: 16px;
 }
 
 .loginLink {

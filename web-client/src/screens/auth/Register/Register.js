@@ -171,7 +171,6 @@ const Register = ({ normalImage, sunglassesImage }) => {
     const isValid = validateForm();
     
     if (isValid && formData.selectedAvatar !== null) {
-    //if (isValid) {
       setIsLoading(true);
       setError('');
 
@@ -194,20 +193,21 @@ const Register = ({ normalImage, sunglassesImage }) => {
         if (!response.ok) {
           const data = await response.json();
           if (response.status === 400) {
-            // Username taken
-            setError('Username is already taken');
-            setFormData(prev => ({
-              ...prev,
-              username: ''
-            }));
-            setValidationState(prev => ({
-              ...prev,
-              touched: {
-                ...prev.touched,
-                username: false
-              }
-            }));
-          } else {
+          // Username already exists
+          const takenUsername = formData.username;
+          setValidationState(prev => ({
+            ...prev,
+            errors: {
+              ...prev.errors,
+              username: `Username "${takenUsername}" is already exists`
+            }
+          }));
+          // Clear username field but keep other fields
+          setFormData(prev => ({
+            ...prev,
+            username: ''
+          }));
+        } else {
             throw new Error(data.message || 'Registration failed');
           }
         } else {
