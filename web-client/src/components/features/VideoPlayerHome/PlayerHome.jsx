@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import VideoPlayer from '../player/VideoPlayer';
+import VideoPlayer from '../../common/player/VideoPlayer';
 import './PlayerHome.css';
 
 const PlayerHome = () => {
@@ -16,7 +16,14 @@ const PlayerHome = () => {
     useEffect(() => {
         const fetchMovies = async () => {
             try {
-                const response = await fetch('http://localhost:3000/api/movies');
+                const token = '97f3f30c7512f8f507057e9c5752256a';
+                const headers = {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                };
+                const response = await fetch('http://localhost:4000/api/movies', {
+                    headers: headers
+                });
                 const data = await response.json();
                 setMovies(data);
                 const randomIndex = Math.floor(Math.random() * data.length);

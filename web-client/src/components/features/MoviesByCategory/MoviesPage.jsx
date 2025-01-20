@@ -4,141 +4,40 @@ import { useTheme } from '../../../hooks/useTheme';
 import './MoviesPage.css';
 
 const MoviesPage = () => {
-
-    const trendingMovies = [
-        {
-            id: 1,
-            title: "Money Heist",
-            imageUrl: "/api/placeholder/256/144"
-        },
-        {
-            id: 2,
-            title: "Squid Game",
-            imageUrl: "/api/placeholder/256/144"
-        },
-        {
-            id: 3,
-            title: "Stranger Things",
-            imageUrl: "/api/placeholder/256/144"
-        },
-        {
-            id: 4,
-            title: "Breaking Bad",
-            imageUrl: "/api/placeholder/256/144"
-        },
-        {
-            id: 5,
-            title: "The Crown",
-            imageUrl: "/api/placeholder/256/144"
-        },
-        {
-            id: 5,
-            title: "The Crown",
-            imageUrl: "/api/placeholder/256/144"
-        },
-        {
-            id: 5,
-            title: "The Crown",
-            imageUrl: "/api/placeholder/256/144"
-        },
-        {
-            id: 5,
-            title: "The Crown",
-            imageUrl: "/api/placeholder/256/144"
-        },
-        {
-            id: 5,
-            title: "The Crown",
-            imageUrl: "/api/placeholder/256/144"
-        },
-        {
-            id: 5,
-            title: "The Crown",
-            imageUrl: "/api/placeholder/256/144"
-        },
-        {
-            id: 5,
-            title: "The Crown",
-            imageUrl: "/api/placeholder/256/144"
-        }
-    ];
-    const moMovies = [
-        {
-            id: 1,
-            title: "Money Heist",
-            imageUrl: "/api/placeholder/256/144"
-        },
-        {
-            id: 2,
-            title: "Squid Game",
-            imageUrl: "/api/placeholder/256/144"
-        },
-        {
-            id: 3,
-            title: "Stranger Things",
-            imageUrl: "/api/placeholder/256/144"
-        },
-        {
-            id: 4,
-            title: "Breaking Bad",
-            imageUrl: "/api/placeholder/256/144"
-        },
-        {
-            id: 5,
-            title: "The Crown",
-            imageUrl: "/api/placeholder/256/144"
-        },
-        {
-            id: 5,
-            title: "The Crown",
-            imageUrl: "/api/placeholder/256/144"
-        },
-        {
-            id: 5,
-            title: "The Crown",
-            imageUrl: "/api/placeholder/256/144"
-        },
-        {
-            id: 5,
-            title: "The Crown",
-            imageUrl: "/api/placeholder/256/144"
-        },
-        {
-            id: 5,
-            title: "The Crown",
-            imageUrl: "/api/placeholder/256/144"
-        },
-        {
-            id: 5,
-            title: "The Crown",
-            imageUrl: "/api/placeholder/256/144"
-        },
-        {
-            id: 5,
-            title: "The Crown",
-            imageUrl: "/api/placeholder/256/144"
-        }
-    ];
     const { colors } = useTheme();
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
 
+
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const categoriesResponse = await fetch('http://localhost:3000/api/categories');
+                const token = '97f3f30c7512f8f507057e9c5752256a';
+                const headers = {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                };
+
+                const categoriesResponse = await fetch('http://localhost:4000/api/categories', {
+                    headers: headers
+                });
                 const categoriesData = await categoriesResponse.json();
 
                 const categoriesWithMovies = await Promise.all(
                     categoriesData.map(async (category) => {
-                        const response = await fetch(`http://localhost:3000/api/movies/category/${category.id}`);
-                        const movies = await response.json();
+                        const response = await fetch(
+                            `http://localhost:4000/api/categories/${category._id}`,
+                            { headers: headers }
+                        );
+                        const categoryData = await response.json();
+
                         return {
-                            ...category,
-                            movies: movies.map(movie => ({
-                                id: movie.id,
-                                title: movie.title,
-                                imageUrl: movie.imageUrl || "/api/placeholder/256/144"
+                            id: categoryData._id,
+                            name: categoryData.name,
+                            movies: categoryData.movies.map((movieTitle, index) => ({
+                                id: index,
+                                title: movieTitle,
+                                imageUrl: "/api/placeholder/256/144"
                             }))
                         };
                     })
@@ -152,6 +51,7 @@ const MoviesPage = () => {
             }
         };
 
+
         fetchCategories();
     }, []);
 
@@ -160,8 +60,6 @@ const MoviesPage = () => {
             '--background-primary': colors.background.primary,
             '--text-primary': colors.text.primary
         }}>
-            <MovieList title="Trending Now" movies={trendingMovies} />
-            <MovieList title="Trending not Now" movies={trendingMovies} />
 
             {!loading && categories.map((category) => (
                 <MovieList
