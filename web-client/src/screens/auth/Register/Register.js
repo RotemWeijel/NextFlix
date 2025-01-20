@@ -1,21 +1,23 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import CharacterDisplay from './CharacterDisplay';
-import AvatarSelector from './AvatarSelector';
 import Input from '../../../components/common/Input/Input';
 import Button from '../../../components/common/Button/Button';
+import CharacterDisplay from './CharacterDisplay';
+import AvatarSelector from './AvatarSelector';
 import styles from './Register.module.css';
 
 const AVATAR_OPTIONS = [
-  '/path/to/avatar1.jpg',
-  '/path/to/avatar2.jpg',
-  '/path/to/avatar3.jpg',
-  '/path/to/avatar4.jpg',
-  '/path/to/avatar5.jpg',
-  '/path/to/avatar6.jpg'
+  '/images/Register/avatar1.png',
+  '/images/Register/avatar2.png',
+  '/images/Register/avatar3.png',
+  '/images/Register/avatar4.png',
+  '/images/Register/avatar5.png',
+  '/images/Register/avatar6.png'
 ];
 
 const SPECIAL_CHARS = '!@#$%^&*-_';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
+const FRONTEND_BASE_URL = process.env.REACT_APP_FRONTEND_URL || window.location.origin;
 
 const Register = ({ normalImage, sunglassesImage }) => {
   const navigate = useNavigate();
@@ -38,6 +40,9 @@ const Register = ({ normalImage, sunglassesImage }) => {
       displayName: false
     }
   });
+
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   // Validation rules
   const validateUsername = (username) => {
@@ -72,8 +77,8 @@ const Register = ({ normalImage, sunglassesImage }) => {
     if (!/^[a-zA-Z0-9]+$/.test(displayName)) {
       return "Display name can only contain English letters and numbers";
     }
-    if (displayName.length < 6 || displayName.length > 12) {
-      return "Display name must be 6-12 characters long";
+    if (displayName.length < 5 || displayName.length > 12) {
+      return "Display name must be 5-12 characters long";
     }
     return null;
   };
@@ -101,6 +106,7 @@ const Register = ({ normalImage, sunglassesImage }) => {
       ...prev,
       [name]: value
     }));
+    setError(''); // Clear any previous errors
 
     // Validate field on change
     let error = null;
@@ -160,15 +166,65 @@ const Register = ({ normalImage, sunglassesImage }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const isValid = validateForm();
     
-    if (isValid) {
-      console.log('Form is valid, submitting:', formData);
-      // Add your submit logic here
-    } else {
-      console.log('Form has errors, please fix them');
+    if (isValid && formData.selectedAvatar !== null) {
+    //if (isValid) {
+      setIsLoading(true);
+      setError('');
+
+      try {
+        const fullAvatarUrl = `${FRONTEND_BASE_URL}${AVATAR_OPTIONS[formData.selectedAvatar]}`;
+        const response = await fetch(`${API_BASE_URL}/api/users`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            "username": formData.username,
+            "password": formData.password,
+            "full_name": formData.displayName,
+            "picture": fullAvatarUrl,
+            "watchedMovies": []
+          })
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          if (response.status === 400) {
+            // Username taken
+            setError('Username is already taken');
+            setFormData(prev => ({
+              ...prev,
+              username: ''
+            }));
+            setValidationState(prev => ({
+              ...prev,
+              touched: {
+                ...prev.touched,
+                username: false
+              }
+            }));
+          } else {
+            throw new Error(data.message || 'Registration failed');
+          }
+        } else {
+          // Registration successful
+          navigate('/registration-success', {
+            state: {
+              username: formData.username,
+              password: formData.password
+            },
+            replace: true // This prevents going back to the registration form
+          });
+        }
+      } catch (error) {
+        setError('An error occurred during registration. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -188,6 +244,19 @@ const Register = ({ normalImage, sunglassesImage }) => {
       <div className={styles.formCard}>
         <div className={styles.formSection}>
           <h1 className={styles.title}>Create Account</h1>
+          
+          <div className={styles.characterSection}>
+            <CharacterDisplay 
+              isPasswordField={validationState.isPasswordField}
+              isValidating={true}
+              normalImage={normalImage}
+              sunglassesImage={sunglassesImage}
+              username={formData.username}
+              displayName={formData.displayName}
+              isUsernameValid={!validationState.errors.username}
+              hasValidDisplayName={!validationState.errors.displayName}
+            />
+          </div>
           
           <form onSubmit={handleSubmit} className={styles.form}>
             <Input
@@ -258,19 +327,6 @@ const Register = ({ normalImage, sunglassesImage }) => {
               Already have an account? <Link to="/login">Sign in</Link>
             </p>
           </form>
-        </div>
-
-        <div className={styles.characterSection}>
-          <CharacterDisplay 
-            isPasswordField={validationState.isPasswordField}
-            isValidating={true}
-            normalImage={normalImage}
-            sunglassesImage={sunglassesImage}
-            username={formData.username}
-            displayName={formData.displayName}
-            isUsernameValid={!validationState.errors.username}
-            hasValidDisplayName={!validationState.errors.displayName}
-          />
         </div>
       </div>
     </div>

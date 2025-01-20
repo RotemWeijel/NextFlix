@@ -9,7 +9,7 @@ const AvatarSelector = ({
   return (
     <div className={styles.container}>
       <label className={styles.label}>
-        Choose Avatar
+        Choose your Avatar:
       </label>
       <div className={styles.grid}>
         {avatarOptions.map((avatar, index) => (

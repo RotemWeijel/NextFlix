@@ -1,44 +1,82 @@
 .container {
-    margin-bottom: 24px;
-  }
-  
-  .label {
-    display: block;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    margin-bottom: 12px;
-  }
-  
+  margin-bottom: 16px;
+}
+
+.label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 12px;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.avatarButton {
+  position: relative;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 75px;
+}
+
+.avatarButton:hover {
+  transform: scale(1.05);
+}
+
+.avatarButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 12px;
+  border: 3px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.avatarButton.selected {
+  transform: scale(1.05);
+}
+
+.avatarButton.selected::before {
+  border-color: rgba(229, 9, 20);
+  box-shadow: 0 0 5px var(--primary-color);
+}
+
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+@media (max-width: 480px) {
   .grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Changed to 3 columns */
-    grid-template-rows: repeat(2, 1fr); /* Added second row */
-    gap: 16px;
+    gap: 10px;
+    max-width: 240px;
   }
   
   .avatarButton {
-    position: relative;
-    padding: 0;
-    border: none;
-    background: none;
-    cursor: pointer;
-    aspect-ratio: 1;
-    border-radius: 4px;
-    overflow: hidden;
-    transition: transform 0.2s ease;
+    max-width: 60px;
   }
   
-  .avatarButton:hover {
-    transform: scale(1.05);
+  .avatarButton.selected::before {
+    border-width: 2px;
   }
-  
-  .avatarButton.selected {
-    box-shadow: 0 0 0 2px var(--primary-color);
-  }
-  
-  .avatarImage {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+}

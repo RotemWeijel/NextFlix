@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import LoadingSpinner from '../../../components/common/LoadingSpinner/LoadingSpinner';
 import styles from './CharacterDisplay.module.css';
 
 const CharacterDisplay = ({ 
@@ -22,13 +21,6 @@ const CharacterDisplay = ({
         alt="Character"
         className={styles.characterImage}
       />
-      
-      <div className={styles.leftEyeSpinner}>
-        <LoadingSpinner size="large" />
-      </div>
-      <div className={styles.rightEyeSpinner}>
-        <LoadingSpinner size="large" />
-      </div>
 
       {nameToDisplay && (
         <div className={styles.nameDisplay}>
