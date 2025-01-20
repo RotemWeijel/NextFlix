@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Landing from './screens/auth/Landing/Landing';
 import Login from './screens/auth/Login/Login';
 import Register from './screens/auth/Register/Register';
+import RegistrationSuccess from './screens/auth/Register/RegistrationSuccess';
 import TestComponents from './TestComponents';
 import './App.css';
 
@@ -32,7 +33,8 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/register" element={<Register normalImage="/images/Register/3D-glasses.jpg" sunglassesImage="/images/Register/sunglasses.png" />} />
+        <Route path="/registration-success" element={<RegistrationSuccess />} />
         <Route path="/test" element={<TestComponents />} />
       </Routes>
     </div>

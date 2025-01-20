@@ -49,12 +49,13 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 0rem;
+  margin-top: 15rem;
   padding: 0 1rem;
 }
 
 .featureCard {
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.8);
   padding: 0.8rem;
   border-radius: 8px;
   transition: all 0.3s ease;
@@ -88,7 +89,7 @@
 }
 
 .featureTitle {
-  font-size: 1.1rem;
+  font-size: 1.7rem;
   color: white;
   margin-bottom: 0.5rem;
   margin-top: 0.5rem;
