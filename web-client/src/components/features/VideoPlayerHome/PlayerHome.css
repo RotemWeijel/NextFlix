@@ -31,10 +31,9 @@
 
 .movie-content {
     position: absolute;
-    left: 4%;
-    bottom: 35%;
-    z-index: 10;
-    width: 40%;
+    bottom: 40%;
+    left: 5%;
+    z-index: 2;
 }
 
 .netflix-title-container {
@@ -43,19 +42,16 @@
 
 .netflix-title {
     color: white;
-    font-family: 'Netflix Sans', Arial, sans-serif;
-    font-size: 2.8rem;
-    /* Slightly smaller */
-    font-weight: 700;
-    line-height: 1.2;
-    /* Adjusted for better line height */
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.45);
+    font-size: 4rem;
+    font-weight: bold;
     margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    /* Stack title words vertically */
-    align-items: flex-start;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    word-wrap: break-word;
+    word-break: break-word;
+    max-width: 300px;
+    line-height: 1.2;
+    hyphens: auto;
+    text-align: left;
 }
 
 .title-word {
@@ -148,10 +144,10 @@
     line-height: 1;
 }
 
-/* Additional style for title wrapping */
-.title-word {
-    display: inline-block;
-    max-width: 100%;
-    white-space: normal;
-    word-wrap: break-word;
+@media (max-width: 800px) {
+    .netflix-title {
+        font-size: 3rem;
+        word-wrap: break-word;
+        max-width: 100%;
+    }
 }
