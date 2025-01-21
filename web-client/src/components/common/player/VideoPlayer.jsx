@@ -23,8 +23,12 @@ const VideoPlayer = forwardRef(({ videoUrl, onPlayPauseChange, onMuteChange }, r
         setVolume: (value) => {
           videoRef.current.volume = value;
         },
+        setCurrentTime: (time) => {
+          videoRef.current.currentTime = time;
+        },
         getIsPlaying: () => !videoRef.current.paused,
         getIsMuted: () => videoRef.current.muted
+
       };
     }
   }, [ref]);

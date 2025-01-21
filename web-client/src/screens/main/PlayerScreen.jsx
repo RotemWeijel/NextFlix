@@ -91,11 +91,10 @@ const PlayerScreen = ({ movieId, initialQuality = "720", movieTitle = "" }) => {
         const progressBar = e.currentTarget;
         const rect = progressBar.getBoundingClientRect();
         const clickPosition = (e.clientX - rect.left) / rect.width;
-        const videoElement = containerRef.current?.querySelector('video');
 
-        if (videoElement && duration) {
+        if (videoRef.current && duration) {
             const newTime = clickPosition * duration;
-            videoElement.currentTime = newTime;
+            videoRef.current.setCurrentTime(newTime);
             setCurrentTime(newTime);
         }
     };
@@ -162,11 +161,11 @@ const PlayerScreen = ({ movieId, initialQuality = "720", movieTitle = "" }) => {
 
             {/* Unified Controls Bar */}
             <div className="player-controls">
-                <div className="progress-bar-container">
-                    <div
-                        className="progress-bar"
-                        onClick={handleProgressBarClick}
-                    >
+                <div
+                    className="progress-bar-container"
+                    onClick={handleProgressBarClick}
+                >
+                    <div className="progress-bar">
                         <div
                             className="progress-bar-filled"
                             style={{ width: `${(currentTime / duration) * 100}%` }}

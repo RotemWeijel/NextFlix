@@ -55,6 +55,7 @@
     width: 100%;
     padding: 10px 0;
     cursor: pointer;
+    position: relative;
 }
 
 .player-screen .progress-bar {
