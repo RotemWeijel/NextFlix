@@ -81,7 +81,7 @@
     display: flex;
     gap: 16px;
     align-items: center;
-    margin-top: -200px;
+    margin-top: 400px;
     margin-left: 50px;
 
 }
@@ -149,7 +149,8 @@
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 20px;
-    margin-top: -200px;
+    margin-top: 400px;
+    margin-right: 40px;
 
 }
 

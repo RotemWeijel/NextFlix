@@ -23,7 +23,6 @@ const MovieFooter = ({ movieId, tokenUser }) => {
                     throw new Error(`HTTP error! status: ${res.status}`);
                 }
                 const data = await res.json();
-                console.log(data)
                 setMovie(data);
             } catch (error) {
                 console.error('Error fetching movie:', error);

@@ -82,7 +82,6 @@ const DEFAULT_RECOMMENDATIONS = [
 ];
 
 const RecommendSeries = ({ tokenUser, movieId }) => {
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [recommendations, setRecommendations] = useState([]);

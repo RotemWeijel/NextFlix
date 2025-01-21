@@ -86,6 +86,9 @@ const VideoPlayerDetails = ({ tokenUser, movieId }) => {
         }
         navigate(-1);
     };
+    const handleclickPlay = () => {
+        navigate(`/Player/${movie.id}`)
+    }
 
     return (
         <div className="movie-player-container">
@@ -110,7 +113,7 @@ const VideoPlayerDetails = ({ tokenUser, movieId }) => {
 
                     <div className="bottom-controls">
                         <div className="left-controls">
-                            <button className="play-button" >
+                            <button onClick={handleclickPlay} className="play-button" >
                                 {'▶ Play'}
                             </button>
                             <button className="circle-button" title="Add to My List">

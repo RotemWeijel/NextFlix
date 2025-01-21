@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import VideoPlayer from '../../common/player/VideoPlayer';
 import './PlayerHome.css';
 
-const PlayerHome = ({ tokenUser, }) => {
+const PlayerHome = ({ tokenUser }) => {
     const navigate = useNavigate();
     const videoRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -40,8 +40,6 @@ const PlayerHome = ({ tokenUser, }) => {
                         selectedMovie[' videoUrl'] ||
                         selectedMovie['"videoUrl"'] ||
                         "/video_480.mp4";
-
-
                     setRandomMovie({
                         ...selectedMovie,
                         ageRating: selectedMovie.ageAllow + "+",
@@ -105,11 +103,12 @@ const PlayerHome = ({ tokenUser, }) => {
     };
 
     const handlePlayPause = () => {
-        navigate('/player', { state: { movieId: randomMovie?.id } });
+        navigate(`/Player/${randomMovie._id}`);
+
     };
 
     const handleMoreInfo = () => {
-        navigate('/info', { state: { movieId: randomMovie?.id } });
+        navigate(`/MovieDetails/${randomMovie._id}`);
     };
 
     const handleMuteToggle = () => {
@@ -135,7 +134,7 @@ const PlayerHome = ({ tokenUser, }) => {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
             >
-                <VideoPlayer
+                <VideoPlayer 
                     ref={videoRef}
                     videoUrl={randomMovie?.videoUrl}
                     onPlayPauseChange={setIsPlaying}
