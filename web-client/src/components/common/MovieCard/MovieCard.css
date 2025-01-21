@@ -1,8 +1,8 @@
 .movie-card {
   position: relative;
-  width: 220px;
+  width: 220px !important;
   /* Netflix-like width */
-  height: 120px;
+  height: 120px !important;
   /* Adjusted for Netflix-like aspect ratio */
   border-radius: 3px;
   overflow: hidden;

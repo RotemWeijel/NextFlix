@@ -42,12 +42,13 @@ const MovieList = ({ title, movies }) => {
                     id={`slider-${title.replace(/\s+/g, '-')}`}
                     className="movies-slider"
                 >
-                    {movies.map((movie) => 
-                     (
+                    {movies.map((movie) =>
+                    (
                         <div key={movie._id} className="movie-item">
                             <MovieCard
                                 src={movie.imageUrl}
                                 name={movie.name}
+                                movieId={movie._id}
                             />
                         </div>
                     ))}

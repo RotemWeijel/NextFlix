@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './MovieCard.css';
+import { useNavigate } from 'react-router-dom';
+const MovieCard = ({ src, name, movieId }) => {
 
-const MovieCard = ({ src, name }) => {
   const [imageError, setImageError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const defaultImage = "/netflix.png";
-
+  const navigate = useNavigate();
   const getImageUrl = () => {
     if (!src || src === '') {
       return defaultImage;
@@ -18,9 +19,13 @@ const MovieCard = ({ src, name }) => {
 
     return src;
   };
+  const handleclick = () => {
+    console.log('movieId:', movieId);
+    navigate(`/MovieDetails/${movieId}`)
+  }
 
   return (
-    <div className="movie-card">
+    <div className="movie-card" onClick={handleclick}>
       <div className="image-container">
         <img
           src={getImageUrl()}
@@ -32,6 +37,7 @@ const MovieCard = ({ src, name }) => {
             setIsLoading(false);
           }}
           onLoad={() => setIsLoading(false)}
+
         />
       </div>
 

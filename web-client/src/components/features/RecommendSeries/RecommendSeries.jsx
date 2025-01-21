@@ -91,7 +91,7 @@ const RecommendSeries = ({ movieId }) => {
       try {
         setLoading(true);
         // Uncomment when server is ready
-        // const response = await fetch(`http://localhost:5000/api/movies/${movieId}/recommend`);
+        // const response = await fetch(`http://localhost:4000/api/movies/${movieId}/recommend`);
         // if (!response.ok) throw new Error('Failed to fetch recommendations');
         // const data = await response.json();
         // setRecommendations(data);

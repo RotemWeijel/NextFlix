@@ -49,6 +49,7 @@ const MoviesPage = ({ tokenUser }) => {
                 }));
 
 
+
                 const organizedCategories = organizeCategories(categoriesWithMovies);
                 setCategories(organizedCategories);
                 setLoading(false);
