@@ -81,29 +81,40 @@ const DEFAULT_RECOMMENDATIONS = [
   }
 ];
 
-const RecommendSeries = ({ movieId }) => {
-  const [recommendations, setRecommendations] = useState(DEFAULT_RECOMMENDATIONS);
+const RecommendSeries = ({ tokenUser, movieId }) => {
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const [recommendations, setRecommendations] = useState([]);
   useEffect(() => {
-    const fetchRecommendations = async () => {
+    const fetchMovie = async () => {
       try {
-        setLoading(true);
-        // Uncomment when server is ready
-        // const response = await fetch(`http://localhost:4000/api/movies/${movieId}/recommend`);
-        // if (!response.ok) throw new Error('Failed to fetch recommendations');
-        // const data = await response.json();
-        // setRecommendations(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+        const actualId = typeof movieId === 'object' ? movieId.movie : movieId;
+        const headers = {
+          'Authorization': `Bearer ${tokenUser}`,
+          'Content-Type': 'application/json'
+        };
+        const url = `http://localhost:4000/api/movies/${actualId}/recommend`;
+        console.log(url)
+        const res = await fetch(url, {
+          headers: headers
+        });
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        const data = await res.json();
+        setRecommendations(data);
+      } catch (error) {
+        console.error('Error fetching movie:', error);
       }
     };
 
-    // fetchRecommendations();
+    if (movieId) {
+      fetchMovie();
+    }
   }, [movieId]);
+
 
   if (loading) return <div className="recommend-series-container">Loading recommendations...</div>;
   if (error) return <div className="recommend-series-container">Error: {error}</div>;

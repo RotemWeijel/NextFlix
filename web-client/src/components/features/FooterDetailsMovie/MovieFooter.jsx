@@ -1,39 +1,52 @@
 import React from 'react';
 import './MovieFooter.css';
+import { useState, useEffect } from 'react';
 
-const movie = {
-    id: 1,
-    title: "Caliphate",
-    image: "/favicon.ico",
-    releaseYear: 2020,
-    duration: "8:56",
-    description: "An impending ISIS attack on Sweden entangles a group of women, including a mother in a bind, a spirited student and an ambitious cop.",
-    ageAllow: 16,
-    actors: [
-        { name: "Gizem Erdogan" },
-        { name: "Aliette Opheim" },
-        { name: "Nora Rios" }
-    ],
-    categories: [
-        "Crime TV Shows",
-        "TV Dramas",
-        "Scandinavian TV Shows"
-    ],
-    traits: ["Witty", "Irreverent"]
-};
 
-const MovieFooter = ({ }) => {
+const MovieFooter = ({ movieId, tokenUser }) => {
+    const [movie, setMovie] = useState(null)
+    useEffect(() => {
+        const fetchMovie = async () => {
+            try {
+                const actualId = typeof movieId === 'object' ? movieId.movie : movieId;
+                const headers = {
+                    'Authorization': `Bearer ${tokenUser}`,
+                    'Content-Type': 'application/json'
+                };
+                const url = `http://localhost:4000/api/movies/${actualId}`;
+
+                const res = await fetch(url, {
+                    headers: headers
+                });
+
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                const data = await res.json();
+                console.log(data)
+                setMovie(data);
+            } catch (error) {
+                console.error('Error fetching movie:', error);
+            }
+        };
+
+        if (movieId) {
+            fetchMovie();
+        }
+    }, [movieId]);
+    if (!movie) {
+        return null;
+    }
     return (
         <div className="footer-wrapper">
             <div className="movie-footer">
                 <h2 className="footer-title">About {movie.name}</h2>
                 <div className="footer-content">
-                    {movie.creators && (
-                        <div className="footer-row">
-                            <span className="label">Creators:</span>
-                            <span className="value">{movie.creators.join(', ')}</span>
-                        </div>
-                    )}
+                    <div className="footer-row">
+                        <span className="label">Director:</span>
+                        <span className="value">{movie.director}</span>
+                    </div>
+
                     {movie.actors && movie.actors.length > 0 && (
                         <div className="footer-row">
                             <span className="label">Cast:</span>
@@ -42,18 +55,34 @@ const MovieFooter = ({ }) => {
                             </span>
                         </div>
                     )}
+
                     {movie.categories && movie.categories.length > 0 && (
                         <div className="footer-row">
                             <span className="label">Genres:</span>
                             <span className="value">{movie.categories.join(', ')}</span>
                         </div>
                     )}
+
                     <div className="footer-row">
-                        <span className="label">This show is:</span>
-                        <span className="value">
-                            {movie.description.split('.')[0]}
-                        </span>
+                        <span className="label">Language:</span>
+                        <span className="value">{movie.language}</span>
                     </div>
+
+                    <div className="footer-row">
+                        <span className="label">Release Year:</span>
+                        <span className="value">{movie.releaseYear}</span>
+                    </div>
+
+                    <div className="footer-row">
+                        <span className="label">Duration:</span>
+                        <span className="value">{movie.duration} minutes</span>
+                    </div>
+
+                    <div className="footer-row">
+                        <span className="label">Description:</span>
+                        <span className="value">{movie.description}</span>
+                    </div>
+
                     <div className="footer-row">
                         <span className="label">Maturity rating:</span>
                         <div className="maturity-container">

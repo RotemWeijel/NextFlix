@@ -1,31 +1,52 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './DetailsMovie.css';
 
-const movie = {
-    id: 1,
-    title: "Caliphate",
-    image: "/favicon.ico",
-    releaseYear: 2020,
-    duration: "8:56",
-    description: "An impending ISIS attack on Sweden entangles a group of women, including a mother in a bind, a spirited student and an ambitious cop.",
-    ageAllow: 16,
-    actors: [
-        { name: "Gizem Erdogan" },
-        { name: "Aliette Opheim" },
-        { name: "Nora Rios" }
-    ],
-    categories: [
-        "Crime TV Shows",
-        "TV Dramas",
-        "Scandinavian TV Shows"
-    ],
-    traits: ["Witty", "Irreverent"]
-};
 
-const DetailsMovie = ({  }) => {
-    if (!movie) return null;
+
+const DetailsMovie = ({ movieId, tokenUser }) => {
+    const [movie, setMovie] = useState(null)
+    const [showAllCast, setShowAllCast] = useState(false);
+    useEffect(() => {
+        const fetchMovie = async () => {
+            try {
+                const actualId = typeof movieId === 'object' ? movieId.movie : movieId;
+                const headers = {
+                    'Authorization': `Bearer ${tokenUser}`,
+                    'Content-Type': 'application/json'
+                };
+                const url = `http://localhost:4000/api/movies/${actualId}`;
+
+                const res = await fetch(url, {
+                    headers: headers
+                });
+
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                const data = await res.json();
+                setMovie(data);
+            } catch (error) {
+                console.error('Error fetching movie:', error);
+            }
+        };
+
+        if (movieId) {
+            fetchMovie();
+        }
+    }, [movieId]);
+    if (!movie) {
+        return null;
+    }
+
 
     const getAgeRating = (ageAllow) => `${ageAllow}+`;
+
+    const movieTraits = [
+        "Emotional",
+        `${movie.language} language`,
+        `Directed by ${movie.director}`,
+        `${movie.duration} minutes`
+    ];
 
     return (
         <div className="movie-details-container">
@@ -48,27 +69,29 @@ const DetailsMovie = ({  }) => {
                         <div className="metadata-row">
                             <span className="metadata-label">Cast:</span>
                             <span className="metadata-value">
-                                {movie.actors.map((actor, index) => (
-                                    <React.Fragment key={actor.name}>
+                                {movie.actors?.slice(0, showAllCast ? movie.actors.length : 3).map((actor, index) => (
+                                    <React.Fragment key={`actor-${index}`}>
                                         {index > 0 && ", "}
                                         {actor.name}
                                     </React.Fragment>
                                 ))}
-                                <span className="more">, more</span>
+                                {!showAllCast && movie.actors?.length > 3 && (
+                                    <span className="more" onClick={() => setShowAllCast(true)}>, more</span>
+                                )}
                             </span>
                         </div>
 
                         <div className="metadata-row">
                             <span className="metadata-label">Genres:</span>
                             <span className="metadata-value">
-                                {movie.categories.join(", ")}
+                                {movie.categories?.join(", ")}
                             </span>
                         </div>
 
                         <div className="metadata-row">
-                            <span className="metadata-label">This show is:</span>
+                            <span className="metadata-label">This movie is:</span>
                             <span className="metadata-value">
-                                {movie.traits.join(", ")}
+                                {movieTraits.join(", ")}
                             </span>
                         </div>
                     </div>

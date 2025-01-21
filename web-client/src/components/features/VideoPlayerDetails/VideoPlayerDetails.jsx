@@ -3,12 +3,40 @@ import { useNavigate } from 'react-router-dom';
 import VideoPlayer from '../../common/player/VideoPlayer';
 import './VideoPlayerDetails.css';
 
-const VideoPlayerDetails = ({ videoUrl, title }) => {
+const VideoPlayerDetails = ({ tokenUser, movieId }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMuted, setIsMuted] = useState(true);
     const videoRef = useRef();
     const timeoutRef = useRef(null);
     const navigate = useNavigate();
+    const [movie, setMovie] = useState([])
+    useEffect(() => {
+        const fetchMovie = async () => {
+            try {
+                const actualId = typeof movieId === 'object' ? movieId.movie : movieId;
+                const headers = {
+                    'Authorization': `Bearer ${tokenUser}`,
+                    'Content-Type': 'application/json'
+                };
+                const url = `http://localhost:4000/api/movies/${actualId}`;
+                const res = await fetch(url, {
+                    headers: headers
+                });
+
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                const data = await res.json();
+                setMovie(data);
+            } catch (error) {
+                console.error('Error fetching movie:', error);
+            }
+        };
+
+        if (movieId) {
+            fetchMovie();
+        }
+    }, [movieId]);
 
     useEffect(() => {
         return () => {
@@ -62,16 +90,16 @@ const VideoPlayerDetails = ({ videoUrl, title }) => {
     return (
         <div className="movie-player-container">
             <div className="title-container">
-                <h1 className="video-title">{title || "Tahrhen Episode"}</h1>
+                <h1 className="video-title">{movie.name}</h1>
             </div>
-            <div 
+            <div
                 className="video-wrapper"
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
             >
                 <VideoPlayer
                     ref={videoRef}
-                    videoUrl={videoUrl || '/video_480.mp4'}
+                    videoUrl={movie.videoUrl}
                 />
                 <div className="controls-layer">
                     <div className="top-controls">
