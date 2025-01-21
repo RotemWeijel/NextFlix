@@ -17,48 +17,37 @@ const MoviesPage = ({ tokenUser }) => {
                     'Authorization': `Bearer ${tokenUser}`,
                     'Content-Type': 'application/json'
                 };
-                const moviesResponse = await fetch('http://localhost:4000/api/movies', {
-                    headers: headers
-                });
-                const allMovies = await moviesResponse.json();
-                const moviesMap = allMovies.reduce((acc, movie) => {
-                    acc[movie._id] = {
-                        _id: movie._id,
-                        name: movie.name,
-                        imageUrl: movie.imageUrl,
-                        categories: movie.categories
-                    };
-                    return acc;
-                }, {});
-                console.log(moviesMap)
                 const categoriesResponse = await fetch('http://localhost:4000/api/categories', {
                     headers: headers
                 });
                 const categoriesData = await categoriesResponse.json();
-                console.log('Categories data:', categoriesData);
+                const categoriesWithMovies = await Promise.all(categoriesData.map(async category => {
+                    const movieDetails = await Promise.all(category.movies.map(async movieId => {
+                        try {
+                            const movieResponse = await fetch(`http://localhost:4000/api/movies/${movieId}`, {
+                                headers: headers
+                            });
+                            const movieData = await movieResponse.json();
+                            return {
+                                _id: movieId,
+                                name: movieData.name,
+                                imageUrl: movieData.imageUrl
+                            };
+                        } catch (error) {
+                            console.error(`Error fetching movie ${movieId}:`, error);
+                            return null;
+                        }
+                    }));
 
-                const priorityCategories = categoriesData.slice(0, MAX_CATEGORIES);
-
-                const categoriesWithMovies = priorityCategories.map(category => {
-                    const moviesList = Array.isArray(category.movies)
-                        ? category.movies
-                            .map(movieId => moviesMap[movieId])
-                            .filter(movie => movie)
-                            .map(movie => ({
-                                _id: movie._id,
-                                name: movie.name,
-                                imageUrl: movie.imageUrl
-                            }))
-                        : [];
+                    const validMovies = movieDetails.filter(movie => movie !== null);
 
                     return {
                         id: category._id,
                         name: category.name,
-                        movies: moviesList
+                        movies: validMovies
                     };
-                });
+                }));
 
-                console.log('Final categories with movies:', categoriesWithMovies);
 
                 const organizedCategories = organizeCategories(categoriesWithMovies);
                 setCategories(organizedCategories);
