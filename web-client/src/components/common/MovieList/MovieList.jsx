@@ -7,7 +7,7 @@ const MovieList = ({ title, movies }) => {
         const slider = document.querySelector(`#slider-${title.replace(/\s+/g, '-')}`);
         if (!slider) return;
 
-        const scrollAmount = 250; 
+        const scrollAmount = 250;
         const maxScroll = slider.scrollWidth - slider.clientWidth;
 
         let newPosition;
@@ -42,9 +42,13 @@ const MovieList = ({ title, movies }) => {
                     id={`slider-${title.replace(/\s+/g, '-')}`}
                     className="movies-slider"
                 >
-                    {movies.map((movie) => (
-                        <div key={movie.id} className="movie-item">
-                            <MovieCard src={movie.imageUrl} name={movie.title} />
+                    {movies.map((movie) => 
+                     (
+                        <div key={movie._id} className="movie-item">
+                            <MovieCard
+                                src={movie.imageUrl}
+                                name={movie.name}
+                            />
                         </div>
                     ))}
                 </div>

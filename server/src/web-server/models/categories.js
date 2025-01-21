@@ -21,7 +21,8 @@ const categorySchema = new mongoose.Schema({
         default: 0
     },
     movies: [{
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Movie',
         default: null
     }],
     parentCategory: {

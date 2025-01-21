@@ -48,11 +48,11 @@ const createMovie = async (name,
             await Category.findByIdAndUpdate(
                 category._id,
                 {
-                    $push: { movies: savedMovie.name },
+                    $push: { movies: savedMovie._id },
                     $inc: { movieCount: 1 }
                 },
                 { new: true }
-            )
+            );
         }
 
         return { success: true, data: savedMovie }
@@ -161,13 +161,13 @@ const deleteMovie = async (id) => {
 
 
         // Get categories by name and remove the movie
-        const categories = await Category.find({ name: { $in: movie.categories } });
+        const categories = await Category.find({ movies: movie._id });
         for (const category of categories) {
             await Category.findByIdAndUpdate(
                 category._id,
                 {
-                    $pull: { movies: movie.name },
-                    $inc: { movieCount: -1 }
+                    $pull: { movies: movie._id }, // Remove movie ObjectId
+                    $inc: { movieCount: -1 } // Decrement the movie count
                 },
                 { new: true }
             );

@@ -17,39 +17,53 @@ const MoviesPage = ({ tokenUser }) => {
                     'Authorization': `Bearer ${tokenUser}`,
                     'Content-Type': 'application/json'
                 };
-
+                const moviesResponse = await fetch('http://localhost:4000/api/movies', {
+                    headers: headers
+                });
+                const allMovies = await moviesResponse.json();
+                const moviesMap = allMovies.reduce((acc, movie) => {
+                    acc[movie._id] = {
+                        _id: movie._id,
+                        name: movie.name,
+                        imageUrl: movie.imageUrl,
+                        categories: movie.categories
+                    };
+                    return acc;
+                }, {});
+                console.log(moviesMap)
                 const categoriesResponse = await fetch('http://localhost:4000/api/categories', {
                     headers: headers
                 });
                 const categoriesData = await categoriesResponse.json();
+                console.log('Categories data:', categoriesData);
 
                 const priorityCategories = categoriesData.slice(0, MAX_CATEGORIES);
 
-                const categoriesWithMovies = await Promise.all(
-                    priorityCategories.map(async (category) => {
-                        const response = await fetch(
-                            `http://localhost:4000/api/categories/${category._id}`,
-                            { headers: headers }
-                        );
-                        const categoryData = await response.json();
-
-                        const limitedMovies = categoryData.movies.slice(0, 20);
-
-                        return {
-                            id: categoryData._id,
-                            name: categoryData.name,
-                            movies: limitedMovies.map((movieTitle, index) => ({
-                                id: index,
-                                title: movieTitle,
-                                imageUrl: "/api/placeholder/256/144"
+                const categoriesWithMovies = priorityCategories.map(category => {
+                    const moviesList = Array.isArray(category.movies)
+                        ? category.movies
+                            .map(movieId => moviesMap[movieId])
+                            .filter(movie => movie)
+                            .map(movie => ({
+                                _id: movie._id,
+                                name: movie.name,
+                                imageUrl: movie.imageUrl
                             }))
-                        };
-                    })
-                );
+                        : [];
+
+                    return {
+                        id: category._id,
+                        name: category.name,
+                        movies: moviesList
+                    };
+                });
+
+                console.log('Final categories with movies:', categoriesWithMovies);
 
                 const organizedCategories = organizeCategories(categoriesWithMovies);
                 setCategories(organizedCategories);
                 setLoading(false);
+
             } catch (error) {
                 console.error('Error fetching data:', error);
                 setLoading(false);
