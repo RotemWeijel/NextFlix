@@ -1,6 +1,6 @@
 const { verifyToken } = require('../services/token');
 
-const requireAdmin = (req, res, next) => {
+const requireAdmin = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
@@ -8,7 +8,7 @@ const requireAdmin = (req, res, next) => {
     }
 
     const token = authHeader.split(' ')[1]; // Bearer <token>
-    const decoded = verifyToken(token);
+    const decoded = await verifyToken(token);
 
     if (!decoded) {
       return res.status(401).json({ error: 'Invalid token' });

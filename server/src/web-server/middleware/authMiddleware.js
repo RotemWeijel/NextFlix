@@ -1,5 +1,6 @@
 // middleware/authMiddleware.js
 const Token = require('../models/token'); 
+const { verifyToken } = require('../services/token');
 
 module.exports = async (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -13,13 +14,13 @@ module.exports = async (req, res, next) => {
   }
 
   try {
-    const validToken = await Token.findOne({ token }); // Check if the token exists in the DB- which means that
-    //some user have logged in and got this token
-    if (!validToken) {
+    const decoded = await verifyToken(token); // Use verifyToken service
+    if (!decoded) {
       return res.status(401).json({ error: 'Unauthorized: Invalid or expired token' });
     }
 
-    req.userId = validToken.userId;
+    req.user = decoded; // Store full decoded user info
+    req.userId = decoded.userId;
     next();
   } catch (error) {
     res.status(500).json({ error: error.message });

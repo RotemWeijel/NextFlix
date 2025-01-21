@@ -14,7 +14,7 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: 'Invalid username or password' }); // Authentication failed
     }
 
-    const token = generateToken(user);
+    const token = await generateToken(user);
 
     res.status(200).json({
       token,

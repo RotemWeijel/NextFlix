@@ -41,10 +41,11 @@ function AppContent() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register normalImage="/images/Register/3D-glasses.jpg" sunglassesImage="/images/Register/sunglasses.png" />} />
+        <Route path="/registration-success" element={<RegistrationSuccess />} />
 
         {/* Protected routes for authenticated users */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/registration-success" element={<RegistrationSuccess />} />
+          
           <Route path="/test" element={<TestComponents />} />
         </Route>
 

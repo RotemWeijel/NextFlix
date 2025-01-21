@@ -71,8 +71,8 @@ const Login = () => {
       if (data.user.isAdmin) {
         navigate('/admin/dashboard');
       } else {
-        //navigate('/browse');
-        navigate('/registration-success');
+        navigate('/browse');
+        //navigate('/registration-success');
       }
 
     } catch (error) {
