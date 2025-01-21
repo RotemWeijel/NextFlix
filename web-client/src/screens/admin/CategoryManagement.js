@@ -138,7 +138,7 @@ const CategoriesManagement = ({ tokenUser }) => {
         <div style={{ backgroundColor: colors.background.primary, color: colors.text.primary }}>
             <Navbar />
             <div className="categories-container">
-                <h1 style={{ color: colors.text.primary }}>Categories Management</h1>
+                <h1 style={{ color: colors.text.primary }}>Management Screen</h1>
                 
                 {feedback.message && (
                     <div className={`feedback-message ${feedback.type}`}>
