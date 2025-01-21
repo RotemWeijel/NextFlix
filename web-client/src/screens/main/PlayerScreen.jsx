@@ -62,19 +62,34 @@ const PlayerScreen = ({ movieId, initialQuality = "720", movieTitle = "" }) => {
             setIsFullscreen(!!document.fullscreenElement);
         };
 
+
         document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
         return () => {
             document.removeEventListener('fullscreenchange', handleFullscreenChange);
+            document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+            document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+            document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
         };
     }, []);
 
     useEffect(() => {
-        if (videoRef.current) {
-            videoRef.current.play().catch(err => {
-                console.error("Auto-play failed:", err);
-            });
-            setIsPlaying(true);
-        }
+        const initializeVideo = async () => {
+            if (videoRef.current) {
+                try {
+                    await videoRef.current.play();
+                    setIsPlaying(true);
+                } catch (err) {
+                    console.error("Auto-play failed:", err);
+                    setIsPlaying(false);
+                }
+            }
+        };
+
+        initializeVideo();
     }, []);
 
     const handlePlayPause = () => {
@@ -87,15 +102,19 @@ const PlayerScreen = ({ movieId, initialQuality = "720", movieTitle = "" }) => {
             setIsPlaying(!isPlaying);
         }
     };
+
     const handleProgressBarClick = (e) => {
         const progressBar = e.currentTarget;
         const rect = progressBar.getBoundingClientRect();
         const clickPosition = (e.clientX - rect.left) / rect.width;
 
-        if (videoRef.current && duration) {
-            const newTime = clickPosition * duration;
-            videoRef.current.setCurrentTime(newTime);
-            setCurrentTime(newTime);
+        if (videoRef.current) {
+            const videoElement = containerRef.current.querySelector('video');
+            if (videoElement && duration) {
+                const newTime = Math.max(0, Math.min(clickPosition * duration, duration));
+                videoElement.currentTime = newTime;
+                setCurrentTime(newTime);
+            }
         }
     };
 
@@ -121,9 +140,26 @@ const PlayerScreen = ({ movieId, initialQuality = "720", movieTitle = "" }) => {
     const handleFullscreenToggle = async () => {
         try {
             if (!isFullscreen) {
-                await containerRef.current.requestFullscreen();
+                const element = containerRef.current;
+                if (element.requestFullscreen) {
+                    await element.requestFullscreen();
+                } else if (element.webkitRequestFullscreen) {
+                    await element.webkitRequestFullscreen();
+                } else if (element.mozRequestFullScreen) {
+                    await element.mozRequestFullScreen();
+                } else if (element.msRequestFullscreen) {
+                    await element.msRequestFullscreen();
+                }
             } else {
-                await document.exitFullscreen();
+                if (document.exitFullscreen) {
+                    await document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    await document.webkitExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    await document.mozCancelFullScreen();
+                } else if (document.msExitFullscreen) {
+                    await document.msExitFullscreen();
+                }
             }
         } catch (error) {
             console.error('Fullscreen error:', error);
@@ -138,9 +174,17 @@ const PlayerScreen = ({ movieId, initialQuality = "720", movieTitle = "" }) => {
     const handleSpeedChange = (speed) => {
         setPlaybackSpeed(speed);
         setShowSpeedMenu(false);
-        const videoElement = containerRef.current.querySelector('video');
-        if (videoElement) {
-            videoElement.playbackRate = speed;
+        if (videoRef.current) {
+            const videoElement = containerRef.current.querySelector('video');
+            if (videoElement) {
+                videoElement.playbackRate = speed;
+
+                const currentTime = videoElement.currentTime;
+
+                videoElement.playbackRate = speed;
+
+                videoElement.currentTime = currentTime;
+            }
         }
     };
 
@@ -149,7 +193,7 @@ const PlayerScreen = ({ movieId, initialQuality = "720", movieTitle = "" }) => {
     };
 
     return (
-        <div className="player-screen">
+        <div className="player-screen" ref={containerRef}>
             <button className="home-button" onClick={handleHomeClick}>
                 Home →
             </button>
@@ -159,7 +203,6 @@ const PlayerScreen = ({ movieId, initialQuality = "720", movieTitle = "" }) => {
                 ref={videoRef}
             />
 
-            {/* Unified Controls Bar */}
             <div className="player-controls">
                 <div
                     className="progress-bar-container"
@@ -175,12 +218,10 @@ const PlayerScreen = ({ movieId, initialQuality = "720", movieTitle = "" }) => {
 
                 <div className="controls-row">
                     <div className="controls-left">
-                        {/* Play/Pause */}
                         <button className="control-button" onClick={handlePlayPause}>
                             {isPlaying ? '⏸' : '▶'}
                         </button>
 
-                        {/* Volume Controls */}
                         <div className="volume-control">
                             <button className="control-button" onClick={handleMuteToggle}>
                                 {isMuted ? '🔇' : '🔊'}
@@ -197,7 +238,6 @@ const PlayerScreen = ({ movieId, initialQuality = "720", movieTitle = "" }) => {
                     </div>
 
                     <div className="controls-right">
-                        {/* Speed */}
                         <div className="speed-control">
                             <button
                                 className="control-button"
@@ -224,7 +264,6 @@ const PlayerScreen = ({ movieId, initialQuality = "720", movieTitle = "" }) => {
                             )}
                         </div>
 
-                        {/* Quality */}
                         <div className="quality-control">
                             <button
                                 className="control-button"
@@ -251,7 +290,6 @@ const PlayerScreen = ({ movieId, initialQuality = "720", movieTitle = "" }) => {
                             )}
                         </div>
 
-                        {/* Fullscreen */}
                         <button
                             className="control-button"
                             onClick={handleFullscreenToggle}
