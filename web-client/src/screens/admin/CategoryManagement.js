@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import LoadingSpinner from '../../components/common/LoadingSpinner/LoadingSpinner';
 import Button from '../../components/common/Button/Button';
 import Input from '../../components/common/Input/Input';
 import Navbar from '../../components/common/Navbar/Navbar';
@@ -7,11 +6,16 @@ import Footer from '../../components/common/Footer/Footer';
 import { useTheme } from '../../hooks/useTheme';
 import CategoryList from '../../components/admin/categories/CategoryList';
 import CategoryForm from '../../components/admin/categories/CategoryForm';
+import CategoryDetails from '../../components/admin/categories/CategoryDetails';
 import './CategoryManagement.css';
 
 const CategoriesManagement = ({ tokenUser }) => {
     const { colors } = useTheme();
-    const [categories, setCategories] = useState([]);
+    const [categories, setCategories] = useState([
+        { id: 1, name: 'Category 1' },
+        { id: 2, name: 'Category 2' }
+    ]);
+
     const [loading, setLoading] = useState(true);
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
@@ -78,7 +82,7 @@ const CategoriesManagement = ({ tokenUser }) => {
     const handleUpdate = async (categoryId, updatedData) => {
         try {
             const response = await fetch(`http://localhost:4000/api/categories/${categoryId}`, {
-                method: 'PUT',
+                method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${tokenUser}`,
                     'Content-Type': 'application/json'
@@ -129,7 +133,7 @@ const CategoriesManagement = ({ tokenUser }) => {
                 setFeedback({
                     type: 'error',
                     message: 'Failed to delete category. Please try again.'
-            });
+                });
             }
         }
     };
@@ -138,8 +142,16 @@ const CategoriesManagement = ({ tokenUser }) => {
         <div style={{ backgroundColor: colors.background.primary, color: colors.text.primary }}>
             <Navbar />
             <div className="categories-container">
+            <div className="image-container">
                 <h1 style={{ color: colors.text.primary }}>Management Screen</h1>
-                
+                <img
+                    src="/images/admin/admin.jpeg"
+                    alt="Baby Image"
+                    className = 'baby-image'
+                />
+
+
+
                 {feedback.message && (
                     <div className={`feedback-message ${feedback.type}`}>
                         {feedback.message}
@@ -151,32 +163,41 @@ const CategoriesManagement = ({ tokenUser }) => {
                     className="primary"
                 >
                     Add New Category
-                </Button>
+                </Button >
+                </div>
 
-                    <div className="categories-content">
-                        <CategoryList 
-                            categories={categories}
-                            onSelectCategory={(category) => {
-                                setSelectedCategory(category);
-                                setIsFormVisible(true);
+                <div className="categories-content">
+                    <CategoryList
+                        categories={categories}
+                        onSelectCategory={(category) => {
+                            setSelectedCategory(category);
+                            setIsFormVisible(true);
+                        }}
+                        onDeleteCategory={handleDelete}
+                        colors={colors}
+                    />
+
+                    {isFormVisible ? (
+                        <CategoryForm
+                            category={selectedCategory}
+                            onSubmit={selectedCategory ? handleUpdate : handleCreate}
+                            onCancel={() => {
+                                setIsFormVisible(false);
+                                setSelectedCategory(null);
                             }}
-                            onDeleteCategory={handleDelete}
+                            categories={categories}
                             colors={colors}
                         />
-                        
-                        {isFormVisible && (
-                            <CategoryForm
-                                category={selectedCategory}
-                                onSubmit={selectedCategory ? handleUpdate : handleCreate}
-                                onCancel={() => {
-                                    setIsFormVisible(false);
-                                    setSelectedCategory(null);
-                                }}
-                                categories={categories}
-                                colors={colors}
-                            />
-                        )}
-                    </div>
+                    ) : selectedCategory ? (
+                        <CategoryDetails
+                            category={selectedCategory}
+                            onBack={() => setSelectedCategory(null)}
+                            colors={colors}
+                        />
+                    ) : null}
+
+
+                </div>
             </div>
             <Footer />
         </div>

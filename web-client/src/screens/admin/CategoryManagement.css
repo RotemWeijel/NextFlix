@@ -33,3 +33,17 @@
     background-color: rgba(244, 67, 54, 0.1);
     border: 1px solid #f44336;
 }
+
+.image-container {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center items horizontally (optional) */
+    margin: 20px 0;
+}
+
+.baby-image {
+    width: 200px;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 15px; /* Add space below the image */
+}

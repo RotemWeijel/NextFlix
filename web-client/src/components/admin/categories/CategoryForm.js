@@ -10,7 +10,8 @@ const CategoryForm = ({ category, onSubmit, onCancel, categories, colors }) => {
         description: '',
         sortOrder: 0,
         parentCategory: '',
-        displayInMenu: true
+        displayInMenu: true,
+        movieCount: 0 // Movie count can be set automatically by the backend
     });
 
     useEffect(() => {
@@ -21,7 +22,8 @@ const CategoryForm = ({ category, onSubmit, onCancel, categories, colors }) => {
                 description: category.description || '',
                 sortOrder: category.sortOrder || 0,
                 parentCategory: category.parentCategory || '',
-                displayInMenu: category.displayInMenu ?? true
+                displayInMenu: category.displayInMenu ?? true,
+                movieCount: category.movieCount || 0
             });
         }
     }, [category]);
@@ -88,6 +90,31 @@ const CategoryForm = ({ category, onSubmit, onCancel, categories, colors }) => {
                         />
                         Display in Menu
                     </label>
+                </div>
+
+                <div className="form-group">
+                    <label style={{ color: colors.text.primary }}>Parent Category: </label>
+                    <select
+                        value={formData.parentCategory}
+                        onChange={(e) => setFormData({ ...formData, parentCategory: e.target.value })}
+                    >
+                        <option value="">Select Parent Category</option>
+                        {categories.map((cat) => (
+                            <option key={cat._id} value={cat._id}>
+                                {cat.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+
+                <div className="form-group">
+                    <Input
+                        type="number"
+                        label="Movie Count"
+                        value={formData.movieCount}
+                        disabled
+                    />
                 </div>
 
                 <div className="form-actions">
