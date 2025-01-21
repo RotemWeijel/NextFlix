@@ -1,0 +1,110 @@
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
+import VideoPlayer from '../../common/player/VideoPlayer';
+import './VideoPlayerDetails.css';
+
+const VideoPlayerDetails = ({ videoUrl, title }) => {
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [isMuted, setIsMuted] = useState(true);
+    const videoRef = useRef();
+    const timeoutRef = useRef(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
+    }, []);
+
+    const handleMouseEnter = () => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+        timeoutRef.current = setTimeout(() => {
+            if (videoRef.current) {
+                videoRef.current.play().catch(err => {
+                    console.error("Play failed:", err);
+                });
+                setIsPlaying(true);
+            }
+        }, 300);
+    };
+
+    const handleMouseLeave = () => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+        timeoutRef.current = setTimeout(() => {
+            if (videoRef.current) {
+                videoRef.current.pause();
+                setIsPlaying(false);
+            }
+        }, 300);
+    };
+
+
+    const handleMuteToggle = () => {
+        if (videoRef.current) {
+            videoRef.current.muted = !isMuted;
+            setIsMuted(!isMuted);
+        }
+    };
+
+    const handleClose = () => {
+        if (videoRef.current) {
+            videoRef.current.pause();
+        }
+        navigate(-1);
+    };
+
+    return (
+        <div className="movie-player-container">
+            <div className="title-container">
+                <h1 className="video-title">{title || "Tahrhen Episode"}</h1>
+            </div>
+            <div 
+                className="video-wrapper"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+            >
+                <VideoPlayer
+                    ref={videoRef}
+                    videoUrl={videoUrl || '/video_480.mp4'}
+                />
+                <div className="controls-layer">
+                    <div className="top-controls">
+                        <button className="close-button" onClick={handleClose}>
+                            ✕
+                        </button>
+                    </div>
+
+                    <div className="bottom-controls">
+                        <div className="left-controls">
+                            <button className="play-button" >
+                                {'▶ Play'}
+                            </button>
+                            <button className="circle-button" title="Add to My List">
+                                +
+                            </button>
+                            <button className="circle-button" title="Like">
+                                👍
+                            </button>
+                        </div>
+
+                        <button
+                            className="volume-button"
+                            onClick={handleMuteToggle}
+                            title={isMuted ? 'Unmute' : 'Mute'}
+                        >
+                            {isMuted ? '🔇' : '🔊'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default VideoPlayerDetails;

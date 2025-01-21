@@ -1,0 +1,91 @@
+.movie-card {
+    background-color: rgba(255, 255, 255, 0.1);
+    width: 100%;
+    height: 360px;
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.movie-card:hover {
+    transform: scale(1.02);
+    transition: transform 0.2s;
+}
+
+.card-img-container {
+    width: 100%;
+    height: 200px;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 16px;
+    height: 160px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.movie-metadata {
+    display: flex;
+    align-items: center;
+}
+
+.metadata-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    justify-content: flex-start;
+}
+
+.badge-rating,
+.year-text,
+.duration {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #a1a1a1;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+}
+
+.plus-button {
+    width: 32px;
+    height: 32px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: #a1a1a1;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 0;
+    margin-left: auto
+}
+
+.plus-button:hover {
+    border-color: white;
+    color: white;
+}
+
+.movie-description {
+    color: #a1a1a1;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.4;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+}
