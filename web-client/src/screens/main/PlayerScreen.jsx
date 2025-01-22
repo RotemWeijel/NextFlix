@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import VideoPlayer from '../../components/common/player/VideoPlayer'
+import { getStoredToken, createAuthHeaders } from '../../utils/auth'
 import './PlayerScreen.css';
-
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
 const PlayerScreen = ({ }) => {
     const navigate = useNavigate();
     const [isFullscreen, setIsFullscreen] = useState(false);
@@ -18,7 +19,13 @@ const PlayerScreen = ({ }) => {
     const location = useLocation()
     const queryParams = new URLSearchParams(location.search);
     const src = queryParams.get('extraParam');
+    const movieId = queryParams.get('movieId')
+    const checkAuthAndFetchCategories = async () => {
+        if (!getStoredToken()) {
+            navigate('/login');
 
+        }
+    }
     const speedOptions = [
         { value: 0.25, label: "0.25x" },
         { value: 0.5, label: "0.5x" },
@@ -29,6 +36,25 @@ const PlayerScreen = ({ }) => {
         { value: 1.75, label: "1.75x" },
         { value: 2, label: "2x" }
     ];
+    useEffect(() => {
+        const fetchmovies = async () => {
+            try {
+                const headers = {
+                    ...createAuthHeaders(),
+                    'Content-Type': 'application/json'
+                };
+                const data = await fetch(`${API_BASE_URL}/api/movies/${movieId}`, {
+                    headers: headers
+                });
+            }
+            catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchmovies();
+
+    }, []);
 
     useEffect(() => {
         const videoElement = containerRef.current?.querySelector('video');

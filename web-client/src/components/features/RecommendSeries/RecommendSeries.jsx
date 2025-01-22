@@ -102,7 +102,6 @@ const RecommendSeries = ({ movieId }) => {
           'Content-Type': 'application/json'
         };
         const url = `${API_BASE_URL}/api/movies/${actualId}/recommend`;
-        console.log(url)
         const res = await fetch(url, {
           headers: headers
         });

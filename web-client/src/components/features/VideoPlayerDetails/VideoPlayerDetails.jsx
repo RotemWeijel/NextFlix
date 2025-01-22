@@ -97,7 +97,7 @@ const VideoPlayerDetails = ({ movieId }) => {
     };
     const handleclickPlay = () => {
         const src = movie.videoUrl
-        navigate(`/Player/${movie.id}?extraParam=${src}`)
+        navigate(`/Player/${movie.id}?extraParam=${src}&movieId=${movie._id}`)
     }
     const handleEdit = () => {
 

@@ -114,7 +114,7 @@ const PlayerHome = ({ }) => {
 
     const handlePlayPause = () => {
         const src = randomMovie.videoUrl
-        navigate(`/Player/${randomMovie._id}?extraParam=${src}`);
+        navigate(`/Player/${randomMovie._id}?extraParam=${src}&movieId=${randomMovie._id}`);
 
     };
 
