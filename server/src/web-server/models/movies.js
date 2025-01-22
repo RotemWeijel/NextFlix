@@ -66,6 +66,7 @@ const moviesScheme = new mongoose.Schema({
         require: true,
         trim: true
     }
+
 })
 moviesScheme.index({
     name: 'text',

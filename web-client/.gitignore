@@ -21,5 +21,4 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-video_480.mp4
-video_720.mp4
+/public

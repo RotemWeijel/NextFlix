@@ -1,0 +1,92 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.formWrapper {
+  background: var(--background-dark);
+  border-radius: 4px;
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.characterContainer {
+  width: 100%;
+  height: 200px;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.formContainer {
+  padding: 32px;
+  flex: 1;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 32px;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.errorMessage {
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  color: #f90303;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.loginLink {
+  margin-top: 24px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.loginLink a {
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.loginLink a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .formContainer {
+    padding: 24px;
+  }
+
+  .characterContainer {
+    height: 160px;
+  }
+}

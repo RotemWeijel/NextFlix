@@ -1,17 +1,18 @@
 const movieControllers = require('../controllers/movies')
 const verifyAuth = require('../middleware/authMiddleware')
+const requireAdmin = require('../middleware/adminMiddlewere')
 const express = require('express');
 var router = express.Router();
 
 router.route('/')
     .get(verifyAuth, movieControllers.getMovies)
-    .post(verifyAuth, movieControllers.createMovie)
+    .post(verifyAuth, requireAdmin, movieControllers.createMovie)
 router.route('/search/:query')
     .get(verifyAuth, movieControllers.findMovieByQuery)
 router.route('/:id')
     .get(verifyAuth, movieControllers.getMovieById)
-    .put(verifyAuth, movieControllers.putMovie)
-    .delete(verifyAuth, movieControllers.deleteMovie)
+    .put(verifyAuth, requireAdmin, movieControllers.putMovie)
+    .delete(verifyAuth, requireAdmin, movieControllers.deleteMovie)
 router.route('/:id/recommend')
     .get(verifyAuth, movieControllers.getRecommendations)
     .post(verifyAuth, movieControllers.addRecommendation)

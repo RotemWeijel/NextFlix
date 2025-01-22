@@ -28,6 +28,7 @@ class UserService {
     
     if (!userData.username) errors.push('Username is required');
     if (!userData.password) errors.push('Password is required');
+    if (!userData.full_name) errors.push('Full name is required');
     if (userData.picture && !this.isValidUrl(userData.picture)) {
       errors.push('Invalid image URL format');
     }
@@ -49,8 +50,9 @@ class UserService {
     const newUser = new User({
       username: userData.username,
       password: userData.password,
-      name: userData.name,
-      picture: userData.picture
+      full_name: userData.full_name,
+      picture: userData.picture,
+      isAdmin: false
     });
 
     return await newUser.save();
