@@ -89,6 +89,9 @@ const VideoPlayerDetails = ({ tokenUser, movieId }) => {
     const handleclickPlay = () => {
         navigate(`/Player/${movie.id}`)
     }
+    const handleEdit = () => {
+
+    }
 
     return (
         <div className="movie-player-container">
@@ -121,6 +124,13 @@ const VideoPlayerDetails = ({ tokenUser, movieId }) => {
                             </button>
                             <button className="circle-button" title="Like">
                                 👍
+                            </button>
+                            <button
+                                className="edit-button"
+                                title="Edit Movie"
+                                onClick={handleEdit}
+                            >
+                                ✎
                             </button>
                         </div>
 

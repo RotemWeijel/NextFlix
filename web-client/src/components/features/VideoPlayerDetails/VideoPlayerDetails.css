@@ -83,7 +83,6 @@
     align-items: center;
     margin-top: 400px;
     margin-left: 50px;
-
 }
 
 .play-button {
@@ -121,6 +120,26 @@
 }
 
 .circle-button:hover {
+    border-color: white;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.edit-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 20px;
+}
+
+.edit-button:hover {
     border-color: white;
     background: rgba(0, 0, 0, 0.7);
 }
