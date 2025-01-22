@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 import './MovieCard.css';
 import { useNavigate } from 'react-router-dom';
 const MovieCard = ({ src, name, movieId }) => {
