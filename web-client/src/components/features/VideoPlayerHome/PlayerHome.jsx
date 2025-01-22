@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import VideoPlayer from '../../common/player/VideoPlayer';
 import './PlayerHome.css';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
+
 const PlayerHome = ({ tokenUser }) => {
     const navigate = useNavigate();
     const videoRef = useRef(null);
@@ -22,7 +24,7 @@ const PlayerHome = ({ tokenUser }) => {
                     'Authorization': `Bearer ${tokenUser}`,
                     'Content-Type': 'application/json'
                 };
-                const response = await fetch('http://localhost:4000/api/movies', {
+                const response = await fetch(`${API_BASE_URL}/api/movies`, {
                     headers: headers
                 });
                 const data = await response.json();

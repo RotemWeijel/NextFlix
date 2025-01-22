@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import MovieWrap from "./MovieWrap"
 import "./RecommendSeries.css";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
 // Default data for demonstration
 const DEFAULT_RECOMMENDATIONS = [
   {
@@ -84,35 +85,35 @@ const DEFAULT_RECOMMENDATIONS = [
 const RecommendSeries = ({ tokenUser, movieId }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [recommendations, setRecommendations] = useState(DEFAULT_RECOMMENDATIONS);
-  // useEffect(() => {
-  //   const fetchMovie = async () => {
-  //     try {
-  //       const actualId = typeof movieId === 'object' ? movieId.movie : movieId;
-  //       const headers = {
-  //         'Authorization': `Bearer ${tokenUser}`,
-  //         'Content-Type': 'application/json'
-  //       };
-  //       const url = `http://localhost:4000/api/movies/${actualId}/recommend`;
-  //       console.log(url)
-  //       const res = await fetch(url, {
-  //         headers: headers
-  //       });
+  const [recommendations, setRecommendations] = useState([]);
+  useEffect(() => {
+    const fetchMovie = async () => {
+      try {
+        const actualId = typeof movieId === 'object' ? movieId.movie : movieId;
+        const headers = {
+          'Authorization': `Bearer ${tokenUser}`,
+          'Content-Type': 'application/json'
+        };
+        const url = `${API_BASE_URL}/api/movies/${actualId}/recommend`;
+        console.log(url)
+        const res = await fetch(url, {
+          headers: headers
+        });
 
-  //       if (!res.ok) {
-  //         throw new Error(`HTTP error! status: ${res.status}`);
-  //       }
-  //       const data = await res.json();
-  //       setRecommendations(data);
-  //     } catch (error) {
-  //       console.error('Error fetching movie:', error);
-  //     }
-  //   };
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        const data = await res.json();
+        setRecommendations(data);
+      } catch (error) {
+        console.error('Error fetching movie:', error);
+      }
+    };
 
-  //   if (movieId) {
-  //     fetchMovie();
-  //   }
-  // }, [movieId]);
+    if (movieId) {
+      fetchMovie();
+    }
+  }, [movieId]);
 
 
   if (loading) return <div className="recommend-series-container">Loading recommendations...</div>;

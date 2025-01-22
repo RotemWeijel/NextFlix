@@ -3,6 +3,8 @@ import MovieList from '../../common/MovieList/MovieList';
 import { useTheme } from '../../../hooks/useTheme';
 import './MoviesPage.css';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
+
 const MoviesPage = ({ tokenUser }) => {
     const { colors } = useTheme();
     const [categories, setCategories] = useState([]);
@@ -17,14 +19,14 @@ const MoviesPage = ({ tokenUser }) => {
                     'Authorization': `Bearer ${tokenUser}`,
                     'Content-Type': 'application/json'
                 };
-                const categoriesResponse = await fetch('http://localhost:4000/api/categories', {
+                const categoriesResponse = await fetch(`${API_BASE_URL}/api/categories`, {
                     headers: headers
                 });
                 const categoriesData = await categoriesResponse.json();
                 const categoriesWithMovies = await Promise.all(categoriesData.map(async category => {
                     const movieDetails = await Promise.all(category.movies.map(async movieId => {
                         try {
-                            const movieResponse = await fetch(`http://localhost:4000/api/movies/${movieId}`, {
+                            const movieResponse = await fetch(`${API_BASE_URL}/api/movies/${movieId}`, {
                                 headers: headers
                             });
                             const movieData = await movieResponse.json();

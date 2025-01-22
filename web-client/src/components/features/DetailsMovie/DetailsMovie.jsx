@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './DetailsMovie.css';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
 
 
 const DetailsMovie = ({ movieId, tokenUser }) => {
@@ -14,7 +15,7 @@ const DetailsMovie = ({ movieId, tokenUser }) => {
                     'Authorization': `Bearer ${tokenUser}`,
                     'Content-Type': 'application/json'
                 };
-                const url = `http://localhost:4000/api/movies/${actualId}`;
+                const url = `${API_BASE_URL}/api/movies/${actualId}`;
 
                 const res = await fetch(url, {
                     headers: headers

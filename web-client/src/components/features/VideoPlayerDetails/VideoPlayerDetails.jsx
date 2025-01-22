@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import VideoPlayer from '../../common/player/VideoPlayer';
 import './VideoPlayerDetails.css';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
+
 const VideoPlayerDetails = ({ tokenUser, movieId }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMuted, setIsMuted] = useState(true);
@@ -18,7 +20,7 @@ const VideoPlayerDetails = ({ tokenUser, movieId }) => {
                     'Authorization': `Bearer ${tokenUser}`,
                     'Content-Type': 'application/json'
                 };
-                const url = `http://localhost:4000/api/movies/${actualId}`;
+                const url = `${API_BASE_URL}/api/movies/${actualId}`;
                 const res = await fetch(url, {
                     headers: headers
                 });
