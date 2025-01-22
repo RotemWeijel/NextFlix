@@ -2,22 +2,29 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import VideoPlayer from '../../common/player/VideoPlayer';
 import './VideoPlayerDetails.css';
-
+import { getStoredToken, createAuthHeaders } from '../../../utils/auth';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
 
-const VideoPlayerDetails = ({ tokenUser, movieId }) => {
+const VideoPlayerDetails = ({ movieId }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMuted, setIsMuted] = useState(true);
     const videoRef = useRef();
     const timeoutRef = useRef(null);
     const navigate = useNavigate();
     const [movie, setMovie] = useState([])
+
+    const checkAuthAndFetchCategories = async () => {
+        if (!getStoredToken()) {
+            navigate('/login');
+
+        }
+    }
     useEffect(() => {
         const fetchMovie = async () => {
             try {
                 const actualId = typeof movieId === 'object' ? movieId.movie : movieId;
                 const headers = {
-                    'Authorization': `Bearer ${tokenUser}`,
+                    ...createAuthHeaders(),
                     'Content-Type': 'application/json'
                 };
                 const url = `${API_BASE_URL}/api/movies/${actualId}`;
@@ -86,7 +93,7 @@ const VideoPlayerDetails = ({ tokenUser, movieId }) => {
         if (videoRef.current) {
             videoRef.current.pause();
         }
-        navigate(-1);
+        navigate('/browse');
     };
     const handleclickPlay = () => {
         const src = movie.videoUrl

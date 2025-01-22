@@ -2,21 +2,29 @@ import React, { useState, useEffect } from 'react';
 import MovieList from '../../common/MovieList/MovieList';
 import { useTheme } from '../../../hooks/useTheme';
 import './MoviesPage.css';
-
+import { getStoredToken, createAuthHeaders } from '../../../utils/auth';
+import { useNavigate } from 'react-router-dom';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
 
-const MoviesPage = ({ tokenUser }) => {
+const MoviesPage = ({ }) => {
     const { colors } = useTheme();
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const MAX_CATEGORIES = 5;
+    const navigate = useNavigate()
+
+    const checkAuthAndFetchCategories = async () => {
+        if (!getStoredToken()) {
+            navigate('/login');
+
+        }
+    }
 
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-
                 const headers = {
-                    'Authorization': `Bearer ${tokenUser}`,
+                    ...createAuthHeaders(),
                     'Content-Type': 'application/json'
                 };
                 const categoriesResponse = await fetch(`${API_BASE_URL}/api/categories`, {
@@ -61,10 +69,10 @@ const MoviesPage = ({ tokenUser }) => {
                 setLoading(false);
             }
         };
-        if (tokenUser) {
-            fetchCategories();
-        }
-    }, [tokenUser]);
+
+        fetchCategories();
+
+    }, []);
 
     const organizeCategories = (categories) => {
         return categories.sort((a, b) => {

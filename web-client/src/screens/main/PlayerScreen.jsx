@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import VideoPlayer from '../../components/common/player/VideoPlayer'
 import './PlayerScreen.css';
 
-const PlayerScreen = ({ movieId, movieTitle = "" }) => {
+const PlayerScreen = ({ }) => {
     const navigate = useNavigate();
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [showSpeedMenu, setShowSpeedMenu] = useState(false);
@@ -180,7 +180,7 @@ const PlayerScreen = ({ movieId, movieTitle = "" }) => {
     };
 
     const handleHomeClick = () => {
-        navigate('/');
+        navigate('/browse');
     };
 
 

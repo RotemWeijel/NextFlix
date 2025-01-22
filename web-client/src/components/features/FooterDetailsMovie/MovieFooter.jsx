@@ -1,18 +1,27 @@
 import React from 'react';
 import './MovieFooter.css';
 import { useState, useEffect } from 'react';
+import { getStoredToken, createAuthHeaders } from '../../../utils/auth';
+import { useNavigate } from 'react-router-dom';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
 
 
-const MovieFooter = ({ movieId, tokenUser }) => {
+const MovieFooter = ({ movieId }) => {
     const [movie, setMovie] = useState(null)
+    const navigate = useNavigate()
+
+    const checkAuthAndFetchCategories = async () => {
+        if (!getStoredToken()) {
+            navigate('/login');
+        }
+    }
     useEffect(() => {
         const fetchMovie = async () => {
             try {
                 const actualId = typeof movieId === 'object' ? movieId.movie : movieId;
                 const headers = {
-                    'Authorization': `Bearer ${tokenUser}`,
+                    ...createAuthHeaders(),
                     'Content-Type': 'application/json'
                 };
                 const url = `${API_BASE_URL}/api/movies/${actualId}`;

@@ -2,10 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import VideoPlayer from '../../common/player/VideoPlayer';
 import './PlayerHome.css';
+import { getStoredToken, createAuthHeaders } from '../../../utils/auth';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
 
-const PlayerHome = ({ tokenUser }) => {
+const PlayerHome = ({ }) => {
     const navigate = useNavigate();
     const videoRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -16,12 +17,19 @@ const PlayerHome = ({ tokenUser }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false)
 
+
+    const checkAuthAndFetchCategories = async () => {
+        if (!getStoredToken()) {
+            navigate('/login');
+
+        }
+    }
     useEffect(() => {
         const fetchMovies = async () => {
             try {
 
                 const headers = {
-                    'Authorization': `Bearer ${tokenUser}`,
+                    ...createAuthHeaders(),
                     'Content-Type': 'application/json'
                 };
                 const response = await fetch(`${API_BASE_URL}/api/movies`, {
@@ -59,10 +67,10 @@ const PlayerHome = ({ tokenUser }) => {
                 });
                 setLoading(false);
             }
-        }; if (tokenUser) {
-            fetchMovies();
-        }
-    }, [tokenUser, setLoading, setError]);
+        };
+        fetchMovies();
+
+    }, [setLoading, setError]);
     useEffect(() => {
         let playTimeout;
 
