@@ -44,6 +44,7 @@ const PlayerScreen = ({ }) => {
                     'Content-Type': 'application/json'
                 };
                 const data = await fetch(`${API_BASE_URL}/api/movies/${movieId}`, {
+                    method: 'POST',
                     headers: headers
                 });
             }

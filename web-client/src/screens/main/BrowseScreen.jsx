@@ -25,6 +25,7 @@ const BrowseScreen = ({ tokenUser }) => {
                     'Content-Type': 'application/json'
                 };
                 const data = await fetch(`${API_BASE_URL}/api/movies/678f99cdac81c8e9d0f313dd/recommend`, {
+                    method: 'POST',
                     headers: headers
                 });
             }

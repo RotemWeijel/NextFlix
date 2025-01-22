@@ -86,7 +86,7 @@ const DEFAULT_RECOMMENDATIONS = [
 const RecommendSeries = ({ movieId }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [recommendations, setRecommendations] = useState([]);
+  const [recommendations, setRecommendations] = useState();
   const navigate = useNavigate()
   const checkAuthAndFetchCategories = async () => {
     if (!getStoredToken()) {
@@ -102,6 +102,8 @@ const RecommendSeries = ({ movieId }) => {
           'Content-Type': 'application/json'
         };
         const url = `${API_BASE_URL}/api/movies/${actualId}/recommend`;
+        console.log(url)
+        console.log(headers)
         const res = await fetch(url, {
           headers: headers
         });
