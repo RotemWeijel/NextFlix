@@ -1,0 +1,49 @@
+/* This centers the form horizontally and positions it near the top */
+.search-container {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Align items to center vertically */
+    width: 100%;
+    position: absolute;
+    top: 20px; /* Adjusts how far from the top */
+  }
+  
+  /* The form is displayed as a row with spacing between elements */
+  .search-form {
+    display: flex;
+    gap: 10px; /* Space between input and button */
+    align-items: center;
+  }
+  
+  /* Input field styling */
+  .input-field {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 250px;
+  }
+  
+  /* Button styling - RED button */
+  .search-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: red; /* Red background */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Button hover effect */
+  .search-button:hover {
+    background-color: darkred; /* Darker red on hover */
+  }
+  .no-movies {
+    margin-top: 10px;
+    color: gray;
+    text-align: center;
+    font-style: italic;
+  }
+  
