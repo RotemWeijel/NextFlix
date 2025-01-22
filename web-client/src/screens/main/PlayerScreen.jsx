@@ -192,6 +192,7 @@ const PlayerScreen = ({ movieId, initialQuality = "720", movieTitle = "" }) => {
         navigate('/');
     };
 
+
     return (
         <div className="player-screen" ref={containerRef}>
             <button className="home-button" onClick={handleHomeClick}>
@@ -201,6 +202,7 @@ const PlayerScreen = ({ movieId, initialQuality = "720", movieTitle = "" }) => {
             <VideoPlayer
                 videoUrl={`/video_${selectedQuality}.mp4`}
                 ref={videoRef}
+
             />
 
             <div className="player-controls">

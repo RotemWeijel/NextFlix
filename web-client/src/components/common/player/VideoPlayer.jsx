@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, forwardRef } from 'react';
 import './VideoPlayer.css';
 
-const VideoPlayer = forwardRef(({ videoUrl, onPlayPauseChange, onMuteChange }, ref) => {
+const VideoPlayer = forwardRef(({ videoUrl, onPlayPauseChange, onMuteChange, onVideoClick }, ref) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef(null);
@@ -32,6 +32,17 @@ const VideoPlayer = forwardRef(({ videoUrl, onPlayPauseChange, onMuteChange }, r
       };
     }
   }, [ref]);
+  const handleClick = async () => {
+    try {
+      if (videoRef.current.paused) {
+        await videoRef.current.play();
+      } else {
+        videoRef.current.pause();
+      }
+    } catch (err) {
+      console.error("Error toggling play/pause:", err);
+    }
+  };
 
   return (
     <div className="video-container">
@@ -40,9 +51,11 @@ const VideoPlayer = forwardRef(({ videoUrl, onPlayPauseChange, onMuteChange }, r
         className="video-element"
         src={videoUrl}
         muted={isMuted}
+        onClick={handleClick}
       />
     </div>
   );
 });
+
 
 export default VideoPlayer;
