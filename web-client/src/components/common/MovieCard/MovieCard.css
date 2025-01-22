@@ -1,7 +1,8 @@
 .movie-card {
   position: relative;
-  width: 220px !important;
-  /* Netflix-like width */
+  width: 100%;
+  min-width: 220px;
+  aspect-ratio: 16/9;
   height: 120px !important;
   /* Adjusted for Netflix-like aspect ratio */
   border-radius: 3px;
@@ -9,7 +10,7 @@
   cursor: pointer;
   transition: transform 0.2s ease;
   margin: 0 4px;
-  background-color: #141414;
+
 }
 
 .image-container {
