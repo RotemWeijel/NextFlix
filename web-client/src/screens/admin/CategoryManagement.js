@@ -96,13 +96,6 @@ const CategoriesManagement = () => {
 
     const handleUpdate = async (data) => {
         const { categoryId, updates } = data;
-        
-        console.log('Update request details:', {
-            categoryId,
-            updates,
-            url: `${API_BASE_URL}/api/categories/${categoryId}`
-        });
-        
         if (!categoryId) {
             setFeedback({
                 type: 'error',
@@ -206,7 +199,6 @@ const CategoriesManagement = () => {
                     <CategoryList
                         categories={categories}
                         onSelectCategory={(category) => {
-                            console.log('Selected category:', category); //log
                             setSelectedCategory(category);
                             setIsFormVisible(true);
                         }}
