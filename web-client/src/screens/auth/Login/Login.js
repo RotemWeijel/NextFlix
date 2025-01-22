@@ -72,7 +72,6 @@ const Login = () => {
         navigate('/admin/dashboard');
       } else {
         navigate('/browse');
-        //navigate('/registration-success');
       }
 
     } catch (error) {

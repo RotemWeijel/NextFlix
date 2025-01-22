@@ -7,6 +7,7 @@ import Login from './screens/auth/Login/Login';
 import Register from './screens/auth/Register/Register';
 import RegistrationSuccess from './screens/auth/Register/RegistrationSuccess';
 import TestComponents from './TestComponents';
+import CategoriesManagement from './screens/admin/CategoryManagement';
 import './App.css';
 
 function App() {
@@ -44,16 +45,15 @@ function AppContent() {
         <Route path="/registration-success" element={<RegistrationSuccess />} />
 
         {/* Protected routes for authenticated users */}
-        <Route element={<ProtectedRoute />}>
-          
+        <Route element={<ProtectedRoute />}>          
           <Route path="/test" element={<TestComponents />} />
         </Route>
 
         {/* Protected routes for admin users */}
         <Route element={<AdminRoute />}>
           {/* <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/movies" element={<MovieManagement />} />
-          <Route path="/admin/categories" element={<CategoryManagement />} /> */}
+          <Route path="/admin/movies" element={<MovieManagement />} />*/}
+          <Route path="/admin/categories" element={<CategoriesManagement />} />
         </Route>
       </Routes>
     </div>
