@@ -89,7 +89,8 @@ const VideoPlayerDetails = ({ tokenUser, movieId }) => {
         navigate(-1);
     };
     const handleclickPlay = () => {
-        navigate(`/Player/${movie.id}`)
+        const src = movie.videoUrl
+        navigate(`/Player/${movie.id}?extraParam=${src}`)
     }
     const handleEdit = () => {
 

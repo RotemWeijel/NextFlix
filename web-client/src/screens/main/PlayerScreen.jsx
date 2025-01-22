@@ -1,13 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import VideoPlayer from '../../components/common/player/VideoPlayer'
 import './PlayerScreen.css';
 
-const PlayerScreen = ({ movieId, initialQuality = "720", movieTitle = "" }) => {
+const PlayerScreen = ({ movieId, movieTitle = "" }) => {
     const navigate = useNavigate();
     const [isFullscreen, setIsFullscreen] = useState(false);
-    const [selectedQuality, setSelectedQuality] = useState(initialQuality);
-    const [showQualityMenu, setShowQualityMenu] = useState(false);
     const [showSpeedMenu, setShowSpeedMenu] = useState(false);
     const [playbackSpeed, setPlaybackSpeed] = useState(1);
     const [isPlaying, setIsPlaying] = useState(true);
@@ -17,13 +15,9 @@ const PlayerScreen = ({ movieId, initialQuality = "720", movieTitle = "" }) => {
     const videoRef = useRef(null);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
-
-    const qualityOptions = [
-        { value: "1080", label: "1080p" },
-        { value: "720", label: "720p" },
-        { value: "480", label: "480p" },
-        { value: "360", label: "360p" }
-    ];
+    const location = useLocation()
+    const queryParams = new URLSearchParams(location.search);
+    const src = queryParams.get('extraParam');
 
     const speedOptions = [
         { value: 0.25, label: "0.25x" },
@@ -166,10 +160,7 @@ const PlayerScreen = ({ movieId, initialQuality = "720", movieTitle = "" }) => {
         }
     };
 
-    const handleQualityChange = (quality) => {
-        setSelectedQuality(quality);
-        setShowQualityMenu(false);
-    };
+
 
     const handleSpeedChange = (speed) => {
         setPlaybackSpeed(speed);
@@ -200,7 +191,7 @@ const PlayerScreen = ({ movieId, initialQuality = "720", movieTitle = "" }) => {
             </button>
 
             <VideoPlayer
-                videoUrl={`/video_${selectedQuality}.mp4`}
+                videoUrl={src}
                 ref={videoRef}
 
             />
@@ -245,7 +236,6 @@ const PlayerScreen = ({ movieId, initialQuality = "720", movieTitle = "" }) => {
                                 className="control-button"
                                 onClick={() => {
                                     setShowSpeedMenu(!showSpeedMenu);
-                                    setShowQualityMenu(false);
                                 }}
                             >
                                 {playbackSpeed}x
@@ -266,31 +256,7 @@ const PlayerScreen = ({ movieId, initialQuality = "720", movieTitle = "" }) => {
                             )}
                         </div>
 
-                        <div className="quality-control">
-                            <button
-                                className="control-button"
-                                onClick={() => {
-                                    setShowQualityMenu(!showQualityMenu);
-                                    setShowSpeedMenu(false);
-                                }}
-                            >
-                                {selectedQuality}p
-                            </button>
 
-                            {showQualityMenu && (
-                                <div className="control-menu">
-                                    {qualityOptions.map((option) => (
-                                        <button
-                                            key={option.value}
-                                            className={`menu-option ${selectedQuality === option.value ? 'active' : ''}`}
-                                            onClick={() => handleQualityChange(option.value)}
-                                        >
-                                            {option.label}
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
 
                         <button
                             className="control-button"

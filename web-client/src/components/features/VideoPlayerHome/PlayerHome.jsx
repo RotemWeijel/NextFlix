@@ -105,7 +105,8 @@ const PlayerHome = ({ tokenUser }) => {
     };
 
     const handlePlayPause = () => {
-        navigate(`/Player/${randomMovie._id}`);
+        const src = randomMovie.videoUrl
+        navigate(`/Player/${randomMovie._id}?extraParam=${src}`);
 
     };
 
@@ -136,7 +137,7 @@ const PlayerHome = ({ tokenUser }) => {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
             >
-                <VideoPlayer 
+                <VideoPlayer
                     ref={videoRef}
                     videoUrl={randomMovie?.videoUrl}
                     onPlayPauseChange={setIsPlaying}
