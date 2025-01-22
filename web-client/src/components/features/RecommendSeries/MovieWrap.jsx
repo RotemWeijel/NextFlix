@@ -4,8 +4,8 @@ import './MovieWrap.css';
 
 const MovieWrap = ({ movie }) => {
   return (
-    <div className="movie-card">
-      <div className="card-img-container">
+    <div className="movie-wrap-card"> 
+        <div className="movie-wrap-container">
         <img src={movie.image} className="card-img-top" alt={movie.title} />
       </div>
       <div className="card-body">

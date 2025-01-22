@@ -84,35 +84,35 @@ const DEFAULT_RECOMMENDATIONS = [
 const RecommendSeries = ({ tokenUser, movieId }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [recommendations, setRecommendations] = useState([]);
-  useEffect(() => {
-    const fetchMovie = async () => {
-      try {
-        const actualId = typeof movieId === 'object' ? movieId.movie : movieId;
-        const headers = {
-          'Authorization': `Bearer ${tokenUser}`,
-          'Content-Type': 'application/json'
-        };
-        const url = `http://localhost:4000/api/movies/${actualId}/recommend`;
-        console.log(url)
-        const res = await fetch(url, {
-          headers: headers
-        });
+  const [recommendations, setRecommendations] = useState(DEFAULT_RECOMMENDATIONS);
+  // useEffect(() => {
+  //   const fetchMovie = async () => {
+  //     try {
+  //       const actualId = typeof movieId === 'object' ? movieId.movie : movieId;
+  //       const headers = {
+  //         'Authorization': `Bearer ${tokenUser}`,
+  //         'Content-Type': 'application/json'
+  //       };
+  //       const url = `http://localhost:4000/api/movies/${actualId}/recommend`;
+  //       console.log(url)
+  //       const res = await fetch(url, {
+  //         headers: headers
+  //       });
 
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        const data = await res.json();
-        setRecommendations(data);
-      } catch (error) {
-        console.error('Error fetching movie:', error);
-      }
-    };
+  //       if (!res.ok) {
+  //         throw new Error(`HTTP error! status: ${res.status}`);
+  //       }
+  //       const data = await res.json();
+  //       setRecommendations(data);
+  //     } catch (error) {
+  //       console.error('Error fetching movie:', error);
+  //     }
+  //   };
 
-    if (movieId) {
-      fetchMovie();
-    }
-  }, [movieId]);
+  //   if (movieId) {
+  //     fetchMovie();
+  //   }
+  // }, [movieId]);
 
 
   if (loading) return <div className="recommend-series-container">Loading recommendations...</div>;
