@@ -16,23 +16,57 @@ const CategoryForm = ({ category, onSubmit, onCancel, categories, colors }) => {
 
     useEffect(() => {
         if (category) {
+            // Set form data when a category is selected for editing
             setFormData({
                 name: category.name || '',
                 promoted: category.promoted || false,
                 description: category.description || '',
                 sortOrder: category.sortOrder || 0,
-                parentCategory: category.parentCategory || '',
+                parentCategory: category.parentCategory || null,
                 displayInMenu: category.displayInMenu ?? true,
                 movieCount: category.movieCount || 0
+            });
+        } else {
+            // Reset form data when creating a new category
+            setFormData({
+                name: '',
+                promoted: false,
+                description: '',
+                sortOrder: 0,
+                parentCategory: null,
+                displayInMenu: true,
+                movieCount: 0
             });
         }
     }, [category]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        
+        // Create a copy of the form data
+        const processedData = { ...formData };
+    
+        // Convert empty string to null for parentCategory
+        if (processedData.parentCategory === "") {
+            processedData.parentCategory = null;
+        }
+
         if (category) {
-            onSubmit(category._id, formData);
+            // For updates, we're sending just the updated fields
+            const updates = {};
+            // Only include fields that have changed
+            Object.keys(formData).forEach(key => {
+                if (formData[key] !== category[key]) {
+                    updates[key] = formData[key];
+                }
+            });
+            
+            onSubmit({
+                categoryId: category._id,
+                updates
+            });
         } else {
+            // For new categories, send all form data
             onSubmit(formData);
         }
     };
