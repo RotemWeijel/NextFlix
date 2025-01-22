@@ -45,7 +45,7 @@ function AppContent() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register normalImage="/images/Register/3D-glasses.jpg" sunglassesImage="/images/Register/sunglasses.png" />} />
         <Route path="/registration-success" element={<RegistrationSuccess />} />
-        <Route index element={<BrowseScreen />} />
+        <Route path="/browse" element={<BrowseScreen />} />
         <Route path="/MovieDetails/:movie" element={<MovieDetailsScreen />} />
         <Route path='/Player/:movie' element={<PlayerScreen />} />
 
