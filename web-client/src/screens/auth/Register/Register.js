@@ -186,6 +186,7 @@ const Register = ({ normalImage, sunglassesImage }) => {
             "password": formData.password,
             "full_name": formData.displayName,
             "picture": fullAvatarUrl,
+            "isAdmin": false,
             "watchedMovies": []
           })
         });

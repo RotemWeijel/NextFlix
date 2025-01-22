@@ -10,12 +10,20 @@ exports.register = async (req, res) => {
     const { username, password, full_name, picture } = req.body;
     const hashedPassword = hashPassword(password);
 
-    const userData = { username, password: hashedPassword, full_name, picture };
+    const userData = { 
+      username, 
+      password: hashedPassword, 
+      full_name, 
+      picture 
+    };
+
+    // Create the user using the UserService instance
     await UserService.createUser(userData);
 
     res.status(201).end();
 
   } catch (error) {
+    console.error('Registration error:', error);
     res.status(400).json({ error: error.message });
   }
 };

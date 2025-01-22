@@ -1,83 +1,180 @@
 .navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background-color: var(--navbar-bg);
-    border-bottom: 1px solid var(--navbar-border);
-    z-index: 1000;
-    transition: background-color 0.3s ease;
-  }
-  
-  .navContent {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 1rem 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  .logo {
-    height: 25px;
-    width: auto;
-  }
-  
-  .navLinks {
-    display: flex;
-    gap: 1.5rem;
-    margin-left: 2rem;
-  }
-  
-  .navLinks a {
-    color: var(--navbar-text);
-    text-decoration: none;
-    font-size: 14px;
-    transition: opacity 0.2s ease;
-  }
-  
-  .navLinks a:hover {
-    opacity: 0.8;
-  }
-  
-  .rightSection {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  
-  .profileImage {
-    width: 32px;
-    height: 32px;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .dropdownMenu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background-color: var(--navbar-bg);
-    border: 1px solid var(--navbar-border);
-    border-radius: 4px;
-    padding: 0.5rem 0;
-    min-width: 200px;
-  }
-  
-  .dropdownMenu a,
-  .dropdownMenu button {
-    display: block;
-    padding: 0.5rem 1rem;
-    width: 100%;
-    text-align: left;
-    background: none;
-    border: none;
-    color: var(--navbar-text);
-    cursor: pointer;
-  }
-  
-  .dropdownMenu a:hover,
-  .dropdownMenu button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--navbar-bg);
+  border-bottom: 1px solid var(--navbar-border);
+  z-index: 1000;
+  transition: background-color 0.3s ease;
+  padding: 0.1rem 2rem;
+}
+
+.navContent {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.logoSection {
+  justify-self: start;
+}
+
+.logo {
+  height: 25px;
+  width: auto;
+  display: block;
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 0 1rem;
+}
+
+.navLinks a {
+  color: var(--navbar-text);
+  text-decoration: none;
+  font-size: 14px;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.navLinks a:hover {
+  opacity: 0.8;
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-self: end;
+}
+
+.userSection {
+  position: relative;
+}
+
+/* User info section in dropdown */
+.userInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--navbar-border);
+  margin-bottom: 0.5rem;
+}
+
+.userTable {
+  border-collapse: collapse;
+}
+
+.userTable td {
+  padding: 2px 4px;
+}
+
+.userLabel {
+  color: var(--navbar-text);
+  opacity: 0.7;
+  font-size: 0.85em;
+  text-align: right;
+  padding-right: 8px;
+}
+
+.userName {
+  display: block;
+  font-size: 0.95em;
+  color: var(--navbar-text);
+  opacity: 0.9;
+}
+
+.userRole {
+  display: block;
+  font-size: 0.85em;
+  color: var(--navbar-text);
+  opacity: 0.7;
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.userInfoImage {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+/* Sign out button specific styling */
+.signOutButton {
+  border-top: 1px solid var(--navbar-border);
+  margin-top: 0.5rem;
+  color: #ff4d4d;
+}
+
+/* Admin link styling */
+.adminLink {
+  color: #ffd700;
+  font-weight: 600;
+}
+
+.profileDropdown {
+  position: relative;
+  cursor: pointer;
+}
+
+.profileImage {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  background-color: var(--navbar-bg);
+  border: 1px solid var(--navbar-border);
+  border-radius: 4px;
+  padding: 0.5rem 0;
+  min-width: 200px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.dropdownMenu a,
+.dropdownMenu button {
+  display: block;
+  padding: 0.5rem 1rem;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--navbar-text);
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.dropdownMenu a:hover,
+.dropdownMenu button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.themeToggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
