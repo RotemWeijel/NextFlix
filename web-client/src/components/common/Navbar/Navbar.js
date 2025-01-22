@@ -37,7 +37,7 @@ export const Navbar = () => {
   const isLoggedIn = !!user;
 
   return (
-    <nav 
+    <nav
       className={styles.navbar}
       style={{
         '--navbar-bg': colors.background.primary,
@@ -48,9 +48,9 @@ export const Navbar = () => {
       <div className={styles.navContent}>
         {/* Logo */}
         <Link to="/" className={styles.logoSection}>
-          <img 
-            src="/NextFlix_icon.png" 
-            alt="NextFlix Logo" 
+          <img
+            src="/NextFlix_icon.png"
+            alt="NextFlix Logo"
             className={styles.logo}
           />
         </Link>
@@ -71,8 +71,37 @@ export const Navbar = () => {
 
         {/* Right Section */}
         <div className={styles.rightSection}>
+          {/* Search Icon */}
+          <div className={styles.searchContainer}>
+            {isSearchOpen ? (
+              <div className={styles.searchBox}>
+                <svg
+                  viewBox="0 0 24 24"
+                  className={styles.searchIcon}
+                  onClick={() => setIsSearchOpen(false)}
+                >
+                  <path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                </svg>
+                <input
+                  type="text"
+                  placeholder="Titles, people, genres"
+                  className={styles.searchInput}
+                  autoFocus
+                />
+              </div>
+            ) : (
+              <svg
+                viewBox="0 0 24 24"
+                className={styles.searchIcon}
+                onClick={() => setIsSearchOpen(true)}
+              >
+                <path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+              </svg>
+            )}
+          </div>
+
           {/* Theme Toggle */}
-          <button 
+          <button
             onClick={toggleTheme}
             className={styles.themeToggle}
             aria-label="Toggle theme"
@@ -82,11 +111,11 @@ export const Navbar = () => {
 
           {isLoggedIn ? (
             <div className={styles.userSection}>
-              <div 
+              <div
                 className={styles.profileDropdown}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
-                <img 
+                <img
                   src={!imageError ? (user?.picture || '/default-avatar.png') : '/default-avatar.png'}
                   alt={`${user?.full_name || 'User'}'s profile`}
                   className={styles.profileImage}
@@ -94,29 +123,29 @@ export const Navbar = () => {
                 />
                 {isMenuOpen && (
                   <div className={styles.dropdownMenu}>
-                  <div className={styles.userInfo}>
-                    <table className={styles.userTable}>
-                      <tbody>
-                        <tr>
-                          <td className={styles.userLabel}>Username:</td>
-                          <td className={styles.userName}>{user?.username}</td>
-                        </tr>
-                        <tr>
-                          <td className={styles.userLabel}>Role:</td>
-                          <td className={styles.userRole}>{user?.isAdmin ? 'Administrator' : 'User'}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <img 
-                      src={!imageError ? (user?.picture || '/default-avatar.png') : '/default-avatar.png'}
-                      alt="Profile" 
-                      className={styles.userInfoImage}
-                      onError={handleImageError}
-                    />
-                  </div>
+                    <div className={styles.userInfo}>
+                      <table className={styles.userTable}>
+                        <tbody>
+                          <tr>
+                            <td className={styles.userLabel}>Username:</td>
+                            <td className={styles.userName}>{user?.username}</td>
+                          </tr>
+                          <tr>
+                            <td className={styles.userLabel}>Role:</td>
+                            <td className={styles.userRole}>{user?.isAdmin ? 'Administrator' : 'User'}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <img
+                        src={!imageError ? (user?.picture || '/default-avatar.png') : '/default-avatar.png'}
+                        alt="Profile"
+                        className={styles.userInfoImage}
+                        onError={handleImageError}
+                      />
+                    </div>
                     <Link to="/profile" onClick={() => setIsMenuOpen(false)}>Profile</Link>
                     <Link to="/account" onClick={() => setIsMenuOpen(false)}>Account</Link>
-                    <button 
+                    <button
                       onClick={handleLogout}
                       className={styles.signOutButton}
                     >
@@ -128,9 +157,9 @@ export const Navbar = () => {
             </div>
           ) : (
             <div className={styles.authButtons}>
-              <Button 
-                variant="secondary" 
-                size="small" 
+              <Button
+                variant="secondary"
+                size="small"
                 onClick={() => navigate('/login')}
               >
                 Sign In
