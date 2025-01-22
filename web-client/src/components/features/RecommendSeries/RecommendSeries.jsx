@@ -4,84 +4,7 @@ import "./RecommendSeries.css";
 import { getStoredToken, createAuthHeaders } from '../../../utils/auth';
 import { useNavigate } from "react-router-dom";
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
-// Default data for demonstration
-const DEFAULT_RECOMMENDATIONS = [
-  {
-    id: 1,
-    title: "Caliphate",
-    image: "/favicon.ico",
-    year: 2020,
-    duration: "8:56",
-    description: "An impending ISIS attack on Sweden entangles a group of women, including a mother in a bind, a spirited student and an ambitious cop.",
-    rating: "16+"
-  },
-  {
-    id: 2,
-    title: "Hit & Run",
-    image: "/api/placeholder/220/120",
-    year: 2021,
-    duration: 9,
-    description: "A former special ops soldier has settled into a happy family life — until tragedy thrusts him back into a world of secret plots and deadly threats.",
-    rating: "16+"
-  },
-  {
-    id: 3,
-    title: "The Girl From Oslo",
-    image: "/api/placeholder/220/120",
-    year: 2021,
-    duration: 10,
-    description: "In this suspenseful thriller series, a diplomat attempts to save her daughter who's been kidnapped by terrorists.",
-    rating: "16+"
-  }, {
-    id: 4,
-    title: "The Girl From Oslo",
-    image: "/api/placeholder/220/120",
-    year: 2021,
-    duration: 10,
-    description: "In this suspenseful thriller series, a diplomat attempts to save her daughter who's been kidnapped by terrorists.",
-    rating: "16+"
-  }, {
-    id: 5,
-    title: "The Girl From Oslo",
-    image: "/api/placeholder/220/120",
-    year: 2021,
-    duration: 10,
-    description: "In this suspenseful thriller series, a diplomat attempts to save her daughter who's been kidnapped by terrorists.",
-    rating: "16+"
-  }, {
-    id: 6,
-    title: "The Girl From Oslo",
-    image: "/api/placeholder/220/120",
-    year: 2021,
-    episodes: 10,
-    description: "In this suspenseful thriller series, a diplomat attempts to save her daughter who's been kidnapped by terrorists.",
-    rating: "16+"
-  }, {
-    id: 7,
-    title: "The Girl From Oslo",
-    image: "/api/placeholder/220/120",
-    year: 2021,
-    episodes: 10,
-    description: "In this suspenseful thriller series, a diplomat attempts to save her daughter who's been kidnapped by terrorists.",
-    rating: "16+"
-  }, {
-    id: 8,
-    title: "The Girl From Oslo",
-    image: "/api/placeholder/220/120",
-    year: 2021,
-    episodes: 10,
-    description: "In this suspenseful thriller series, a diplomat attempts to save her daughter who's been kidnapped by terrorists.",
-    rating: "16+"
-  }, {
-    id: 8,
-    title: "The Girl From Oslo",
-    image: "/api/placeholder/220/120",
-    year: 2021,
-    episodes: 10,
-    description: "In this suspenseful thriller series, a diplomat attempts to save her daughter who's been kidnapped by terrorists.",
-    rating: "16+"
-  }
-];
+
 
 const RecommendSeries = ({ movieId }) => {
   const [loading, setLoading] = useState(false);
@@ -93,6 +16,30 @@ const RecommendSeries = ({ movieId }) => {
       navigate('/login');
     }
   }
+  const fetchRandomMovies = async () => {
+    try {
+      const headers = {
+        ...createAuthHeaders(),
+        'Content-Type': 'application/json'
+      };
+      const response = await fetch(`${API_BASE_URL}/api/movies`, {
+        headers: headers
+      });
+      const data = await response.json();
+      const allMovies = data.reduce((acc, category) => {
+        return [...acc, ...category.movies];
+      }, []);
+
+      // Get 12 random movies
+      const randomMovies = allMovies
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 12);
+
+      setRecommendations(randomMovies);
+    } catch (error) {
+      setError(error);
+    }
+  };
   useEffect(() => {
     const fetchMovie = async () => {
       try {
@@ -102,8 +49,7 @@ const RecommendSeries = ({ movieId }) => {
           'Content-Type': 'application/json'
         };
         const url = `${API_BASE_URL}/api/movies/${actualId}/recommend`;
-        console.log(url)
-        console.log(headers)
+
         const res = await fetch(url, {
           headers: headers
         });
@@ -112,9 +58,13 @@ const RecommendSeries = ({ movieId }) => {
           throw new Error(`HTTP error! status: ${res.status}`);
         }
         const data = await res.json();
-        setRecommendations(data);
+        if (!data || data.length === 0) {
+          await fetchRandomMovies();
+        } else {
+          setRecommendations(data);
+        }
       } catch (error) {
-        console.error('Error fetching movie:', error);
+        await fetchRandomMovies();
       }
     };
 
