@@ -3,25 +3,26 @@ const Category = require('../models/categories');
 
 
 const createMovie = async (name,
-    description, duration, releaseYear, actors, categoryNames,
+    description, duration, releaseYear, actors, categoryIds, // Changed from categoryNames
     ageAllow, director, language, imageUrl, trailerUrl) => {
     try {
         // Input validation
-        const movies = await Movie.find({ name: name })
+        const movies = await Movie.find({ name: name });
         if (movies.length > 0) {
-            return { success: false, error: "name movie already exist!" }
+            return { success: false, error: "name movie already exist!" };
         }
         if (!name || !description || !duration || !releaseYear ||
             !ageAllow || !director || !language) {
-            return { success: false, error: "Missing required fields" }
+            return { success: false, error: "Missing required fields" };
         }
-        if (!categoryNames || !Array.isArray(categoryNames) || categoryNames.length === 0) {
-            return { success: false, error: "At least one category is required" }
+        if (!categoryIds || !Array.isArray(categoryIds) || categoryIds.length === 0) {
+            return { success: false, error: "At least one category is required" };
         }
 
-        const categories = await Category.find({ name: { $in: categoryNames } });
-        if (categories.length !== categoryNames.length) {
-            return { success: false, error: "One or more invalid category names" }
+        // Validate categories by ID
+        const categories = await Category.find({ _id: { $in: categoryIds } });
+        if (categories.length !== categoryIds.length) {
+            return { success: false, error: "One or more invalid category IDs" };
         }
 
         const movie = new Movie({
@@ -30,20 +31,20 @@ const createMovie = async (name,
             duration: duration,
             releaseYear: releaseYear,
             actors: actors || [],
-            categories: categoryNames,
+            categories: categoryIds, // Store category IDs
             ageAllow: ageAllow,
             director: director,
             language: language,
             imageUrl: imageUrl,
             trailerUrl: trailerUrl
-        })
+        });
 
-        const savedMovie = await movie.save()
+        const savedMovie = await movie.save();
         if (!savedMovie) {
-            return { success: false, error: "Could not create movie" }
+            return { success: false, error: "Could not create movie" };
         }
 
-        // Update categories with movie name
+        // Update categories with movie ID
         for (const category of categories) {
             await Category.findByIdAndUpdate(
                 category._id,
@@ -55,11 +56,11 @@ const createMovie = async (name,
             );
         }
 
-        return { success: true, data: savedMovie }
+        return { success: true, data: savedMovie };
     } catch (error) {
-        return { success: false, error: error.message }
+        return { success: false, error: error.message };
     }
-}
+};
 
 const getMoviebyId = async (id) => {
     try {
@@ -75,40 +76,59 @@ const getMoviebyId = async (id) => {
 
 const putMovie = async (id, movieData) => {
     try {
+        console.log('Received Movie Update Request:', { id, movieData });
+
         // Validate movie exists
-        const findMovie = await Movie.findById(id)
+        const findMovie = await Movie.findById(id);
         if (!findMovie) {
-            return { success: false, error: "Movie not found" }
+            console.error(`Movie not found with ID: ${id}`);
+            return { success: false, error: "Movie not found" };
         }
 
-        // Input validation
-        if (!movieData.name || !movieData.description || !movieData.duration ||
-            !movieData.releaseYear || !movieData.ageAllow ||
-            !movieData.director || !movieData.language) {
-            return { success: false, error: "Missing required fields" }
+        // Detailed input validation with specific error messages
+        const requiredFields = [
+            'name', 'description', 'duration', 
+            'releaseYear', 'ageAllow', 'director', 'language'
+        ];
+
+        for (const field of requiredFields) {
+            if (!movieData[field]) {
+                console.error(`Missing required field: ${field}`);
+                return { 
+                    success: false, 
+                    error: `Missing required field: ${field}` 
+                };
+            }
         }
 
-        // Category validation
-        if (!movieData.categories || !Array.isArray(movieData.categories) ||
-            movieData.categories.length === 0) {
-            return { success: false, error: "At least one category is required" }
+        // Category validation with detailed logging
+        if (!movieData.categories || !Array.isArray(movieData.categories)) {
+            console.error('Invalid categories format');
+            return { success: false, error: "Categories must be an array" };
         }
 
-        // Validate categories exist by name
-        const newCategories = await Category.find({ name: { $in: movieData.categories } });
+        if (movieData.categories.length === 0) {
+            console.error('No categories provided');
+            return { success: false, error: "At least one category is required" };
+        }
+
+        // Validate categories exist by ID
+        const newCategories = await Category.find({ _id: { $in: movieData.categories } });
+        
+        console.log('Found Categories:', newCategories.map(c => c._id));
+        console.log('Requested Category IDs:', movieData.categories);
+
         if (newCategories.length !== movieData.categories.length) {
-            return { success: false, error: "One or more invalid category names" }
+            console.error('Invalid category IDs detected');
+            return { success: false, error: "One or more invalid category IDs" };
         }
-
-        // Get old categories by name
-        const oldCategories = await Category.find({ name: { $in: findMovie.categories } });
 
         // Remove movie from old categories
-        for (const category of oldCategories) {
+        for (const category of newCategories) {
             await Category.findByIdAndUpdate(
                 category._id,
                 {
-                    $pull: { movies: findMovie.name },
+                    $pull: { movies: findMovie._id },
                     $inc: { movieCount: -1 }
                 },
                 { new: true }
@@ -132,25 +152,32 @@ const putMovie = async (id, movieData) => {
                 trailerUrl: movieData.trailerUrl
             },
             { new: true, runValidators: true }
-        )
+        );
 
         // Add movie to new categories
         for (const category of newCategories) {
             await Category.findByIdAndUpdate(
                 category._id,
                 {
-                    $push: { movies: movieData.name },
+                    $push: { movies: updatedMovie._id }, 
                     $inc: { movieCount: 1 }
                 },
                 { new: true }
             );
         }
 
+        console.log('Movie successfully updated:', updatedMovie);
         return { success: true, data: updatedMovie };
+
     } catch (error) {
-        return { success: false, error: error.message }
+        console.error('Detailed Error in putMovie:', {
+            message: error.message,
+            stack: error.stack,
+            movieData: movieData
+        });
+        return { success: false, error: error.message };
     }
-}
+};
 
 const deleteMovie = async (id) => {
     try {
@@ -201,15 +228,15 @@ const getMovies = async (userId) => {
     try {
         const categories = await Category.find({ promoted: true });
         const moviesUser = await getMoviesByUser(userId);
-        const moviesUserId = moviesUser.map(movie => movie.name);
+        const moviesUserId = moviesUser.map(movie => movie._id); // Changed from name to _id
 
         const results = [];
 
         for (const category of categories) {
             const moviefit = await Movie.aggregate([{
                 $match: {
-                    categories: category.name,
-                    name: { $nin: moviesUserId }
+                    categories: category._id, // Changed from category.name
+                    _id: { $nin: moviesUserId }
                 }
             }, { $sample: { size: 20 } }]);
 
@@ -236,7 +263,8 @@ const getMovies = async (userId) => {
     } catch (error) {
         return { error: error.message };
     }
-}
+};
+
 const getMoviesByUser = async (userId) => {
     try {
         const watchedMovies = await Movie.find({

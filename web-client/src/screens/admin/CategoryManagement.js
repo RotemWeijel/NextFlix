@@ -38,6 +38,7 @@ const CategoriesManagement = () => {
                 ...createAuthHeaders(),
                 'Content-Type': 'application/json'
             };
+
             const response = await fetch(`${API_BASE_URL}/api/categories`, {
                 headers
             });
@@ -52,8 +53,10 @@ const CategoriesManagement = () => {
             
             const data = await response.json();
             setCategories(data);
+          
         } catch (error) {
             console.error('Error fetching categories:', error);
+            setCategories([]);
             setFeedback({
                 type: 'error',
                 message: 'Failed to fetch categories. Please try again.'
@@ -62,6 +65,8 @@ const CategoriesManagement = () => {
             setLoading(false);
         }
     };
+    
+    
 
     const handleCreate = async (categoryData) => {
         try {
@@ -143,7 +148,7 @@ const CategoriesManagement = () => {
                     ...createAuthHeaders(),
                     'Content-Type': 'application/json'
                 };
-                
+              
                 const response = await fetch(`${API_BASE_URL}/api/categories/${categoryId}`, {
                     method: 'DELETE',
                     headers
@@ -206,16 +211,19 @@ const CategoriesManagement = () => {
                         colors={colors}
                     />
 
-                    <CategoryForm
-                        category={selectedCategory}
-                        onSubmit={selectedCategory ? handleUpdate : handleCreate}
-                        onCancel={() => {
-                            setIsFormVisible(false);
-                            setSelectedCategory(null);
-                        }}
-                        categories={categories}
-                        colors={colors}
-                    />
+                    {isFormVisible ? (
+                        <CategoryForm
+                            category={selectedCategory}
+                            onSubmit={selectedCategory ? handleUpdate : handleCreate}
+                            onCancel={() => {
+                                setIsFormVisible(false);
+                                setSelectedCategory(null);
+                            }}
+                            categories={categories}
+                            colors={colors}
+                        />
+                    ) : null}
+
                 </div>
             </div>
             <Footer />
