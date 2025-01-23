@@ -99,7 +99,7 @@ const VideoPlayerDetails = ({ movieId }) => {
         navigate(`/Player/${movie._id}?extraParam=${src}&movieId=${movie._id}`)
     }
     const handleEdit = () => {
-
+        navigate('movies/:id/edit')
     }
 
     const isAdmin = () => {

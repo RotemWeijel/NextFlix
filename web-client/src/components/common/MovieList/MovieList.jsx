@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import MovieCard from "../MovieCard/MovieCard"
 import './MovieList.css'
+import { Navigate } from 'react-router-dom';
 const MovieList = ({ title, movies }) => {
     const [scrollPosition, setScrollPosition] = useState(0);
     const handleScroll = (direction) => {
@@ -24,9 +25,31 @@ const MovieList = ({ title, movies }) => {
 
         setScrollPosition(newPosition);
     };
+    const isAdmin = () => {
+        const userStr = localStorage.getItem('user');
+        try {
+            const user = userStr ? JSON.parse(userStr) : null;
+            return user && user.role === 'admin';
+        } catch (error) {
+            console.error('Error parsing stored user:', error);
+            return false;
+        }
+    };
+    const handleEdit = () => {
+        Navigate("/admin/categories")
+    }
     return (
         <div className="movie-list-container">
             <h2 className="category-title">{title}</h2>
+            {isAdmin() && (
+                <button
+                    className="edit-button"
+                    title="Edit category"
+                    onClick={handleEdit}
+                >
+                    ✎
+                </button>
+            )}
             <div className="movies-row">
                 {scrollPosition > 0 && (
                     <button
