@@ -4,7 +4,7 @@ import VideoPlayerDetails from '../../components/features/VideoPlayerDetails/Vid
 import RecommendSeries from '../../components/features/RecommendSeries/RecommendSeries';
 import DetailsMovie from '../../components/features/DetailsMovie/DetailsMovie'
 import MovieFooter from '../../components/features/FooterDetailsMovie/MovieFooter';
-const MovieDetailsScreen = ({ tokenUser }) => {
+const MovieDetailsScreen = ({  }) => {
     const movieId = useParams()
     const navigate = useNavigate();
 
@@ -16,10 +16,10 @@ const MovieDetailsScreen = ({ tokenUser }) => {
     }, [movieId]);
     return (
         <div>
-            <VideoPlayerDetails tokenUser={tokenUser} movieId={movieId} />
-            <DetailsMovie tokenUser={tokenUser} movieId={movieId} />
-            <RecommendSeries tokenUser={tokenUser} movieId={movieId} />
-            <MovieFooter tokenUser={tokenUser} movieId={movieId} />
+            <VideoPlayerDetails  movieId={movieId} />
+            <DetailsMovie  movieId={movieId} />
+            <RecommendSeries  movieId={movieId} />
+            <MovieFooter  movieId={movieId} />
         </div>)
 }
 export default MovieDetailsScreen

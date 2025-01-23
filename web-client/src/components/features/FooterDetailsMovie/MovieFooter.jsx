@@ -11,11 +11,11 @@ const MovieFooter = ({ movieId }) => {
     const [movie, setMovie] = useState(null)
     const navigate = useNavigate()
 
-    const checkAuthAndFetchCategories = async () => {
+    useEffect(() => {
         if (!getStoredToken()) {
             navigate('/login');
         }
-    }
+    }, []);
     useEffect(() => {
         const fetchMovie = async () => {
             try {

@@ -9,13 +9,15 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:400
 const RecommendSeries = ({ movieId }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [recommendations, setRecommendations] = useState();
+  const [recommendations, setRecommendations] = useState({});
   const navigate = useNavigate()
-  const checkAuthAndFetchCategories = async () => {
+
+
+  useEffect(() => {
     if (!getStoredToken()) {
       navigate('/login');
     }
-  }
+  }, []);
   const fetchRandomMovies = async () => {
     try {
       const headers = {
@@ -29,7 +31,6 @@ const RecommendSeries = ({ movieId }) => {
       const allMovies = data.reduce((acc, category) => {
         return [...acc, ...category.movies];
       }, []);
-
       // Get 12 random movies
       const randomMovies = allMovies
         .sort(() => Math.random() - 0.5)
@@ -76,14 +77,21 @@ const RecommendSeries = ({ movieId }) => {
 
   if (loading) return <div className="recommend-series-container">Loading recommendations...</div>;
   if (error) return <div className="recommend-series-container">Error: {error}</div>;
-
+  if (!recommendations || recommendations.length === 0) {
+    return <div>Loading recommendations...</div>;
+  }
   return (
     <div className="recommend-series-container">
       <h2 className="recommend-title">More Like This</h2>
       <div className="movies-grid">
-        {recommendations.map((movie) => (
-          <MovieWrap key={movie.id} movie={movie} />
-        ))}
+        {recommendations.length > 0 ? (
+          recommendations.map((movie) => (
+
+            <MovieWrap key={movie.id} movie={movie} />
+          ))
+        ) : (
+          <div>No recommendations available.</div>
+        )}
       </div>
     </div>
   );

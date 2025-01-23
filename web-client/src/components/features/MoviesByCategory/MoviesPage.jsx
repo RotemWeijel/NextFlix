@@ -13,12 +13,11 @@ const MoviesPage = ({ }) => {
     const MAX_CATEGORIES = 5;
     const navigate = useNavigate()
 
-    const checkAuthAndFetchCategories = async () => {
+    useEffect(() => {
         if (!getStoredToken()) {
             navigate('/login');
-
         }
-    }
+    }, []);
 
     useEffect(() => {
         const fetchCategories = async () => {

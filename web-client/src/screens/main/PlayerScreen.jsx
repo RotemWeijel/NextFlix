@@ -39,11 +39,12 @@ const PlayerScreen = ({ }) => {
     useEffect(() => {
         const fetchmovies = async () => {
             try {
+                const actualId = typeof movieId === 'object' ? movieId.movie : movieId;
                 const headers = {
                     ...createAuthHeaders(),
                     'Content-Type': 'application/json'
                 };
-                const data = await fetch(`${API_BASE_URL}/api/movies/${movieId}`, {
+                const data = await fetch(`${API_BASE_URL}/api/movies/${actualId}/recommend`, {
                     method: 'POST',
                     headers: headers
                 });

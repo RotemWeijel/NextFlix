@@ -11,12 +11,11 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:400
 const BrowseScreen = ({ tokenUser }) => {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-    const checkAuthAndFetchCategories = async () => {
+    useEffect(() => {
         if (!getStoredToken()) {
             navigate('/login');
-
         }
-    }
+    }, []);
     useEffect(() => {
         const fetchmovies = async () => {
             try {
@@ -24,10 +23,13 @@ const BrowseScreen = ({ tokenUser }) => {
                     ...createAuthHeaders(),
                     'Content-Type': 'application/json'
                 };
-                const data = await fetch(`${API_BASE_URL}/api/movies/678f99cdac81c8e9d0f313dd/recommend`, {
+                const data = await fetch(`${API_BASE_URL}/api/movies/6790957bbb56b734be940fee/recommend`, {
                     method: 'POST',
                     headers: headers
                 });
+                if (!data.ok) {
+                    throw new Error(`HTTP error! status: ${data.status}`);
+                }
             }
             catch (error) {
                 console.error('Error fetching data:', error);
@@ -47,8 +49,8 @@ const BrowseScreen = ({ tokenUser }) => {
                     userProfile={{ avatar: '/user.png' }}
                     onLogout={() => { }}
                 />
-                <PlayerHome tokenUser={tokenUser} />
-                <MoviesPage tokenUser={tokenUser} />
+                <PlayerHome  />
+                <MoviesPage  />
                 <Footer />
             </div>
         </ThemeProvider>

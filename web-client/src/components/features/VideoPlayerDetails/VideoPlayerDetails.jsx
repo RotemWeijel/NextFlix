@@ -13,12 +13,11 @@ const VideoPlayerDetails = ({ movieId }) => {
     const navigate = useNavigate();
     const [movie, setMovie] = useState([])
 
-    const checkAuthAndFetchCategories = async () => {
+    useEffect(() => {
         if (!getStoredToken()) {
             navigate('/login');
-
         }
-    }
+    }, []);
     useEffect(() => {
         const fetchMovie = async () => {
             try {
@@ -97,11 +96,22 @@ const VideoPlayerDetails = ({ movieId }) => {
     };
     const handleclickPlay = () => {
         const src = movie.videoUrl
-        navigate(`/Player/${movie.id}?extraParam=${src}&movieId=${movie._id}`)
+        navigate(`/Player/${movie._id}?extraParam=${src}&movieId=${movie._id}`)
     }
     const handleEdit = () => {
 
     }
+
+    const isAdmin = () => {
+        const userStr = localStorage.getItem('user');
+        try {
+            const user = userStr ? JSON.parse(userStr) : null;
+            return user && user.role === 'admin';
+        } catch (error) {
+            console.error('Error parsing stored user:', error);
+            return false;
+        }
+    };
 
     return (
         <div className="movie-player-container">
@@ -135,13 +145,15 @@ const VideoPlayerDetails = ({ movieId }) => {
                             <button className="circle-button" title="Like">
                                 👍
                             </button>
-                            <button
-                                className="edit-button"
-                                title="Edit Movie"
-                                onClick={handleEdit}
-                            >
-                                ✎
-                            </button>
+                            {isAdmin() && (
+                                <button
+                                    className="edit-button"
+                                    title="Edit Movie"
+                                    onClick={handleEdit}
+                                >
+                                    ✎
+                                </button>
+                            )}
                         </div>
 
                         <button

@@ -18,12 +18,11 @@ const PlayerHome = ({ }) => {
     const [error, setError] = useState(false)
 
 
-    const checkAuthAndFetchCategories = async () => {
+    useEffect(() => {
         if (!getStoredToken()) {
             navigate('/login');
-
         }
-    }
+    }, []);
     useEffect(() => {
         const fetchMovies = async () => {
             try {
