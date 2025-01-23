@@ -3,7 +3,7 @@ const Category = require('../models/categories');
 
 
 const createMovie = async (name,
-    description, duration, releaseYear, actors, categoryIds, // Changed from categoryNames
+    description, duration, releaseYear, actors, categoryIds, 
     ageAllow, director, language, imageUrl, trailerUrl) => {
     try {
         // Input validation
@@ -31,7 +31,7 @@ const createMovie = async (name,
             duration: duration,
             releaseYear: releaseYear,
             actors: actors || [],
-            categories: categoryIds, // Store category IDs
+            categories: categoryIds, 
             ageAllow: ageAllow,
             director: director,
             language: language,

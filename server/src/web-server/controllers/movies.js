@@ -95,6 +95,7 @@ const getRecommendations = async (req, res) => {
             const movies = await Movie.find({ _id: { $in: result.data } });
             return res.status(200).json(movies);
         }
+    
 
         // If no recommendations
         return res.status(200).json([]);

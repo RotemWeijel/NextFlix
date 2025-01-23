@@ -31,7 +31,7 @@ const moviesScheme = new mongoose.Schema({
         }
     }],
     categories: [{
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
         required: true
     }],
