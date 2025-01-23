@@ -71,6 +71,7 @@ const Login = () => {
       navigate('/browse');
       
 
+
     } catch (error) {
       setGeneralError(error.message || 'Failed to sign in. Please check your credentials.');
       setErrors({});

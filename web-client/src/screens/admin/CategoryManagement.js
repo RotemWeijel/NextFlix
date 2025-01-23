@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from '../../components/common/Button/Button';
 import Input from '../../components/common/Input/Input';
 import Navbar from '../../components/common/Navbar/Navbar';
@@ -6,55 +7,53 @@ import Footer from '../../components/common/Footer/Footer';
 import { useTheme } from '../../hooks/useTheme';
 import CategoryList from '../../components/admin/categories/CategoryList';
 import CategoryForm from '../../components/admin/categories/CategoryForm';
+import { getStoredToken, createAuthHeaders } from '../../utils/auth';
 import './CategoryManagement.css';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
-
-const CategoriesManagement = ({ tokenUser }) => {
+const CategoriesManagement = () => {
+    const navigate = useNavigate();
     const { colors } = useTheme();
-    const [categories, setCategories] = useState([
-        { id: 1, name: 'Category 1' },
-        { id: 2, name: 'Category 2' }
-    ]);
-
+    const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [feedback, setFeedback] = useState({ type: '', message: '' });
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
 
     useEffect(() => {
-        if (tokenUser) {
-            fetchCategories();
+        checkAuthAndFetchCategories();
+    }, []);
+
+    const checkAuthAndFetchCategories = async () => {
+        if (!getStoredToken()) {
+            navigate('/login');
+            return;
         }
-    }, [tokenUser]);
+        await fetchCategories();
+    };
 
     const fetchCategories = async () => {
         try {
             const headers = {
-                'Authorization': `Bearer ${tokenUser}`,
+                ...createAuthHeaders(),
                 'Content-Type': 'application/json'
             };
-    
-            console.log('Request Headers:', headers);
-    
-            const response = await fetch(`${API_BASE_URL}/api/categories`, { headers });
-    
+
+            const response = await fetch(`${API_BASE_URL}/api/categories`, {
+                headers
+            });
+            
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                if (response.status === 401) {
+                    navigate('/login');
+                    return;
+                }
+                throw new Error('Failed to fetch categories');
             }
-    
-            const result = await response.json();
-            console.log('Fetched data:', result);
-    
-            // הגדרת הנתונים ישירות ללא בדיקות מיותרות
-            if (Array.isArray(result)) {
-                setCategories(result);
-            } else {
-                setCategories([]);
-                console.error('Unexpected API response format:', result);
-            }
-    
-            setLoading(false);
+            
+            const data = await response.json();
+            setCategories(data);
+          
         } catch (error) {
             console.error('Error fetching categories:', error);
             setCategories([]);
@@ -62,6 +61,7 @@ const CategoriesManagement = ({ tokenUser }) => {
                 type: 'error',
                 message: 'Failed to fetch categories. Please try again.'
             });
+        } finally {
             setLoading(false);
         }
     };
@@ -70,12 +70,14 @@ const CategoriesManagement = ({ tokenUser }) => {
 
     const handleCreate = async (categoryData) => {
         try {
-            const response = await fetch('${API_BASE_URL}/api/categories', {
+            const headers = {
+                ...createAuthHeaders(),
+                'Content-Type': 'application/json'
+            };
+
+            const response = await fetch(`${API_BASE_URL}/api/categories`, {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${tokenUser}`,
-                    'Content-Type': 'application/json'
-                },
+                headers,
                 body: JSON.stringify(categoryData)
             });
 
@@ -97,32 +99,44 @@ const CategoriesManagement = ({ tokenUser }) => {
         }
     };
 
-    const handleUpdate = async (categoryId, updatedData) => {
+    const handleUpdate = async (data) => {
+        const { categoryId, updates } = data;
+        if (!categoryId) {
+            setFeedback({
+                type: 'error',
+                message: 'No category selected for update.'
+            });
+            return;
+        }
+    
         try {
+            const headers = {
+                ...createAuthHeaders(),
+                'Content-Type': 'application/json'
+            };
+
             const response = await fetch(`${API_BASE_URL}/api/categories/${categoryId}`, {
                 method: 'PATCH',
-                headers: {
-                    'Authorization': `Bearer ${tokenUser}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(updatedData)
+                headers,
+                body: JSON.stringify(updates)
             });
-
-            if (response.ok) {
-                setFeedback({
-                    type: 'success',
-                    message: 'Category updated successfully!'
-                });
-                await fetchCategories();
-                setIsFormVisible(false);
-                setSelectedCategory(null);
-            } else {
-                throw new Error('Failed to update category');
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to update category');
             }
+    
+            setFeedback({
+                type: 'success',
+                message: 'Category updated successfully!'
+            });
+            await fetchCategories();
+            setIsFormVisible(false);
+            setSelectedCategory(null);
         } catch (error) {
             setFeedback({
                 type: 'error',
-                message: 'Failed to update category. Please try again.'
+                message: error.message || 'Failed to update category. Please try again.'
             });
         }
     };
@@ -130,12 +144,14 @@ const CategoriesManagement = ({ tokenUser }) => {
     const handleDelete = async (categoryId) => {
         if (window.confirm('Are you sure you want to delete this category?')) {
             try {
+                const headers = {
+                    ...createAuthHeaders(),
+                    'Content-Type': 'application/json'
+                };
+              
                 const response = await fetch(`${API_BASE_URL}/api/categories/${categoryId}`, {
                     method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${tokenUser}`,
-                        'Content-Type': 'application/json'
-                    }
+                    headers
                 });
 
                 if (response.ok) {
@@ -207,7 +223,6 @@ const CategoriesManagement = ({ tokenUser }) => {
                             colors={colors}
                         />
                     ) : null}
-
 
                 </div>
             </div>

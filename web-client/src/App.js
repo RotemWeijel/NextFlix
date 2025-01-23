@@ -46,8 +46,7 @@ function AppContent() {
         <Route path="/registration-success" element={<RegistrationSuccess />} />
 
         {/* Protected routes for authenticated users */}
-        <Route element={<ProtectedRoute />}>
-          
+        <Route element={<ProtectedRoute />}>          
           <Route path="/test" element={<TestComponents />} />
         </Route>
 
