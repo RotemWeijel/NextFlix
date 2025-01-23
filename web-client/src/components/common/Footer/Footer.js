@@ -7,28 +7,30 @@ export const Footer = () => {
   const { colors } = useTheme();
 
   return (
-    <footer 
-      className={styles.footer}
-      style={{
-        '--footer-bg': colors.background.primary,
-        '--footer-text': colors.text.secondary,
-        '--footer-border': colors.border
-      }}
-    >
-      <div className={styles.footerContent}>
-        <div className={styles.footerLinks}>
-          <Link to="/">Home</Link>
-        </div>
-        
-        <p className={styles.disclaimer}>
-          This project was created as part of Advanced Programming course at Bar Ilan University (BIU).
-        </p>
+    <div className={styles.footerWrapper}>
+      <footer 
+        className={styles.footer}
+        style={{
+          '--footer-bg': colors.background.primary,
+          '--footer-text': colors.text.secondary,
+          '--footer-border': colors.border
+        }}
+      >
+        <div className={styles.footerContent}>
+          <div className={styles.footerLinks}>
+            <Link to="/">Home</Link>
+          </div>
+          
+          <p className={styles.disclaimer}>
+            This project was created as part of Advanced Programming course at Bar Ilan University (BIU).
+          </p>
 
-        <p className={styles.copyright}>
-          © {new Date().getFullYear()} Netflix Clone
-        </p>
-      </div>
-    </footer>
+          <p className={styles.copyright}>
+            © {new Date().getFullYear()} Netflix Clone
+          </p>
+        </div>
+      </footer>
+    </div>
   );
 };
 
