@@ -67,13 +67,9 @@ const Login = () => {
       // Store authentication data using the utility function
       setAuthData(data.token, data.user);
 
-      // Redirect based on admin status
-      if (data.user.isAdmin) {
-        navigate('/admin/dashboard');
-      } else {
-        navigate('/browse');
-        //navigate('/registration-success');
-      }
+      
+      navigate('/browse');
+      
 
     } catch (error) {
       setGeneralError(error.message || 'Failed to sign in. Please check your credentials.');

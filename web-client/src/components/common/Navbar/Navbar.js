@@ -64,7 +64,7 @@ export const Navbar = () => {
             <Link to="/new">New & Popular</Link>
             <Link to="/my-list">My List</Link>
             {user?.isAdmin && (
-              <Link to="/admin/dashboard" className={styles.adminLink}>Admin</Link>
+              <Link to="/admin/categories" className={styles.adminLink}>Admin</Link>
             )}
           </div>
         )}

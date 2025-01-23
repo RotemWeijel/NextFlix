@@ -31,9 +31,9 @@ const moviesScheme = new mongoose.Schema({
         }
     }],
     categories: [{
-        type: String,
-        require: true,
-        trim: true
+        type: Schema.Types.ObjectId,
+        ref: 'Category',
+        required: true
     }],
     watchedBy: [{
         userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

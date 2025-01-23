@@ -7,6 +7,8 @@ import Login from './screens/auth/Login/Login';
 import Register from './screens/auth/Register/Register';
 import RegistrationSuccess from './screens/auth/Register/RegistrationSuccess';
 import TestComponents from './TestComponents';
+import CategoryManagement from '../src/screens/admin/CategoryManagement'
+import MovieManagement from './screens/admin/MovieManagement'; 
 import './App.css';
 
 function App() {
@@ -51,9 +53,8 @@ function AppContent() {
 
         {/* Protected routes for admin users */}
         <Route element={<AdminRoute />}>
-          {/* <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/movies" element={<MovieManagement />} />
-          <Route path="/admin/categories" element={<CategoryManagement />} /> */}
+          <Route path="movies/:id/edit" element={<MovieManagement />} />
+          <Route path="/admin/categories" element={<CategoryManagement />} />
         </Route>
       </Routes>
     </div>

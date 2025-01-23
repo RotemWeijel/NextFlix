@@ -6,8 +6,9 @@ import Footer from '../../components/common/Footer/Footer';
 import { useTheme } from '../../hooks/useTheme';
 import CategoryList from '../../components/admin/categories/CategoryList';
 import CategoryForm from '../../components/admin/categories/CategoryForm';
-import CategoryDetails from '../../components/admin/categories/CategoryDetails';
 import './CategoryManagement.css';
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
 
 const CategoriesManagement = ({ tokenUser }) => {
     const { colors } = useTheme();
@@ -33,15 +34,30 @@ const CategoriesManagement = ({ tokenUser }) => {
                 'Authorization': `Bearer ${tokenUser}`,
                 'Content-Type': 'application/json'
             };
-
-            const response = await fetch('http://localhost:4000/api/categories', {
-                headers: headers
-            });
-            const data = await response.json();
-            setCategories(data);
+    
+            console.log('Request Headers:', headers);
+    
+            const response = await fetch(`${API_BASE_URL}/api/categories`, { headers });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            const result = await response.json();
+            console.log('Fetched data:', result);
+    
+            // הגדרת הנתונים ישירות ללא בדיקות מיותרות
+            if (Array.isArray(result)) {
+                setCategories(result);
+            } else {
+                setCategories([]);
+                console.error('Unexpected API response format:', result);
+            }
+    
             setLoading(false);
         } catch (error) {
             console.error('Error fetching categories:', error);
+            setCategories([]);
             setFeedback({
                 type: 'error',
                 message: 'Failed to fetch categories. Please try again.'
@@ -49,10 +65,12 @@ const CategoriesManagement = ({ tokenUser }) => {
             setLoading(false);
         }
     };
+    
+    
 
     const handleCreate = async (categoryData) => {
         try {
-            const response = await fetch('http://localhost:4000/api/categories', {
+            const response = await fetch('${API_BASE_URL}/api/categories', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${tokenUser}`,
@@ -81,7 +99,7 @@ const CategoriesManagement = ({ tokenUser }) => {
 
     const handleUpdate = async (categoryId, updatedData) => {
         try {
-            const response = await fetch(`http://localhost:4000/api/categories/${categoryId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/categories/${categoryId}`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${tokenUser}`,
@@ -112,7 +130,7 @@ const CategoriesManagement = ({ tokenUser }) => {
     const handleDelete = async (categoryId) => {
         if (window.confirm('Are you sure you want to delete this category?')) {
             try {
-                const response = await fetch(`http://localhost:4000/api/categories/${categoryId}`, {
+                const response = await fetch(`${API_BASE_URL}/api/categories/${categoryId}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${tokenUser}`,
@@ -186,12 +204,6 @@ const CategoriesManagement = ({ tokenUser }) => {
                                 setSelectedCategory(null);
                             }}
                             categories={categories}
-                            colors={colors}
-                        />
-                    ) : selectedCategory ? (
-                        <CategoryDetails
-                            category={selectedCategory}
-                            onBack={() => setSelectedCategory(null)}
                             colors={colors}
                         />
                     ) : null}
