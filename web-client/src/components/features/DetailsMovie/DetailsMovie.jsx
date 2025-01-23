@@ -1,20 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import './DetailsMovie.css';
 import { getStoredToken, createAuthHeaders } from '../../../utils/auth';
-import { useNavigate } from 'react-router-dom';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
 
 
 const DetailsMovie = ({ movieId }) => {
     const [movie, setMovie] = useState(null)
     const [showAllCast, setShowAllCast] = useState(false);
-    const navigate = useNavigate()
+    
 
-    useEffect(() => {
-        if (!getStoredToken()) {
-            navigate('/login');
-        }
-    }, []);
+    
     useEffect(() => {
         const fetchMovie = async () => {
             try {

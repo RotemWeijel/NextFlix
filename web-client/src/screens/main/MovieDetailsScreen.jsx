@@ -4,22 +4,22 @@ import VideoPlayerDetails from '../../components/features/VideoPlayerDetails/Vid
 import RecommendSeries from '../../components/features/RecommendSeries/RecommendSeries';
 import DetailsMovie from '../../components/features/DetailsMovie/DetailsMovie'
 import MovieFooter from '../../components/features/FooterDetailsMovie/MovieFooter';
-const MovieDetailsScreen = ({  }) => {
+import { getStoredToken, createAuthHeaders } from '../../utils/auth'
+const MovieDetailsScreen = ({ }) => {
     const movieId = useParams()
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!movieId) {
-            navigate('/');
-            return;
+        if (!getStoredToken()) {
+            navigate('/login');
         }
-    }, [movieId]);
+    }, []);
     return (
         <div>
-            <VideoPlayerDetails  movieId={movieId} />
-            <DetailsMovie  movieId={movieId} />
-            <RecommendSeries  movieId={movieId} />
-            <MovieFooter  movieId={movieId} />
+            <VideoPlayerDetails movieId={movieId} />
+            <DetailsMovie movieId={movieId} />
+            <RecommendSeries movieId={movieId} />
+            <MovieFooter movieId={movieId} />
         </div>)
 }
 export default MovieDetailsScreen

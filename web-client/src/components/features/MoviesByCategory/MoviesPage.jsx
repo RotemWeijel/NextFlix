@@ -3,7 +3,6 @@ import MovieList from '../../common/MovieList/MovieList';
 import { useTheme } from '../../../hooks/useTheme';
 import './MoviesPage.css';
 import { getStoredToken, createAuthHeaders } from '../../../utils/auth';
-import { useNavigate } from 'react-router-dom';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
 
 const MoviesPage = ({ }) => {
@@ -11,13 +10,6 @@ const MoviesPage = ({ }) => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const MAX_CATEGORIES = 5;
-    const navigate = useNavigate()
-
-    useEffect(() => {
-        if (!getStoredToken()) {
-            navigate('/login');
-        }
-    }, []);
 
     useEffect(() => {
         const fetchCategories = async () => {

@@ -14,11 +14,6 @@ const VideoPlayerDetails = ({ movieId }) => {
     const [movie, setMovie] = useState([])
 
     useEffect(() => {
-        if (!getStoredToken()) {
-            navigate('/login');
-        }
-    }, []);
-    useEffect(() => {
         const fetchMovie = async () => {
             try {
                 const actualId = typeof movieId === 'object' ? movieId.movie : movieId;

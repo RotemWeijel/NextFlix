@@ -10,14 +10,8 @@ const RecommendSeries = ({ movieId }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [recommendations, setRecommendations] = useState({});
-  const navigate = useNavigate()
 
 
-  useEffect(() => {
-    if (!getStoredToken()) {
-      navigate('/login');
-    }
-  }, []);
   const fetchRandomMovies = async () => {
     try {
       const headers = {

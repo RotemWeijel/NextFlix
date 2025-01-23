@@ -16,13 +16,6 @@ const PlayerHome = ({ }) => {
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false)
-
-
-    useEffect(() => {
-        if (!getStoredToken()) {
-            navigate('/login');
-        }
-    }, []);
     useEffect(() => {
         const fetchMovies = async () => {
             try {

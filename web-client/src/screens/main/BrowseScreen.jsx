@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { getStoredToken, createAuthHeaders } from '../../utils/auth'
 import './BrowseScreen.css';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
-const BrowseScreen = ({ tokenUser }) => {
+const BrowseScreen = ({ }) => {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
     useEffect(() => {
@@ -49,8 +49,8 @@ const BrowseScreen = ({ tokenUser }) => {
                     userProfile={{ avatar: '/user.png' }}
                     onLogout={() => { }}
                 />
-                <PlayerHome  />
-                <MoviesPage  />
+                <PlayerHome />
+                <MoviesPage />
                 <Footer />
             </div>
         </ThemeProvider>

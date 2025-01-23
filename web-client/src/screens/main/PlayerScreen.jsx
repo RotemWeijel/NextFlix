@@ -20,12 +20,11 @@ const PlayerScreen = ({ }) => {
     const queryParams = new URLSearchParams(location.search);
     const src = queryParams.get('extraParam');
     const movieId = queryParams.get('movieId')
-    const checkAuthAndFetchCategories = async () => {
+    useEffect(() => {
         if (!getStoredToken()) {
             navigate('/login');
-
         }
-    }
+    }, []);
     const speedOptions = [
         { value: 0.25, label: "0.25x" },
         { value: 0.5, label: "0.5x" },
