@@ -32,7 +32,6 @@
     margin-bottom: 16px;
 }
 
-/* סגנון עבור כפתור "הוסף שחקן" */
 .actors-section button.secondary {
     margin-top: 5px;
 }
@@ -41,7 +40,6 @@
     margin-bottom: 0;
 }
 
-/* סגנון עבור קטגוריות */
 .categories-section {
     margin: 20px 0;
 }
@@ -75,7 +73,6 @@
     height: 18px;
 }
 
-/* הודעות שגיאה והצלחה */
 .feedback-message {
     padding: 12px;
     border-radius: 4px;
@@ -94,7 +91,6 @@
     color: #f44336;
 }
 
-/* סגנון הכלליות עבור כל השדות בטופס */
 input, textarea {
     width: 100%;
     padding: 10px;

@@ -48,7 +48,7 @@ export const Navbar = () => {
     >
       <div className={styles.navContent}>
         {/* Logo */}
-        <Link to="/" className={styles.logoSection}>
+        <Link to="/movies/browse" className={styles.logoSection}>
           <img
             src="/NextFlix_icon.png"
             alt="NextFlix Logo"
