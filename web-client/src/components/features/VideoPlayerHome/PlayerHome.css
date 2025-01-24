@@ -48,7 +48,6 @@
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     word-wrap: break-word;
     word-break: break-word;
-    max-width: 300px;
     line-height: 1.2;
     hyphens: auto;
     text-align: left;
@@ -59,6 +58,7 @@
     max-width: 100%;
     white-space: normal;
     word-wrap: break-word;
+    margin-right: 15px;
 }
 
 .top-controls {

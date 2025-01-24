@@ -87,21 +87,21 @@ const VideoPlayerDetails = ({ movieId }) => {
         if (videoRef.current) {
             videoRef.current.pause();
         }
-        navigate('/browse');
+        navigate('/movies/browse');
     };
     const handleclickPlay = () => {
         const src = movie.videoUrl
-        navigate(`/Player/${movie._id}?extraParam=${src}&movieId=${movie._id}`)
+        navigate(`/movies/${movie._id}/play?extraParam=${src}&movieId=${movie._id}`);
     }
     const handleEdit = () => {
-        navigate('movies/:id/edit')
+        navigate(`/admin/movies/${movie._id}/edit`);
     }
 
     const isAdmin = () => {
         const userStr = localStorage.getItem('user');
         try {
             const user = userStr ? JSON.parse(userStr) : null;
-            return user && user.role === 'admin';
+            return user && user.isAdmin;
         } catch (error) {
             console.error('Error parsing stored user:', error);
             return false;

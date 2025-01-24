@@ -41,27 +41,33 @@ function AppContent() {
         color: colors.text.primary
       }}
     >
-      <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<Landing />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register normalImage="/images/Register/3D-glasses.jpg" sunglassesImage="/images/Register/sunglasses.png" />} />
-        <Route path="/registration-success" element={<RegistrationSuccess />} />
-        <Route path="/browse" element={<BrowseScreen />} />
-        <Route path="/MovieDetails/:movie" element={<MovieDetailsScreen />} />
-        <Route path='/Player/:movie' element={<PlayerScreen />} />
+<Routes>
+  {/* Public routes */}
+  <Route path="/" element={<Landing />} />
+  
+  {/* Auth routes */}
+  <Route path="/">
+    <Route path="login" element={<Login />} />
+    <Route path="register" element={<Register normalImage="/images/Register/3D-glasses.jpg" sunglassesImage="/images/Register/sunglasses.png" />} />
+    <Route path="registration-success" element={<RegistrationSuccess />} />
+  </Route>
 
-        {/* Protected routes for authenticated users */}
-        <Route element={<ProtectedRoute />}>          
-          <Route path="/test" element={<TestComponents />} />
-        </Route>
+  {/* Protected user routes */}
+  <Route element={<ProtectedRoute />}>          
+    <Route path="/movies">
+      <Route path="browse" element={<BrowseScreen />} />
+      <Route path=":movie/details" element={<MovieDetailsScreen />} />
+      <Route path=":movie/play" element={<PlayerScreen />} />
+    </Route>
+    <Route path="/test" element={<TestComponents />} />
+  </Route>
 
-        {/* Protected routes for admin users */}
-        <Route element={<AdminRoute />}>
-          <Route path="movies/:id/edit" element={<MovieManagement />} />
-          <Route path="/admin/categories" element={<CategoryManagement />} />
-        </Route>
-      </Routes>
+  {/* Protected admin routes */}
+  <Route path="/admin" element={<AdminRoute />}>
+    <Route path="movies/:id/edit" element={<MovieManagement />} />
+    <Route path="categories" element={<CategoryManagement />} />
+  </Route>
+</Routes>
     </div>
   );
 }

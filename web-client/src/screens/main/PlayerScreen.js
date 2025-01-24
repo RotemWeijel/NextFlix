@@ -207,7 +207,7 @@ const PlayerScreen = ({ }) => {
     };
 
     const handleHomeClick = () => {
-        navigate('/browse');
+        navigate('/movies/browse');
     };
 
 

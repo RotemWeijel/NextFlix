@@ -1,11 +1,11 @@
 .movie-list-container {
-  margin: 3vw 0;
+  margin: 1vw 0;
   position: relative;
 }
 
 .category-title {
   color: white;
-  font-size: 1.4vw;
+  font-size: 2.4vw;
   font-weight: 500;
   margin: 0 4% 0.5em 4%;
 }
@@ -19,7 +19,7 @@
   display: flex;
   overflow-x: hidden;
   scroll-behavior: smooth;
-  gap: 8px;
+  gap: 20px;
 }
 
 /* Hide scrollbar */
@@ -34,7 +34,8 @@
 
 .movie-item {
   flex-shrink: 0;
-  width: 250px;
+  width: 200px;
+  height: 250px;
   transition: transform 0.3s ease;
 }
 

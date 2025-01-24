@@ -32,7 +32,7 @@
     display: flex;
     overflow-x: hidden;
     scroll-behavior: smooth;
-    gap: 8px;
+    gap: 20px;
     padding: 20px 0;
 }
 

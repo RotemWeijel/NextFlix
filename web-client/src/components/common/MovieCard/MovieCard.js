@@ -20,7 +20,7 @@ const MovieCard = ({ src, name, movieId }) => {
     return src;
   };
   const handleclick = () => {
-    navigate(`/MovieDetails/${movieId}`)
+    navigate(`/movies/${movieId}/details`)
   }
 
   return (
