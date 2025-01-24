@@ -121,7 +121,13 @@ export const Navbar = () => {
                   onError={handleImageError}
                 />
                 {isMenuOpen && (
-                  <div className={styles.dropdownMenu}>
+                  <div 
+                    className={styles.dropdownMenu}
+                    style={{
+                      color: colors.text.primary,
+                      backgroundColor: colors.background.secondary
+                    }}
+                  >
                     <div className={styles.userInfo}>
                       <table className={styles.userTable} cellPadding={5} align='center'>
                         <tbody>
