@@ -88,3 +88,10 @@
     background-color: rgba(244, 67, 54, 0.1);
     border: 1px solid #f44336;
 }
+
+.preview {
+    max-height: 200px;
+    width: auto;
+    object-fit: contain;
+    margin-top: 10px;
+}

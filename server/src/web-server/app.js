@@ -1,9 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const path = require('path');
 const userRoutes = require('./routes/users');
 const tokenRoutes = require('./routes/tokens');
 const movieRoutes = require('./routes/movies');
 const categoryRoutes = require('./routes/categories');
+const uploadRoutes = require('./routes/upload');
 
 // Initialize express app
 const app = express();
@@ -35,12 +37,16 @@ mongoose.connect('mongodb://host.docker.internal:27017/netflix-server', {
     process.exit(1);
 });
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
+
 // Routes
+app.use('/api/upload', uploadRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/tokens', tokenRoutes);
 app.use('/api/movies', movieRoutes);
 app.use('/api/categories', categoryRoutes);
-
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -59,10 +65,5 @@ app.use((req, res) => {
         error: 'Not Found'
     });
 });
-
-// Start server
-// const PORT = process.env.PORT || 3000;
-// app.listen(PORT, () => {
-// });
 
 module.exports = app;
