@@ -12,6 +12,7 @@ import PlayerScreen from './screens/main/PlayerScreen';
 import TestComponents from './TestComponents';
 import CategoryManagement from '../src/screens/admin/CategoryManagement'
 import MovieManagement from './screens/admin/MovieManagement'; 
+import SearchResults from './components/features/searchBar/SearchResults';
 import './App.css';
 
 function App() {
@@ -58,6 +59,7 @@ function AppContent() {
       <Route path="browse" element={<BrowseScreen />} />
       <Route path=":movie/details" element={<MovieDetailsScreen />} />
       <Route path=":movie/play" element={<PlayerScreen />} />
+      <Route path="search" element={<SearchResults />} />
     </Route>
     <Route path="/test" element={<TestComponents />} />
   </Route>
