@@ -70,7 +70,7 @@ useEffect(() => {
 
             if (response.ok) {
                 const data = await response.json();
-                setCategories(data); // שמירת הקטגוריות שהתקבלו
+                setCategories(data);
             } else {
                 throw new Error('Failed to fetch categories');
             }
@@ -84,7 +84,7 @@ useEffect(() => {
     };
 
     fetchCategories();
-}, []); // רץ רק פעם אחת בעת טעינת הקומפוננטה
+}, []);
 
 
     useEffect(() => {
@@ -201,7 +201,7 @@ useEffect(() => {
                     type: 'success',
                     message: 'Movie updated successfully!'
                 });
-                setTimeout(() => navigate('/browse'), 2000);
+                setTimeout(() => navigate('/movies/browse'), 2000);
             } else {
                 throw new Error('Failed to update movie');
             }
@@ -229,7 +229,7 @@ useEffect(() => {
                         type: 'success',
                         message: 'Movie deleted successfully!'
                     });
-                    setTimeout(() => navigate('/browse'), 2000);
+                    setTimeout(() => navigate('/movies/browse'), 2000);
                 } else {
                     throw new Error('Failed to delete movie');
                 }
@@ -409,19 +409,20 @@ useEffect(() => {
                     <div className="form-actions" style={{ display: 'flex', gap: '10px', justifyContent: 'space-between' }}>
                         <div>
                             <Button
-                                type="button"
-                                onClick={() => navigate('/')}
-                                className="secondary"
-                            >
-                                Cancel
-                            </Button>
-                            <Button
                                 type="submit"
                                 className="primary"
                                 style={{ marginLeft: '10px' }}
                             >
                                 Save Changes
                             </Button>
+                            <Button
+                                type="button"
+                                onClick={() => navigate('/movies/browse')}
+                                className="secondary"
+                            >
+                                Cancel
+                            </Button>
+
                         </div>
                         <Button
                             type="button"

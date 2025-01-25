@@ -50,11 +50,8 @@ const RegistrationSuccess = () => {
       setAuthData(data.token, data.user);
 
       // Redirect based on admin status
-      if (data.user.isAdmin) {
-        navigate('/admin/dashboard');
-      } else {
-        navigate('/browse');
-      }
+      navigate('/movies/browse');
+      
     } catch (error) {
       setError('Auto-login failed. Please try logging in manually.');
       // Redirect to login page after a short delay if auto-login fails

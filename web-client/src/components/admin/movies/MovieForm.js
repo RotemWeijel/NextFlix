@@ -22,6 +22,56 @@ const MovieForm = ({ onSubmit, onCancel, categoryId, categories, colors }) => {
         trailerUrl: '',
         videoUrl: ''
     });
+    const [uploading, setUploading] = useState(false);
+
+    const uploadFile = async (file, type) => {
+        console.log('Starting upload for:', type, file);
+        const formData = new FormData();
+        formData.append(type, file);
+    
+        try {
+            console.log('Making request to:', `${API_BASE_URL}/api/upload/${type}`);
+            const response = await fetch(`${API_BASE_URL}/api/upload/${type}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${getStoredToken()}`
+                },
+                body: formData
+            });
+            console.log('Upload response:', response);
+    
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Upload success:', data);
+                return data.url;
+            }
+        } catch (error) {
+            console.error('Upload error details:', error);
+            throw error;
+        }
+    };
+
+    const handleFileChange = async (e, type) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setUploading(true);
+        try {
+            const url = await uploadFile(file, type);
+            setFormData(prev => ({
+                ...prev,
+                [type === 'image' ? 'imageUrl' : type === 'video' ? 'videoUrl' : 'trailerUrl']: url
+            }));
+            setFeedback({
+                type: 'success',
+                message: `${type} uploaded successfully`
+            });
+        } catch (error) {
+            console.error('File upload error:', error);
+        } finally {
+            setUploading(false);
+        }
+    };
 
     const navigate = useNavigate(); 
     const [feedback, setFeedback] = useState({ type: '', message: '' });
@@ -59,6 +109,14 @@ const MovieForm = ({ onSubmit, onCancel, categoryId, categories, colors }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const processedData = {
+            ...formData,
+            duration: parseInt(formData.duration),
+            releaseYear: parseInt(formData.releaseYear),
+            ageAllow: parseInt(formData.ageAllow)
+        };
+
         try {
             const response = await fetch(`${API_BASE_URL}/api/movies`, {
                 method: 'POST',
@@ -67,7 +125,7 @@ const MovieForm = ({ onSubmit, onCancel, categoryId, categories, colors }) => {
                     'Content-Type': 'application/json'
                 },
     
-                body: JSON.stringify(formData)
+                body: JSON.stringify(processedData)
             });
 
             if (response.ok) {
@@ -217,28 +275,34 @@ const MovieForm = ({ onSubmit, onCancel, categoryId, categories, colors }) => {
                 </div>
 
                 <div className="form-group">
-                    <Input
-                        label="Image URL"
-                        value={formData.imageUrl}
-                        onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                    <label>Movie Poster</label>
+                    <Input 
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileChange(e, 'image')}
                     />
+                    {formData.imageUrl && <img src={formData.imageUrl} alt="Preview" className="preview" />}
                 </div>
 
                 <div className="form-group">
+                    <label>Trailer Video</label>
                     <Input
-                        label="Trailer URL"
-                        value={formData.trailerUrl}
-                        onChange={(e) => setFormData({ ...formData, trailerUrl: e.target.value })}
+                        type="file" 
+                        accept="video/*"
+                        onChange={(e) => handleFileChange(e, 'trailer')}
                     />
+                    {formData.trailerUrl && <p>Trailer uploaded</p>}
                 </div>
 
                 <div className="form-group">
+                    <label>Movie File</label>
                     <Input
-                        label="Video URL"
-                        value={formData.videoUrl}
-                        onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                        type="file"
+                        accept="video/*"
+                        onChange={(e) => handleFileChange(e, 'video')}
                         required
                     />
+                    {formData.videoUrl && <p>Movie uploaded</p>}
                 </div>
 
                 <div className="form-actions">

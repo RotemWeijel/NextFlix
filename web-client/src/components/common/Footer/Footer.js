@@ -26,7 +26,7 @@ export const Footer = () => {
           </p>
 
           <p className={styles.copyright}>
-            © {new Date().getFullYear()} Netflix Clone
+            © {new Date().getFullYear()} NextFlix
           </p>
         </div>
       </footer>

@@ -22,7 +22,7 @@ const Login = () => {
   useEffect(() => {
     const token = getStoredToken();
     if (token) {
-      navigate('/browse');
+      navigate('/movies/browse');
     }
   }, [navigate]);
 
@@ -68,7 +68,7 @@ const Login = () => {
       setAuthData(data.token, data.user);
 
       
-      navigate('/browse');
+      navigate('/movies/browse');
       
 
 

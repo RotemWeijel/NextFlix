@@ -48,7 +48,7 @@ export const Navbar = () => {
     >
       <div className={styles.navContent}>
         {/* Logo */}
-        <Link to="/" className={styles.logoSection}>
+        <Link to="/movies/browse" className={styles.logoSection}>
           <img
             src="/NextFlix_icon.png"
             alt="NextFlix Logo"
@@ -59,15 +59,13 @@ export const Navbar = () => {
         {/* Navigation Links */}
         {isLoggedIn && (
           <div className={styles.navLinks}>
-            <Link to="/browse">Home</Link>
-            <Link to="/series">TV Shows</Link>
-            <Link to="/movies">Movies</Link>
-            <Link to="/new">New & Popular</Link>
-            <Link to="/my-list">My List</Link>
+            <Link to="/movies/browse">Home</Link>
+            <Link to="/movies/browse">TV Shows</Link>
+            <Link to="/movies/browse">Movies</Link>
             {user?.isAdmin && (
               <Link to="/admin/categories" className={styles.adminLink}>Admin</Link>
             )}
-          </div>
+            </div>
         )}
 
         {/* Right Section */}
@@ -123,13 +121,23 @@ export const Navbar = () => {
                   onError={handleImageError}
                 />
                 {isMenuOpen && (
-                  <div className={styles.dropdownMenu}>
+                  <div 
+                    className={styles.dropdownMenu}
+                    style={{
+                      color: colors.text.primary,
+                      backgroundColor: colors.background.secondary
+                    }}
+                  >
                     <div className={styles.userInfo}>
-                      <table className={styles.userTable}>
+                      <table className={styles.userTable} cellPadding={5} align='center'>
                         <tbody>
                           <tr>
                             <td className={styles.userLabel}>Username:</td>
                             <td className={styles.userName}>{user?.username}</td>
+                          </tr>
+                          <tr>
+                            <td className={styles.userLabel}>Display Name:</td>
+                            <td className={styles.userName}>{user?.full_name}</td>
                           </tr>
                           <tr>
                             <td className={styles.userLabel}>Role:</td>
@@ -142,10 +150,9 @@ export const Navbar = () => {
                         alt="Profile"
                         className={styles.userInfoImage}
                         onError={handleImageError}
+                        align='center'
                       />
                     </div>
-                    <Link to="/profile" onClick={() => setIsMenuOpen(false)}>Profile</Link>
-                    <Link to="/account" onClick={() => setIsMenuOpen(false)}>Account</Link>
                     <button
                       onClick={handleLogout}
                       className={styles.signOutButton}

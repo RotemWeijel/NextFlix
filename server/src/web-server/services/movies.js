@@ -4,7 +4,7 @@ const Category = require('../models/categories');
 
 const createMovie = async (name,
     description, duration, releaseYear, actors, categoryIds, 
-    ageAllow, director, language, imageUrl, trailerUrl) => {
+    ageAllow, director, language, imageUrl, trailerUrl, videoUrl) => {
     try {
         // Input validation
         const movies = await Movie.find({ name: name });
@@ -12,7 +12,7 @@ const createMovie = async (name,
             return { success: false, error: "name movie already exist!" };
         }
         if (!name || !description || !duration || !releaseYear ||
-            !ageAllow || !director || !language) {
+            !ageAllow || !director || !language || !videoUrl) {
             return { success: false, error: "Missing required fields" };
         }
         if (!categoryIds || !Array.isArray(categoryIds) || categoryIds.length === 0) {
@@ -36,7 +36,8 @@ const createMovie = async (name,
             director: director,
             language: language,
             imageUrl: imageUrl,
-            trailerUrl: trailerUrl
+            trailerUrl: trailerUrl,
+            videoUrl: videoUrl
         });
 
         const savedMovie = await movie.save();

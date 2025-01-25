@@ -106,12 +106,11 @@ const PlayerHome = ({ }) => {
 
     const handlePlayPause = () => {
         const src = randomMovie.videoUrl
-        navigate(`/Player/${randomMovie._id}?extraParam=${src}&movieId=${randomMovie._id}`);
-
+        navigate(`/movies/${randomMovie._id}/play?extraParam=${src}&movieId=${randomMovie._id}`);
     };
 
     const handleMoreInfo = () => {
-        navigate(`/MovieDetails/${randomMovie._id}`);
+        navigate(`/movies/${randomMovie._id}/details`);
     };
 
     const handleMuteToggle = () => {

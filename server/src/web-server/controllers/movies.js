@@ -21,7 +21,8 @@ const createMovie = async (req, res) => {
             req.body.director,
             req.body.language,
             req.body.imageUrl,
-            req.body.trailerUrl
+            req.body.trailerUrl,
+            req.body.videoUrl
         );
 
         if (result.error) {
