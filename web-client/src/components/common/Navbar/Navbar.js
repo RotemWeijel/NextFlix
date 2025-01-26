@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../../hooks/useTheme';
 import { Button } from '../Button/Button';
-import { getStoredUser, clearAuthData } from '../../../utils/auth';
+import { getStoredUser, clearAuthData, createAuthHeaders } from '../../../utils/auth';
 import styles from './Navbar.module.css';
 
 export const Navbar = () => {
@@ -11,7 +11,11 @@ export const Navbar = () => {
   const [imageError, setImageError] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
+
 
   // Initialize user data from storage
   useEffect(() => {
@@ -29,6 +33,36 @@ export const Navbar = () => {
     // Redirect to login page
     navigate('/login');
   };
+
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+  
+    try {
+      console.log('Searching for:', searchQuery);
+      const response = await fetch(`${API_BASE_URL}/api/movies/search/${searchQuery}`, {
+        headers: {
+          ...createAuthHeaders(),
+          'Content-Type': 'application/json'
+        }
+      });
+  
+      const data = await response.json();
+      console.log('Full search response:', data); 
+      console.log('Movies:', data.movies || data.data || data); 
+      
+      navigate('/movies/search', { 
+        state: { 
+          searchQuery, 
+          movies: data.movies || data.data || data 
+        } 
+      });
+    } catch (error) {
+      console.error('Search error:', error);
+    }
+  };
+  
 
   const handleImageError = () => {
     setImageError(true);
@@ -72,32 +106,35 @@ export const Navbar = () => {
         <div className={styles.rightSection}>
           {/* Search Icon */}
           <div className={styles.searchContainer}>
-            {isSearchOpen ? (
-              <div className={styles.searchBox}>
-                <svg
-                  viewBox="0 0 24 24"
-                  className={styles.searchIcon}
-                  onClick={() => setIsSearchOpen(false)}
-                >
-                  <path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Titles, people, genres"
-                  className={styles.searchInput}
-                  autoFocus
-                />
-              </div>
-            ) : (
-              <svg
-                viewBox="0 0 24 24"
-                className={styles.searchIcon}
-                onClick={() => setIsSearchOpen(true)}
-              >
-                <path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
-              </svg>
-            )}
-          </div>
+          {isSearchOpen ? (
+          <form onSubmit={handleSearch} className={styles.searchBox}>
+            <svg
+              viewBox="0 0 24 24"
+              className={styles.searchIcon}
+              onClick={() => setIsSearchOpen(false)}
+            >
+              <path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Titles, people, genres"
+              className={styles.searchInput}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              autoFocus
+            />
+            <Button type="submit" className={styles.searchSubmit}>Search</Button>
+          </form>
+        ) : (
+          <svg
+            viewBox="0 0 24 24"
+            className={styles.searchIcon}
+            onClick={() => setIsSearchOpen(true)}
+          >
+            <path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+          </svg>
+        )}
+      </div>
 
           {/* Theme Toggle */}
           <button

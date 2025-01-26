@@ -210,19 +210,21 @@ const deleteMovie = async (id) => {
     }
 }
 const findMovieByQuery = async (query) => {
-    //match all movies that each of the fields contains the query
-    //pay attention to search wuery on fields with nums
+    console.log('Search Query:', query);
     const matchingMovies = await Movie.find({
         $or: [
             { name: { $regex: query, $options: 'i' } },
             { description: { $regex: query, $options: 'i' } },
             { director: { $regex: query, $options: 'i' } },
             { language: { $regex: query, $options: 'i' } },
-            { 'actors.name': { $regex: query, $options: 'i' } }  // Fixed actors search
+            { 'actors.name': { $regex: query, $options: 'i' } }
         ]
     });
-
-    return matchingMovies.length ? { data: matchingMovies } : { error: 'Movies not found' };
+    console.log('Matching Movies:', matchingMovies);
+    return { 
+        data: matchingMovies,
+        message: matchingMovies.length ? 'Movies found' : 'No movies found'
+    };
 }
 
 const getMovies = async (userId) => {

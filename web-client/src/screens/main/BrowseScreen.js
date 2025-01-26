@@ -16,30 +16,6 @@ const BrowseScreen = ({ }) => {
             navigate('/login');
         }
     }, []);
-    useEffect(() => {
-        const fetchmovies = async () => {
-            try {
-                const headers = {
-                    ...createAuthHeaders(),
-                    'Content-Type': 'application/json'
-                };
-                const data = await fetch(`${API_BASE_URL}/api/movies/6790957bbb56b734be940fee/recommend`, {
-                    method: 'POST',
-                    headers: headers
-                });
-                if (!data.ok) {
-                    throw new Error(`HTTP error! status: ${data.status}`);
-                }
-            }
-            catch (error) {
-                console.error('Error fetching data:', error);
-
-            }
-        };
-
-        fetchmovies();
-
-    }, []);
 
     return (
         <ThemeProvider>
