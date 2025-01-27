@@ -1,5 +1,6 @@
 package com.app.nextflix.ui.main;
 
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -20,8 +21,10 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.app.nextflix.R;
+
 
 public class PlayerActivity extends AppCompatActivity {
 
@@ -32,19 +35,44 @@ public class PlayerActivity extends AppCompatActivity {
     private final float[] speeds = {0.5f, 0.75f, 1f, 1.25f, 1.5f, 1.75f, 2f};
     private int currentSpeedIndex = 2;
     private MediaPlayer mediaPlayer;
-    private Handler handler = new Handler();
-    private boolean isMuted = false;
+    private final Handler handler = new Handler();
+    private PlayerViewModel viewModel;
 
-    @SuppressLint({"DefaultLocale", "SetTextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.player_fragment);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
+        viewModel = new ViewModelProvider(this).get(PlayerViewModel.class);
+
         initializeViews();
         setupVideo();
         setupControls();
+        setupViewModelObservers();
+    }
+
+    private void setupViewModelObservers() {
+        viewModel.getCurrentPosition().observe(this, position -> {
+            updateTimeDisplay(position);
+            if (!videoSeekbar.isPressed()) {
+                videoSeekbar.setProgress(position.intValue());
+            }
+        });
+
+        viewModel.getIsPlaying().observe(this, isPlaying -> {
+            playPauseButton.setImageResource(isPlaying ? R.drawable.resume : R.drawable.play);
+            if (isPlaying && !videoView.isPlaying()) {
+                videoView.start();
+            } else if (!isPlaying && videoView.isPlaying()) {
+                videoView.pause();
+            }
+        });
+
+        viewModel.getIsMuted().observe(this, isMuted -> {
+            ImageButton muteButton = findViewById(R.id.mute_toggle);
+            muteButton.setImageResource(isMuted ? R.drawable.novol : R.drawable.mute);
+        });
     }
 
     private void initializeViews() {
@@ -70,10 +98,17 @@ public class PlayerActivity extends AppCompatActivity {
 
         videoView.setOnPreparedListener(this::onVideoPrepared);
         videoView.start();
+        viewModel.setPlaying(true);
     }
 
     private void onVideoPrepared(MediaPlayer mp) {
         mediaPlayer = mp;
+        setupVideoDisplay(mp);
+        viewModel.updateDuration(videoView.getDuration());
+        setupSeekbar();
+    }
+
+    private void setupVideoDisplay(MediaPlayer mp) {
         int videoWidth = mp.getVideoWidth();
         int videoHeight = mp.getVideoHeight();
 
@@ -92,135 +127,121 @@ public class PlayerActivity extends AppCompatActivity {
         videoView.setLayoutParams(layoutParams);
 
         mp.setVideoScalingMode(MediaPlayer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
-        updateSeekbar();
     }
 
     private void setupControls() {
+        setupCloseButton();
+        setupPlayPauseButton();
+        setupSeekButtons();
+        setupMuteButton();
+        setupSpeedButton();
+        setupSeekbar();
+    }
+
+    private void setupCloseButton() {
         ImageButton closeButton = findViewById(R.id.close_button);
         closeButton.setOnClickListener(v -> {
             videoView.stopPlayback();
             finish();
         });
+    }
 
+    private void setupPlayPauseButton() {
         playPauseButton.setOnClickListener(v -> togglePlayPause());
+    }
 
-        ImageButton forwardButton = findViewById(R.id.forward_button);
-        forwardButton.setOnClickListener(v -> seekForward());
+    private void setupSeekButtons() {
+        findViewById(R.id.forward_button).setOnClickListener(v -> seekForward());
+        findViewById(R.id.rewind_button).setOnClickListener(v -> seekBackward());
+    }
 
-        ImageButton rewindButton = findViewById(R.id.rewind_button);
-        rewindButton.setOnClickListener(v -> seekBackward());
-
+    private void setupMuteButton() {
         ImageButton muteButton = findViewById(R.id.mute_toggle);
         muteButton.setOnClickListener(v -> toggleMute());
+    }
 
+    private void setupSpeedButton() {
         ImageButton playbackSpeedButton = findViewById(R.id.playback_speed);
         playbackSpeedButton.setOnClickListener(v -> updateSpeed());
-
-        setupSeekbar();
     }
 
     private void setupSeekbar() {
+        videoSeekbar.setMax(videoView.getDuration());
         videoSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
                     videoView.seekTo(progress);
-                    updateTimeDisplay(progress);
+                    viewModel.updatePosition(progress);
                 }
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                handler.removeCallbacks(updateTimeRunnable);
-            }
+            public void onStartTrackingTouch(SeekBar seekBar) {}
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                handler.post(updateTimeRunnable);
-            }
+            public void onStopTrackingTouch(SeekBar seekBar) {}
         });
-    }
 
-    private void updateSeekbar() {
-        int duration = videoView.getDuration();
-        videoSeekbar.setMax(duration);
-        updateTimeDisplay(0);
-
-        handler.post(updateTimeRunnable);
-    }
-
-    private final Runnable updateTimeRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (videoView.isPlaying()) {
-                int currentPosition = videoView.getCurrentPosition();
-                videoSeekbar.setProgress(currentPosition);
-                updateTimeDisplay(currentPosition);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (videoView.isPlaying()) {
+                    int currentPosition = videoView.getCurrentPosition();
+                    viewModel.updatePosition(currentPosition);
+                }
                 handler.postDelayed(this, 1000);
             }
-        }
-    };
+        }, 1000);
+    }
 
-    @SuppressLint("DefaultLocale")
-    private void updateTimeDisplay(int currentPosition) {
+    private void updateTimeDisplay(long position) {
         TextView startTimeView = findViewById(R.id.start_time);
         TextView endTimeView = findViewById(R.id.end_time);
 
-        int currentSeconds = currentPosition / 1000;
-        int minutes = currentSeconds / 60;
-        int seconds = currentSeconds % 60;
-        startTimeView.setText(String.format("%d:%02d", minutes, seconds));
-
-        int remainingTime = videoView.getDuration() - currentPosition;
-        int remainingSeconds = remainingTime / 1000;
-        int remainingMinutes = remainingSeconds / 60;
-        int remainingSecondsDisplay = remainingSeconds % 60;
-        endTimeView.setText(String.format("%d:%02d", remainingMinutes, remainingSecondsDisplay));
+        startTimeView.setText(viewModel.formatTime(position));
+        long remainingTime = videoView.getDuration() - position;
+        endTimeView.setText(viewModel.formatTime(remainingTime));
     }
 
     private void togglePlayPause() {
-        if (videoView.isPlaying()) {
+        boolean isPlaying = videoView.isPlaying();
+        if (isPlaying) {
             videoView.pause();
-            playPauseButton.setImageResource(R.drawable.play);
-            handler.removeCallbacks(updateTimeRunnable);
         } else {
             videoView.start();
-            playPauseButton.setImageResource(R.drawable.resume);
-            handler.post(updateTimeRunnable);
         }
+        viewModel.setPlaying(!isPlaying);
     }
 
     private void seekForward() {
         int currentPosition = videoView.getCurrentPosition();
         int newPosition = Math.min(currentPosition + 10000, videoView.getDuration());
         videoView.seekTo(newPosition);
-        videoSeekbar.setProgress(newPosition);
-        updateTimeDisplay(newPosition);
+        viewModel.updatePosition(newPosition);
     }
 
     private void seekBackward() {
         int currentPosition = videoView.getCurrentPosition();
         int newPosition = Math.max(currentPosition - 10000, 0);
         videoView.seekTo(newPosition);
-        videoSeekbar.setProgress(newPosition);
-        updateTimeDisplay(newPosition);
+        viewModel.updatePosition(newPosition);
     }
 
     private void toggleMute() {
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        ImageButton muteButton = findViewById(R.id.mute_toggle);
+        boolean isMuted = viewModel.getIsMuted().getValue() != null && viewModel.getIsMuted().getValue();
 
         if (!isMuted) {
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
-            muteButton.setImageResource(R.drawable.novol);
         } else {
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
                     audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC) / 2, 0);
-            muteButton.setImageResource(R.drawable.mute);
         }
-        isMuted = !isMuted;
+        viewModel.setMuted(!isMuted);
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     private void updateSpeed() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && mediaPlayer != null) {
             currentSpeedIndex = (currentSpeedIndex + 1) % speeds.length;
@@ -229,6 +250,7 @@ public class PlayerActivity extends AppCompatActivity {
             PlaybackParams params = mediaPlayer.getPlaybackParams();
             params.setSpeed(newSpeed);
             mediaPlayer.setPlaybackParams(params);
+            viewModel.setSpeed(newSpeed);
 
             Toast.makeText(this, "Speed: " + newSpeed + "x", Toast.LENGTH_SHORT).show();
         } else {
@@ -242,8 +264,8 @@ public class PlayerActivity extends AppCompatActivity {
         super.onResume();
         if (!videoView.isPlaying()) {
             videoView.start();
+            viewModel.setPlaying(true);
         }
-        handler.post(updateTimeRunnable);
     }
 
     @Override
@@ -251,14 +273,14 @@ public class PlayerActivity extends AppCompatActivity {
         super.onPause();
         if (videoView.isPlaying()) {
             videoView.pause();
+            viewModel.setPlaying(false);
         }
-        handler.removeCallbacks(updateTimeRunnable);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacks(updateTimeRunnable);
+        handler.removeCallbacksAndMessages(null);
         videoView.stopPlayback();
     }
 }
