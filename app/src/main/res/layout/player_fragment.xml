@@ -1,37 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/black">
+    android:layout_height="match_parent">
 
-    <com.google.android.exoplayer2.ui.StyledPlayerView
+    <VideoView
         android:id="@+id/video_view"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:resize_mode="fit"
-        app:show_buffering="when_playing"
-        app:use_controller="false" />
-
-    <!-- Overlay for controls (becomes visible on touch) -->
-    <View
-        android:id="@+id/controls_background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/player_overlay_gradient"
-        android:visibility="gone"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:background="@android:color/transparent"
-        android:layout_marginTop="0dp"
+        android:minHeight="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <FrameLayout
@@ -58,102 +49,100 @@
         </FrameLayout>
     </androidx.appcompat.widget.Toolbar>
 
-    <!-- Bottom controls container -->
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/start_time"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="0:00"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@id/player_controls"
+        app:layout_constraintStart_toStartOf="parent"/>
 
-        <!-- Progress bar and time indicators -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+    <SeekBar
+        android:id="@+id/video_seekbar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:progressTint="#E50914"
+        android:thumbTint="#E50914"
+        app:layout_constraintBottom_toTopOf="@id/player_controls"
+        app:layout_constraintStart_toEndOf="@id/start_time"
+        app:layout_constraintEnd_toStartOf="@id/end_time"/>
 
-            <TextView
-                android:id="@+id/start_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0:00"
-                android:textColor="#FFFFFF"
-                android:textSize="12sp" />
+    <TextView
+        android:id="@+id/end_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="0:00"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@id/player_controls"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-            <SeekBar
-                android:id="@+id/video_seekbar"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
-                android:layout_weight="1"
-                android:progressTint="#E50914"
-                android:thumbTint="#E50914" />
+    <LinearLayout
+        android:id="@+id/player_controls"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-            <TextView
-                android:id="@+id/end_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0:00"
-                android:textColor="#FFFFFF"
-                android:textSize="12sp" />
-        </LinearLayout>
+        <ImageButton
+            android:id="@+id/mute_toggle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Mute"
+            android:src="@drawable/mute" />
 
-        <!-- Playback controls -->
-        <LinearLayout
-            android:id="@+id/player_controls"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/rewind_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Rewind"
+            android:src="@drawable/rewind_10s" />
 
-            <ImageButton
-                android:id="@+id/mute_toggle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="24dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Mute"
-                android:src="@drawable/mute" />
+        <ImageButton
+            android:id="@+id/play_pause_button"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginEnd="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Play/Pause"
+            android:src="@drawable/resume" />
 
-            <ImageButton
-                android:id="@+id/rewind_button"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="24dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Rewind"
-                android:src="@drawable/rewind_10s" />
+        <ImageButton
+            android:id="@+id/forward_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Forward"
+            android:src="@drawable/forward_10s" />
 
-            <ImageButton
-                android:id="@+id/play_pause_button"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_marginHorizontal="24dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Play/Pause"
-                android:src="@drawable/resume" />
-
-            <ImageButton
-                android:id="@+id/forward_button"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="24dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Forward"
-                android:src="@drawable/forward_10s" />
-
-            <ImageButton
-                android:id="@+id/playback_speed"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="24dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Playback Speed"
-                android:src="@drawable/play_back_speed" />
-        </LinearLayout>
+        <ImageButton
+            android:id="@+id/playback_speed"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Playback Speed"
+            android:src="@drawable/play_back_speed" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
