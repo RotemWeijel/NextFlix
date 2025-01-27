@@ -2,4 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="netflix_red">#E50914</color>
+    <color name="secondary_button">#838383</color>
 </resources>

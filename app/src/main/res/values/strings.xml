@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">NextFlix</string>
+    <string name="nextflix">NEXTFLIX</string>
+    <string name="Landing_Page_Headline">Unlimited movies, TV shows, and more</string>
+    <string name="Landing_Page_Secondary_Headline">Watch anywhere. Completely free.</string>
+    <string name="Landing_Page_Registration">Get Started</string>
+    <string name="Landing_Page_Login">Sign In</string>
 </resources>
