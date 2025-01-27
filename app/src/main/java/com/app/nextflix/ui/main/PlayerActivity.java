@@ -88,13 +88,10 @@ public class PlayerActivity extends AppCompatActivity {
 
     private void setupVideo() {
         String videoPath = getIntent().getStringExtra("video_path");
-        if (videoPath == null) {
-            videoPath = "android.resource://" + getPackageName() + "/raw/video_480";
-        }
 
         videoView.setVideoURI(Uri.parse(videoPath));
         String title = getIntent().getStringExtra("name");
-        seriesTitle.setText(title != null ? title : "Tahrhen 2 episode 4");
+        seriesTitle.setText(title);
 
         videoView.setOnPreparedListener(this::onVideoPrepared);
         videoView.start();
