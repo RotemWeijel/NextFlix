@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+
 }
 
 android {
@@ -56,7 +57,7 @@ dependencies {
 
     // ExoPlayer for video
     implementation(libs.exoplayer)
-
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
     // Testing dependencies
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
