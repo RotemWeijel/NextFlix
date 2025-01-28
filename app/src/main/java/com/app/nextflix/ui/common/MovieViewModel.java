@@ -1,14 +1,10 @@
 package com.app.nextflix.ui.common;
 
 import android.content.Context;
-import android.util.Log;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.app.nextflix.data.local.AppDatabase;
-import com.app.nextflix.data.local.dao.MovieDao;
 import com.app.nextflix.data.remote.api.MovieApi;
 import com.app.nextflix.data.repositories.MovieRepository;
 import com.app.nextflix.models.Movie;
@@ -16,9 +12,6 @@ import com.app.nextflix.models.Movie;
 import java.util.List;
 
 
-import okhttp3.OkHttpClient;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class MovieViewModel extends ViewModel {

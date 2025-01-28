@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -50,7 +51,7 @@ public class DetailsMovie extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details_movie);
 
-        String movieid = "679093ebbb56b734be940e7c";
+        String movieid = "679094fdbb56b734be940f52";
         viewModel = new ViewModelProvider(this).get(MovieViewModel.class);
         viewModel.init(this);
 
@@ -104,17 +105,42 @@ public class DetailsMovie extends AppCompatActivity {
         castNames.setText(actors);
 
         directorName.setText(movie.getDirector());
+        videoView.setOnPreparedListener(mp -> {
+            mediaPlayer = mp;
+            mediaPlayer.setLooping(true);
+            mediaPlayer.setVolume(0f, 0f);
 
-        if (movie.getVideoUrl() != null) {
-            videoView.setVideoURI(Uri.parse(movie.getVideoUrl()));
-            videoView.start();
+            float videoRatio = mp.getVideoWidth() / (float) mp.getVideoHeight();
+            float screenRatio = videoView.getWidth() / (float) videoView.getHeight();
+            float scaleX = videoRatio / screenRatio;
+
+            if (scaleX >= 1f) {
+                videoView.setScaleX(scaleX);
+            } else {
+                videoView.setScaleY(1f / scaleX);
+            }
+        });
+        try {
+            String serverVideoUrl = movie.getVideoUrl();
+            String videoFileName = serverVideoUrl.replace("/", "").replace(".mp4", "");  // יהיה "video_480"
+            int videoResId = getResources().getIdentifier(videoFileName, "raw", getPackageName());
+
+            if (videoResId != 0) {
+                String properVideoPath = "android.resource://" + getPackageName() + "/" + videoResId;
+                Log.d("DetailsMovie", "Loading video from: " + properVideoPath);
+
+                videoView.setVideoURI(Uri.parse(properVideoPath));
+                videoView.start();
+                videoPath = properVideoPath;
+            } else {
+                Log.e("DetailsMovie", "Video resource not found: " + videoFileName);
+                Toast.makeText(this, "Video not found", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            Log.e("DetailsMovie", "Error loading video", e);
+            Toast.makeText(this, "Error loading video", Toast.LENGTH_SHORT).show();
         }
-        videoPath = "android.resource://" + getPackageName() + "/" + R.raw.video_480;
-
-    }
-
-
-
+}
 
     private void initializeViews() {
         videoView = findViewById(R.id.movieTrailer);

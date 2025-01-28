@@ -1,12 +1,18 @@
 package com.app.nextflix.data.remote.api;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 import com.app.nextflix.data.local.AppDatabase;
 import com.app.nextflix.data.local.dao.MovieDao;
 import com.app.nextflix.data.repositories.MovieRepository.MovieCallback;
 import com.app.nextflix.data.repositories.MovieRepository.RecommendedMoviesCallback;
 import com.app.nextflix.models.Movie;
+import com.app.nextflix.models.MovieCategory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -20,15 +26,27 @@ public class MovieApi {
     private final MovieDao movieDao;
 
     public MovieApi(Context context) {
-
+        String base;
+        if (isEmulator()) {
+            base = "http://10.0.2.2:4000/";
+        } else {
+            base = "http://192.168.7.3:4000/";
+        }
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:4000/")
+                .baseUrl(base)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         this.api = retrofit.create(WebServiceApi.class);
         this.movieDao = AppDatabase.getInstance(context).movieDao();
+    }
+    private boolean isEmulator() {
+        return Build.PRODUCT.contains("sdk") ||
+                Build.PRODUCT.contains("gphone") ||
+                Build.PRODUCT.contains("emulator") ||
+                Build.FINGERPRINT.contains("generic") ||
+                Build.MANUFACTURER.contains("Genymotion");
     }
 
     public void getMovie(String movieId, MovieCallback callback) {
@@ -57,13 +75,36 @@ public class MovieApi {
     }
 
     public void getRecommendedMovies(String movieId, RecommendedMoviesCallback callback) {
+        Log.d("MovieApi", "Starting getRecommendedMovies call with ID: " + movieId);
+
         api.getRecommendedMovies(movieId).enqueue(new Callback<List<Movie>>() {
             @Override
             public void onResponse(Call<List<Movie>> call, Response<List<Movie>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    callback.onSuccess(response.body());
+                if (!response.isSuccessful() || response.body() == null) {
+                    api.getAllMovies().enqueue(new Callback<List<MovieCategory>>() {
+                        @Override
+                        public void onResponse(Call<List<MovieCategory>> call, Response<List<MovieCategory>> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                List<Movie> allMovies = new ArrayList<>();
+                                for (MovieCategory category : response.body()) {
+                                    if (category.getMovies() != null) {
+                                        allMovies.addAll(category.getMovies());
+                                    }
+                                }
+                                Collections.shuffle(allMovies);
+                                callback.onSuccess(allMovies.subList(0, Math.min(12, allMovies.size())));
+                            } else {
+                                callback.onError("Failed to get movies: " + response.code());
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<MovieCategory>> call, Throwable t) {
+                            callback.onError("Network error: " + t.getMessage());
+                        }
+                    });
                 } else {
-                    callback.onError("Failed to get recommendations: " + response.code());
+                    callback.onSuccess(response.body());
                 }
             }
 

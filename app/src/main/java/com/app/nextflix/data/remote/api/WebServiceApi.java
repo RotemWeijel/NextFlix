@@ -1,6 +1,7 @@
 package com.app.nextflix.data.remote.api;
 
 import com.app.nextflix.models.Movie;
+import com.app.nextflix.models.MovieCategory;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface WebServiceApi {
             "Authorization: Bearer 6431820a048e3f5f75604a9c9e62bef4"
     })
     @GET ("/api/movies")
-    Call<List<Movie>> getAllMovies();
+    Call<List<MovieCategory>> getAllMovies();
     @Headers({
             "Content-Type: application/json",
             "Authorization: Bearer 6431820a048e3f5f75604a9c9e62bef4"
@@ -47,16 +48,16 @@ public interface WebServiceApi {
     Call <Void> DeleteMovie(@Path("id")String movieId);
     @Headers({
             "Content-Type: application/json",
-            "Authorization: Bearer 6431820a048e3f5f75604a9c9e62bef4"
+            "Authorization: Bearer c69ab590cfcef1f2e4b966f1496a14c3"
     })
-    @GET("/api/movies/{id}/recommend/")
+    @GET("/api/movies/{id}/recommend")
     Call<List<Movie>> getRecommendedMovies(@Path("id") String movieId);
     @Headers({
             "Content-Type: application/json",
             "Authorization: Bearer 6431820a048e3f5f75604a9c9e62bef4"
     })
 
-    @POST("/api/movies/{id}/recommend/")
+    @POST("/api/movies/{id}/recommend")
     Call<Void> markMovieAsWatched(@Path("id") String movieId);
     @Headers({
             "Content-Type: application/json",
