@@ -16,7 +16,7 @@ import com.app.nextflix.data.local.entity.MovieEntity;
         entities={
                 MovieEntity.class,
 
-        },version=1
+        },version=2
 )
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {

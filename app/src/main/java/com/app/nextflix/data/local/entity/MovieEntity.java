@@ -2,6 +2,7 @@ package com.app.nextflix.data.local.entity;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
@@ -13,7 +14,11 @@ import com.google.gson.Gson;
 import java.util.Date;
 import java.util.List;
 
-@Entity(tableName = "movies")
+@Entity(tableName = "movies",
+        indices = {
+                @Index("id"),
+                @Index("name")
+        })
 @TypeConverters({Converters.class})
 public class MovieEntity {
     @PrimaryKey
@@ -38,7 +43,9 @@ public class MovieEntity {
     public static MovieEntity fromMovie(Movie movie) {
         Gson gson = new Gson();
         MovieEntity entity = new MovieEntity();
-
+        if (movie.getId() == null) {
+            throw new IllegalArgumentException("Movie must have an ID");
+        }
         entity.setId(movie.getId());
         entity.setName(movie.getName());
         entity.setDescription(movie.getDescription());

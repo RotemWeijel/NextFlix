@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">NextFlix</string>
+    <string name="hero_movie_poster">Featured movie poster</string>
+    <string name="movie_poster">Featured movie poster</string>
+    <string name="play_button">Play</string>
+
 </resources>

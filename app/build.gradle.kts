@@ -45,6 +45,7 @@ dependencies {
 
     // Room
     implementation(libs.room.runtime)
+    implementation(libs.volley)
     annotationProcessor(libs.room.compiler)
 
     // Retrofit

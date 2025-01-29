@@ -3,6 +3,6 @@
     <!-- Base application theme -->
     <style name="RoundedCorners">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">4dp</item>
+        <item name="cornerSize">8dp</item>
     </style>
 </resources>

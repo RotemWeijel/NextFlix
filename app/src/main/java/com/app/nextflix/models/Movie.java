@@ -1,11 +1,16 @@
 package com.app.nextflix.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 import java.util.List;
 
 public class Movie {
+    @SerializedName("_id")
     private String id;
+    @SerializedName("name")
     private String name;
+    @SerializedName("description")
     private String description;
     private int duration;
     private int releaseYear;
