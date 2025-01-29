@@ -5,6 +5,8 @@ import android.content.Context;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.app.nextflix.data.local.AppDatabase;
+import com.app.nextflix.data.local.dao.MovieDao;
 import com.app.nextflix.data.remote.api.MovieApi;
 import com.app.nextflix.data.repositories.MovieRepository;
 import com.app.nextflix.models.Movie;
@@ -15,7 +17,6 @@ import java.util.List;
 
 
 public class MovieViewModel extends ViewModel {
-    private MovieApi movieApi;
     private MovieRepository movieRepository;
     private final MutableLiveData<Movie> movieData = new MutableLiveData<>();
     private final MutableLiveData<String> error = new MutableLiveData<>();
@@ -23,8 +24,14 @@ public class MovieViewModel extends ViewModel {
     private final MutableLiveData<List<Movie>> recommendedMovies = new MutableLiveData<>();
 
     public void init(Context context) {
-        movieApi = new MovieApi(context);
-        movieRepository = new MovieRepository(movieApi, movieApi.getMovieDao());
+        // Initialize MovieApi
+        MovieApi movieApi = new MovieApi(context);
+
+        // Get MovieDao from AppDatabase directly
+        MovieDao movieDao = AppDatabase.getInstance(context).movieDao();
+
+        // Initialize Repository with both dependencies
+        movieRepository = new MovieRepository(movieApi, movieDao);
     }
 
     public MutableLiveData<Movie> getMovieData() {
