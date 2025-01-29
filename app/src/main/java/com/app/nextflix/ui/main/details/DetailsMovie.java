@@ -51,13 +51,19 @@ public class DetailsMovie extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details_movie);
 
-        String movieid = "679094fdbb56b734be940f52";
+        String movieId = getIntent().getStringExtra("movie_id");
+        if (movieId == null) {
+            Toast.makeText(this, "Error: Movie ID not found", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         viewModel = new ViewModelProvider(this).get(MovieViewModel.class);
         viewModel.init(this);
 
         try {
             initializeViews();
-            viewModel.loadMovie(movieid);
+            viewModel.loadMovie(movieId);
             setupObservers();
             setupClickListeners();
             setupVideoPlayer();
