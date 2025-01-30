@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.app.nextflix.R;
 import com.app.nextflix.models.MovieCategory;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,12 +70,16 @@ public class MovieCategoryAdapter extends RecyclerView.Adapter<MovieCategoryAdap
             );
             moviesRecyclerView.setLayoutManager(layoutManager);
 
-            int spacing = (int) itemView.getContext().getResources().getDimension(R.dimen.movie_item_spacing);
+            // Use a smaller spacing value
+            int spacing = (int) (itemView.getContext().getResources().getDimension(R.dimen.movie_item_spacing) * 0.7);
             moviesRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
                 @Override
                 public void getItemOffsets(@NonNull Rect outRect, @NonNull View view,
                                            @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                    outRect.right = spacing;
+                    if (parent.getChildAdapterPosition(view) == 0) {
+                        outRect.left = spacing; // Small left margin for first item
+                    }
+                    outRect.right = spacing; // Small right margin for all items
                 }
             });
 

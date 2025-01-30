@@ -102,8 +102,8 @@ public class PlayerActivity extends AppCompatActivity {
                 viewModel.markMovieAsRecommended(movieId);
             }
         } else {
-            Toast.makeText(this, "Error loading video", Toast.LENGTH_SHORT).show();
-            finish();
+            Toast.makeText(this, "No video available for this content", Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(this::finish, 2000);
         }
     }
 

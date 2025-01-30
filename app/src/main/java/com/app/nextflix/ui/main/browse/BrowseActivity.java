@@ -60,12 +60,14 @@ public class BrowseActivity extends AppCompatActivity implements RecommendedMovi
     }
 
     private void setupHeroSection() {
-        playButton.setOnClickListener(v->{
-            Movie curr=viewModel.getHeroMovie().getValue();
-           Intent intent=new Intent(this, PlayerActivity.class);
-           intent.putExtra("video_path",curr.getVideoUrl());
-           intent.putExtra("name",curr.getName());
-           startActivity(intent);
+        playButton.setOnClickListener(v -> {
+            Movie curr = viewModel.getHeroMovie().getValue();
+            if (curr != null) {
+                Intent intent = new Intent(this, PlayerActivity.class);
+                intent.putExtra("video_path", curr.getVideoUrl());
+                intent.putExtra("name", curr.getName());
+                startActivity(intent);
+            }
         });
     }
 
@@ -185,7 +187,6 @@ public class BrowseActivity extends AppCompatActivity implements RecommendedMovi
         }
 
     }
-
 
     @Override
     public void onMovieClick(Movie movie) {

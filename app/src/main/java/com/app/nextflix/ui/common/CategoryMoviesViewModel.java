@@ -60,7 +60,7 @@ public class CategoryMoviesViewModel extends ViewModel {
     }
 
     private void loadHeroMovie(List<Movie> movies) {
-        if (movies.isEmpty()) return;
+        if (movies.isEmpty()|| heroMovie.getValue() != null) return;
         int randomIndex = new Random().nextInt(movies.size());
         Movie selectedMovie = movies.get(randomIndex);
         heroMovie.setValue(selectedMovie);
