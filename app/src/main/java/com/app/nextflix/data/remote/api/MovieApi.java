@@ -85,18 +85,22 @@ public class MovieApi {
     }
 
     public void getAllMovies(MoviesCallback callback) {
+        Log.d("MovieApi", "Making API request to get all movies");
         api.getAllMovies().enqueue(new Callback<List<MovieCategory>>() {
             @Override
             public void onResponse(@NonNull Call<List<MovieCategory>> call, @NonNull Response<List<MovieCategory>> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    Log.d("MovieApi", "Successfully got " + response.body().size() + " categories");
                     callback.onMoviesLoaded(response.body(), null);
                 } else {
+                    Log.e("MovieApi", "Server error: " + response.code());
                     callback.onMoviesLoaded(null, "Server error: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<List<MovieCategory>> call, @NonNull Throwable t) {
+                Log.e("MovieApi", "Network error: " + t.getMessage());
                 callback.onMoviesLoaded(null, "Network error: " + t.getMessage());
             }
         });
@@ -119,4 +123,29 @@ public class MovieApi {
             }
         });
     }
+    public void markMovieAsRecommended(String movieId, MovieRepository.RecommendCallback callback) {
+        new Thread(() -> {
+            try {
+                api.markMovieAsWatched(movieId).enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            callback.onSuccess();
+                        } else {
+                            callback.onError("Failed to mark movie as recommended: " + response.code());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                        callback.onError("Network error: " + t.getMessage());
+                    }
+                });
+            } catch (Exception e) {
+                callback.onError("Error: " + e.getMessage());
+            }
+        }).start();
+    }
+
+
 }

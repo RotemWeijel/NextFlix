@@ -35,10 +35,11 @@ public class MovieRepository {
         void onSuccess(List<Movie> movies);
         void onError(String message);
     }
-
-    public interface MoviesCallback {
-        void onMoviesLoaded(List<MovieCategory> movies, String errorMessage);
+    public interface RecommendCallback {
+        void onSuccess();
+        void onError(String message);
     }
+
 
     public void getMovie(String movieId, MovieCallback callback) {
         new Thread(() -> {
@@ -207,5 +208,8 @@ public class MovieRepository {
             categories.add(category);
         }
         return categories;
+    }
+    public void markMovieAsRecommended(String movieId, RecommendCallback callback) {
+        movieApi.markMovieAsRecommended(movieId, callback);
     }
 }

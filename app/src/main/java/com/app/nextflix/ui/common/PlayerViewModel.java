@@ -1,8 +1,16 @@
-package com.app.nextflix.ui.main;
+package com.app.nextflix.ui.common;
+
+import android.content.Context;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
+import com.app.nextflix.data.local.AppDatabase;
+import com.app.nextflix.data.local.dao.MovieDao;
+import com.app.nextflix.data.remote.api.MovieApi;
+import com.app.nextflix.data.repositories.MovieRepository;
 
 public class PlayerViewModel extends ViewModel {
     private final MutableLiveData<Long> currentPosition = new MutableLiveData<>(0L);
@@ -10,6 +18,13 @@ public class PlayerViewModel extends ViewModel {
     private final MutableLiveData<Boolean> isPlaying = new MutableLiveData<>(false);
     private final MutableLiveData<Float> currentSpeed = new MutableLiveData<>(1.0f);
     private final MutableLiveData<Boolean> isMuted = new MutableLiveData<>(false);
+    private MovieRepository movieRepository;
+
+    public void init(Context context) {
+        MovieApi movieApi = new MovieApi(context);
+        MovieDao movieDao = AppDatabase.getInstance(context).movieDao();
+        movieRepository = new MovieRepository(movieApi, movieDao);
+    }
 
     // Getters for LiveData
     public LiveData<Long> getCurrentPosition() {
@@ -53,11 +68,25 @@ public class PlayerViewModel extends ViewModel {
         isMuted.setValue(muted);
     }
 
-    // Helper method to format time
     public String formatTime(long timeInMillis) {
         int seconds = (int) (timeInMillis / 1000);
         int minutes = seconds / 60;
         seconds = seconds % 60;
         return String.format("%d:%02d", minutes, seconds);
     }
-}
+
+    public void markMovieAsRecommended(String movieId) {
+        if(movieRepository!=null){
+            movieRepository.markMovieAsRecommended(movieId, new MovieRepository.RecommendCallback() {
+                @Override
+                public void onSuccess() {
+                    Log.d("PlayerViewModel", "Successfully marked movie as recommended");
+                }
+
+                @Override
+                public void onError(String message) {
+                    Log.e("PlayerViewModel", "Error marking movie as recommended: " + message);
+                }
+            });
+        }
+    }}

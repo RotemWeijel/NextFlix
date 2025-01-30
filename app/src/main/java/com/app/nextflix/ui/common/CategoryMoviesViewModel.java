@@ -1,6 +1,7 @@
 package com.app.nextflix.ui.common;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -31,21 +32,26 @@ public class CategoryMoviesViewModel extends ViewModel {
 
     public void loadCategorizedMovies() {
         loading.setValue(true);
+        Log.d("CategoryMoviesVM", "Starting to load categorized movies");
 
         if (movieRepository == null) {
             error.setValue("MovieRepository not initialized");
+            Log.e("CategoryMoviesVM", "MovieRepository not initialized");
             loading.setValue(false);
             return;
         }
 
         movieRepository.getAllMovies((movies, errorMessage) -> {
             if (errorMessage != null) {
+                Log.e("CategoryMoviesVM", "Error loading movies: " + errorMessage);
                 error.setValue(errorMessage);
             } else if (movies != null) {
+                Log.d("CategoryMoviesVM", "Loaded " + movies.size() + " categories");
                 categorizedMovies.setValue(movies);
                 if (!movies.isEmpty() && movies.get(0) != null &&
                         movies.get(0).getMovies() != null &&
                         !movies.get(0).getMovies().isEmpty()) {
+                    Log.d("CategoryMoviesVM", "Loading hero movie from first category");
                     loadHeroMovie(movies.get(0).getMovies());
                 }
             }

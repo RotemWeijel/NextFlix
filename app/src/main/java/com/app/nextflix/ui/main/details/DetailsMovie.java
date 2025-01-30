@@ -14,15 +14,14 @@ import android.widget.Toast;
 import android.widget.VideoView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.nextflix.R;
 import com.app.nextflix.models.Movie;
 import com.app.nextflix.ui.admin.adapters.RecommendedMoviesAdapter;
 import com.app.nextflix.ui.common.MovieViewModel;
-import com.app.nextflix.ui.main.PlayerActivity;
-
-
+import com.app.nextflix.ui.main.player.PlayerActivity;
 
 
 public class DetailsMovie extends AppCompatActivity {
@@ -45,13 +44,15 @@ public class DetailsMovie extends AppCompatActivity {
     private RecommendedMoviesAdapter recommendedAdapter;
     private View loadingView;
     private MediaPlayer mediaPlayer;
+    private String movieId;
+    private int currentVideoResId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details_movie);
 
-        String movieId = getIntent().getStringExtra("movie_id");
+        movieId = getIntent().getStringExtra("movie_id");
         if (movieId == null) {
             Toast.makeText(this, "Error: Movie ID not found", Toast.LENGTH_SHORT).show();
             finish();
@@ -63,12 +64,12 @@ public class DetailsMovie extends AppCompatActivity {
 
         try {
             initializeViews();
-            viewModel.loadMovie(movieId);
             setupObservers();
             setupClickListeners();
             setupVideoPlayer();
             setupMuteButton();
             setupRecommendMovies();
+            viewModel.loadMovie(movieId);
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(this, "Error initializing app", Toast.LENGTH_SHORT).show();
@@ -76,6 +77,8 @@ public class DetailsMovie extends AppCompatActivity {
     }
     private void setupRecommendMovies() {
         RecyclerView recyclerView=findViewById(R.id.moreLikeThisRecyclerView);
+        GridLayoutManager gridLayoutManager=new GridLayoutManager(this,3);
+        recyclerView.setLayoutManager(gridLayoutManager);
         recommendedAdapter=new RecommendedMoviesAdapter(movie -> {
             Intent intent=new Intent(this,DetailsMovie.class);
             intent.putExtra("movie_id",movie.getId());
@@ -97,54 +100,47 @@ public class DetailsMovie extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     private void updateMovieData(Movie movie) {
-        movieTitle.setText(movie.getName());
-        releaseYear.setText(String.valueOf(movie.getReleaseYear()));
-        ageRating.setText("+" + movie.getAgeAllow());
-        duration.setText(movie.getDuration() + "m");
-        movieDescription.setText(movie.getDescription());
-
-        // Join actor names
-        String actors = movie.getActors().stream()
-                .map(Movie.Actor::getName)
-                .reduce((a, b) -> a + ", " + b)
-                .orElse("");
-        castNames.setText(actors);
-
-        directorName.setText(movie.getDirector());
-        videoView.setOnPreparedListener(mp -> {
-            mediaPlayer = mp;
-            mediaPlayer.setLooping(true);
-            mediaPlayer.setVolume(0f, 0f);
-
-            float videoRatio = mp.getVideoWidth() / (float) mp.getVideoHeight();
-            float screenRatio = videoView.getWidth() / (float) videoView.getHeight();
-            float scaleX = videoRatio / screenRatio;
-
-            if (scaleX >= 1f) {
-                videoView.setScaleX(scaleX);
-            } else {
-                videoView.setScaleY(1f / scaleX);
-            }
-        });
+        if (movie == null) {
+            Log.e("DetailsMovie", "Received null movie object");
+            Toast.makeText(this, "Error loading movie data", Toast.LENGTH_SHORT).show();
+            return;
+        }
         try {
+            movieTitle.setText(movie.getName());
+            releaseYear.setText(String.valueOf(movie.getReleaseYear()));
+            ageRating.setText("+" + movie.getAgeAllow());
+            duration.setText(movie.getDuration() + "m");
+            movieDescription.setText(movie.getDescription());
+            directorName.setText(movie.getDirector());
+            String actors = movie.getActors().stream()
+                    .map(Movie.Actor::getName)
+                    .reduce((a, b) -> a + ", " + b)
+                    .orElse("");
+            castNames.setText(actors);
             String serverVideoUrl = movie.getVideoUrl();
-            String videoFileName = serverVideoUrl.replace("/", "").replace(".mp4", "");  // יהיה "video_480"
-            int videoResId = getResources().getIdentifier(videoFileName, "raw", getPackageName());
+            if (serverVideoUrl == null || serverVideoUrl.isEmpty()) {
+                Log.e("DetailsMovie", "Invalid video URL");
+                Toast.makeText(this, "Video not available", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String videoFileName = serverVideoUrl
+                    .replace("/", "")
+                    .replace(".mp4", "")
+                    .trim();
 
-            if (videoResId != 0) {
-                String properVideoPath = "android.resource://" + getPackageName() + "/" + videoResId;
-                Log.d("DetailsMovie", "Loading video from: " + properVideoPath);
-
+            currentVideoResId = getResources().getIdentifier(videoFileName, "raw", getPackageName());
+            if (currentVideoResId != 0) {
+                String properVideoPath = "android.resource://" + getPackageName() + "/" + currentVideoResId;
+                videoPath = properVideoPath; // Save for player activity
                 videoView.setVideoURI(Uri.parse(properVideoPath));
                 videoView.start();
-                videoPath = properVideoPath;
             } else {
                 Log.e("DetailsMovie", "Video resource not found: " + videoFileName);
-                Toast.makeText(this, "Video not found", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Video content not found", Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
-            Log.e("DetailsMovie", "Error loading video", e);
-            Toast.makeText(this, "Error loading video", Toast.LENGTH_SHORT).show();
+            Log.e("DetailsMovie", "Error updating movie data", e);
+            Toast.makeText(this, "Error loading movie content", Toast.LENGTH_SHORT).show();
         }
 }
 
@@ -169,6 +165,7 @@ public class DetailsMovie extends AppCompatActivity {
 
         playButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, PlayerActivity.class);
+            intent.putExtra("video_res_id",currentVideoResId);
             intent.putExtra("video_path", videoPath);
             String name=movieTitle.getText().toString();
             intent.putExtra("name", name);
@@ -183,6 +180,16 @@ public class DetailsMovie extends AppCompatActivity {
             mediaPlayer = mp;
             mediaPlayer.setLooping(true);
             mediaPlayer.setVolume(0f, 0f);
+
+            float videoRatio = mp.getVideoWidth() / (float) mp.getVideoHeight();
+            float screenRatio = videoView.getWidth() / (float) videoView.getHeight();
+            float scaleX = videoRatio / screenRatio;
+
+            if (scaleX >= 1f) {
+                videoView.setScaleX(scaleX);
+            } else {
+                videoView.setScaleY(1f / scaleX);
+            }
         });
     }
 
@@ -198,12 +205,22 @@ public class DetailsMovie extends AppCompatActivity {
             }
         });
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (videoView != null && !videoView.isPlaying() && movieId != null) {
+            viewModel.loadMovie(movieId);
+        }
+    }
 
     protected void onStop() {
         super.onStop();
         if (mediaPlayer != null) {
             mediaPlayer.release();
             mediaPlayer = null;
+        }
+        if (videoView != null) {
+            videoView.stopPlayback();
         }
     }
     @Override

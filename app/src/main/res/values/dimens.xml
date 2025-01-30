@@ -2,4 +2,5 @@
 <resources>
     <dimen name="movie_item_spacing">8dp</dimen>
     <dimen name="chip_spacing">8dp</dimen>
+    <dimen name="chip_padding">12dp</dimen>
 </resources>

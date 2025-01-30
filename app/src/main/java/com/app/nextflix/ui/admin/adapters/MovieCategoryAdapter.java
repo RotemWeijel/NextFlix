@@ -1,6 +1,7 @@
 package com.app.nextflix.ui.admin.adapters;
 
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,13 @@ public class MovieCategoryAdapter extends RecyclerView.Adapter<MovieCategoryAdap
     }
 
     public void setCategories(List<MovieCategory> categories) {
+        Log.d("MovieCategoryAdapter", "Setting " + (categories != null ? categories.size() : 0) + " categories");
+        if (categories != null) {
+            for (MovieCategory category : categories) {
+                Log.d("MovieCategoryAdapter", "Category: " + category.getName() +
+                        " with " + (category.getMovies() != null ? category.getMovies().size() : 0) + " movies");
+            }
+        }
         this.categories = categories;
         notifyDataSetChanged();
     }

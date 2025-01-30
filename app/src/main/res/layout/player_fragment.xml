@@ -45,7 +45,7 @@
                 android:layout_gravity="start|center_vertical"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Close"
-                android:src="@drawable/close" />
+                android:src="@drawable/ic_arrow_back" />
         </FrameLayout>
     </androidx.appcompat.widget.Toolbar>
 

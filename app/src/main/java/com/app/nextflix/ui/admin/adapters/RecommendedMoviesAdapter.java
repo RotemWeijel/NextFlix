@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.nextflix.R;
+import com.app.nextflix.data.local.ImageUtils;
 import com.app.nextflix.models.Movie;
 import com.google.android.material.imageview.ShapeableImageView;
 
@@ -68,22 +69,7 @@ public class RecommendedMoviesAdapter extends RecyclerView.Adapter<RecommendedMo
         }
         void bind(Movie movie) {
             movieTitle.setText(movie.getName());
-
-            String imageUrl = movie.getImageUrl();
-            if (imageUrl != null && !imageUrl.isEmpty()) {
-                String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
-                int resourceId = itemView.getContext().getResources().getIdentifier(
-                        fileName.substring(0, fileName.lastIndexOf(".")),
-                        "raw",
-                        itemView.getContext().getPackageName()
-                );
-
-                if (resourceId != 0) {
-                    posterImage.setImageResource(resourceId);
-                } else {
-                    posterImage.setImageResource(R.drawable.error_movie);
-                }
-            }
+            ImageUtils.loadMovieImage(itemView.getContext(), movie.getImageUrl(), posterImage);
         }
     }
 }

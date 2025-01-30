@@ -1,9 +1,9 @@
 package com.app.nextflix.ui.main.browse;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -16,15 +16,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.Volley;
+
 import com.app.nextflix.R;
+import com.app.nextflix.data.local.ImageUtils;
 import com.app.nextflix.models.Movie;
 import com.app.nextflix.ui.admin.adapters.MovieCategoryAdapter;
 import com.app.nextflix.ui.common.CategoryMoviesViewModel;
 import com.app.nextflix.ui.admin.adapters.RecommendedMoviesAdapter;
-import com.app.nextflix.ui.main.PlayerActivity;
+
 import com.app.nextflix.ui.main.details.DetailsMovie;
+import com.app.nextflix.ui.main.player.PlayerActivity;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -55,9 +56,7 @@ public class BrowseActivity extends AppCompatActivity implements RecommendedMovi
         setupViewModel();
         setupRecyclerView();
         setupHeroSection();
-        observeViewModel();
 
-        viewModel.loadCategorizedMovies();
     }
 
     private void setupHeroSection() {
@@ -114,16 +113,20 @@ public class BrowseActivity extends AppCompatActivity implements RecommendedMovi
                 Toast.makeText(this, error, Toast.LENGTH_LONG).show();
             }
         });
-
+       observeViewModel();
         viewModel.init(this);
     }
 
     private void observeViewModel() {
-        viewModel.getCategorizedMovies().observe(this,
-                movieCategories -> categoryAdapter.setCategories(movieCategories));
+        viewModel.getCategorizedMovies().observe(this, movieCategories -> {
+            Log.d("BrowseActivity", "Received categories update: " +
+                    (movieCategories != null ? movieCategories.size() : 0) + " categories");
+            categoryAdapter.setCategories(movieCategories);
+        });
 
-        viewModel.getHeroMovie().observe(this,movie -> {
+        viewModel.getHeroMovie().observe(this, movie -> {
             if (movie != null) {
+                Log.d("BrowseActivity", "Updating hero movie: " + movie.getName());
                 updateHeroSection(movie);
             }
         });
@@ -137,38 +140,26 @@ public class BrowseActivity extends AppCompatActivity implements RecommendedMovi
     }
 
     private void updateHeroSection(Movie movie) {
+        Log.d("BrowseActivity", "Categories for " + movie.getName() + ": " +
+                (movie.getCategories() != null ? movie.getCategories().toString() : "null"));
+
         heroTitle.setText(movie.getName());
-        if (requestQueue == null) {
-            requestQueue = Volley.newRequestQueue(this);
-        }
-
-        String imageUrl = movie.getImageUrl();
-        if (imageUrl != null && !imageUrl.isEmpty()) {
-            String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
-            int resourceId = getResources().getIdentifier(
-                    fileName.substring(0, fileName.lastIndexOf(".")),
-                    "raw",
-                    getPackageName()
-            );
-
-            if (resourceId != 0) {
-                heroImage.setImageResource(resourceId);
-            } else {
-                heroImage.setImageResource(R.drawable.error_movie);
-            }
-        }
+        // class that handle in logics of load image
+        ImageUtils.loadMovieImage(this, movie.getImageUrl(), heroImage);
         //update the category names with chip group
         categoryChipGroup.removeAllViews();
         if (movie.getCategories() != null && !movie.getCategories().isEmpty()) {
+            Log.d("BrowseActivity", "Adding " + movie.getCategories().size() + " category chips");
             categoryChipGroup.setChipSpacing(getResources().getDimensionPixelSize(R.dimen.chip_spacing));
 
             for (String category : movie.getCategories()) {
                 Chip chip = new Chip(this);
                 chip.setText(category);
-
                 chip.setTextColor(Color.WHITE);
                 chip.setChipBackgroundColorResource(R.color.chip_background);
                 chip.setEnsureMinTouchTargetSize(false);
+
+                chip.setPadding(8, 4, 8, 4);
 
                 ChipGroup.LayoutParams layoutParams = new ChipGroup.LayoutParams(
                         ChipGroup.LayoutParams.WRAP_CONTENT,
@@ -177,13 +168,21 @@ public class BrowseActivity extends AppCompatActivity implements RecommendedMovi
                 layoutParams.setMargins(4, 0, 4, 0);
 
                 categoryChipGroup.addView(chip, layoutParams);
+
+                Log.d("BrowseActivity", "Added chip for category: " + category);
             }
 
             categoryChipGroup.setSingleLine(true);
             categoryChipGroup.setHorizontalScrollBarEnabled(true);
+
+            categoryChipGroup.post(() -> {
+                Log.d("BrowseActivity", "ChipGroup width: " + categoryChipGroup.getWidth() +
+                        ", height: " + categoryChipGroup.getHeight() +
+                        ", visibility: " + categoryChipGroup.getVisibility());
+            });
+        } else {
+            Log.d("BrowseActivity", "No categories found for movie: " + movie.getName());
         }
-
-
 
     }
 

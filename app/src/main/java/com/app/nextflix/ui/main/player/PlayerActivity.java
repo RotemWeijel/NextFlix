@@ -1,4 +1,4 @@
-package com.app.nextflix.ui.main;
+package com.app.nextflix.ui.main.player;
 
 
 import android.annotation.SuppressLint;
@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.app.nextflix.R;
+import com.app.nextflix.ui.common.PlayerViewModel;
 
 
 public class PlayerActivity extends AppCompatActivity {
@@ -87,15 +88,23 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     private void setupVideo() {
-        String videoPath = getIntent().getStringExtra("video_path");
-
-        videoView.setVideoURI(Uri.parse(videoPath));
+        int videoResId = getIntent().getIntExtra("video_res_id", 0);
+        String movieId = getIntent().getStringExtra("movie_id");
         String title = getIntent().getStringExtra("name");
-        seriesTitle.setText(title);
 
-        videoView.setOnPreparedListener(this::onVideoPrepared);
-        videoView.start();
-        viewModel.setPlaying(true);
+        if (videoResId != 0) {
+            String properVideoPath = "android.resource://" + getPackageName() + "/" + videoResId;
+            videoView.setVideoURI(Uri.parse(properVideoPath));
+            seriesTitle.setText(title);
+            videoView.start();
+            viewModel.setPlaying(true);
+            if (movieId != null) {
+                viewModel.markMovieAsRecommended(movieId);
+            }
+        } else {
+            Toast.makeText(this, "Error loading video", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
     private void onVideoPrepared(MediaPlayer mp) {

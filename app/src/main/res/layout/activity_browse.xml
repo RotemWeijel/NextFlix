@@ -55,6 +55,7 @@
                     android:padding="16dp"
                     android:gravity="center_horizontal"
                     app:layout_constraintBottom_toBottomOf="parent">
+
                     <TextView
                         android:id="@+id/heroTitle"
                         android:layout_width="wrap_content"
@@ -72,7 +73,8 @@
                         android:layout_marginBottom="8dp"
                         app:singleLine="true"
                         app:chipSpacingHorizontal="8dp"
-                        android:scrollbars="horizontal" />
+                        android:layout_gravity="center"
+                        android:minHeight="48dp"/>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/playButton"
