@@ -24,6 +24,7 @@ import com.app.nextflix.ui.admin.adapters.MovieCategoryAdapter;
 import com.app.nextflix.ui.common.CategoryMoviesViewModel;
 import com.app.nextflix.ui.admin.adapters.RecommendedMoviesAdapter;
 
+import com.app.nextflix.ui.common.NavBarManager;
 import com.app.nextflix.ui.main.details.DetailsMovie;
 import com.app.nextflix.ui.main.player.PlayerActivity;
 import com.google.android.material.appbar.AppBarLayout;
@@ -42,6 +43,7 @@ public class BrowseActivity extends AppCompatActivity implements RecommendedMovi
     private TextView heroTitle;
     private ChipGroup categoryChipGroup;
     private Button playButton;
+    private NavBarManager navBarManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,9 @@ public class BrowseActivity extends AppCompatActivity implements RecommendedMovi
         //define color for up navbar
         AppBarLayout appBarLayout = findViewById(R.id.appBarLayout);
         appBarLayout.setBackgroundColor(Color.BLACK);
+
+        navBarManager = new NavBarManager(this);
+        navBarManager.setupNavBars();
 
 
         initViews();

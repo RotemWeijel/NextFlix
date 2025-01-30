@@ -71,7 +71,7 @@ public class MovieCategoryAdapter extends RecyclerView.Adapter<MovieCategoryAdap
             moviesRecyclerView.setLayoutManager(layoutManager);
 
             // Use a smaller spacing value
-            int spacing = (int) (itemView.getContext().getResources().getDimension(R.dimen.movie_item_spacing) * 0.7);
+            int spacing = (int) (itemView.getContext().getResources().getDimension(R.dimen.movie_item_spacing) * 0.5);
             moviesRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
                 @Override
                 public void getItemOffsets(@NonNull Rect outRect, @NonNull View view,

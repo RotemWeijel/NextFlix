@@ -21,6 +21,7 @@ import com.app.nextflix.R;
 import com.app.nextflix.models.Movie;
 import com.app.nextflix.ui.admin.adapters.RecommendedMoviesAdapter;
 import com.app.nextflix.ui.common.MovieViewModel;
+import com.app.nextflix.ui.common.NavBarManager;
 import com.app.nextflix.ui.main.player.PlayerActivity;
 
 
@@ -46,11 +47,14 @@ public class DetailsMovie extends AppCompatActivity {
     private MediaPlayer mediaPlayer;
     private String movieId;
     private int currentVideoResId;
-
+ private NavBarManager navBarManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details_movie);
+
+         navBarManager= new NavBarManager(this);
+        navBarManager.setupNavBars();
 
         movieId = getIntent().getStringExtra("movie_id");
         if (movieId == null) {

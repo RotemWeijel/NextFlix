@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
@@ -29,7 +30,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- Hero Section -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/heroSection"
                 android:layout_width="match_parent"
@@ -89,7 +89,6 @@
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Content Sections -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/contentRecyclerView"
                 android:layout_width="match_parent"
@@ -102,7 +101,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Loading View -->
     <FrameLayout
         android:id="@+id/loadingView"
         android:layout_width="match_parent"
@@ -116,7 +114,6 @@
             android:layout_gravity="center"/>
     </FrameLayout>
 
-    <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"

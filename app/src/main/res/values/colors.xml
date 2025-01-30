@@ -7,4 +7,6 @@
     <color name="chip_background">#424242</color>
     <color name="netflix_red">#E50914</color>
     <color name="secondary_button">#838383</color>
+    <color name="light_background">#ffffff</color>
+    <color name="dark_background">#000000</color>
 </resources>
