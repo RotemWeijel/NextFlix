@@ -5,4 +5,6 @@
     <color name="gray">#9B9B9B </color>
     <color name="dark_gray">#1F1F1F</color>
     <color name="chip_background">#424242</color>
+    <color name="netflix_red">#E50914</color>
+    <color name="secondary_button">#838383</color>
 </resources>
