@@ -1,17 +1,22 @@
 package com.app.nextflix.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 import java.util.List;
 
 public class Movie {
+    @SerializedName("_id")
     private String id;
+    @SerializedName("name")
     private String name;
+    @SerializedName("description")
     private String description;
     private int duration;
     private int releaseYear;
     private Date addedAt;
     private List<Actor> actors;
-    private List<String> categories;  // Category IDs
+    private List<String> categories;
     private List<WatchedBy> watchedBy;
     private int ageAllow;
     private String director;
@@ -20,7 +25,6 @@ public class Movie {
     private String trailerUrl;
     private String videoUrl;
 
-    // Inner classes for nested objects
     public static class Actor {
         private String name;
 
@@ -29,12 +33,12 @@ public class Movie {
         }
 
         public void setName(String name) {
-            this.name = name;
+            this.name = name != null ? name.trim() : null;
         }
     }
 
     public static class WatchedBy {
-        private String userId;
+        private String userId;  // Changed to String to match MongoDB ObjectId
         private Date watchedAt;
 
         public String getUserId() {
@@ -50,13 +54,13 @@ public class Movie {
         }
 
         public void setWatchedAt(Date watchedAt) {
-            this.watchedAt = watchedAt;
+            this.watchedAt = watchedAt != null ? watchedAt : new Date();
         }
     }
 
     // Constructors
     public Movie() {
-        this.addedAt = new Date();
+        this.addedAt = new Date(); // Initialize with current date
     }
 
     // Getters and Setters
@@ -73,7 +77,7 @@ public class Movie {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name != null ? name.trim() : null;
     }
 
     public String getDescription() {
@@ -81,7 +85,7 @@ public class Movie {
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        this.description = description != null ? description.trim() : null;
     }
 
     public int getDuration() {
@@ -89,7 +93,7 @@ public class Movie {
     }
 
     public void setDuration(int duration) {
-        this.duration = duration;
+        this.duration = Math.max(1, duration); // Ensure minimum duration of 1
     }
 
     public int getReleaseYear() {
@@ -105,7 +109,7 @@ public class Movie {
     }
 
     public void setAddedAt(Date addedAt) {
-        this.addedAt = addedAt;
+        this.addedAt = addedAt != null ? addedAt : new Date();
     }
 
     public List<Actor> getActors() {
@@ -145,7 +149,7 @@ public class Movie {
     }
 
     public void setDirector(String director) {
-        this.director = director;
+        this.director = director != null ? director.trim() : null;
     }
 
     public String getLanguage() {
@@ -153,7 +157,7 @@ public class Movie {
     }
 
     public void setLanguage(String language) {
-        this.language = language;
+        this.language = language != null ? language.trim() : null;
     }
 
     public String getImageUrl() {
@@ -161,7 +165,7 @@ public class Movie {
     }
 
     public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+        this.imageUrl = imageUrl != null ? imageUrl.trim() : null;
     }
 
     public String getTrailerUrl() {
@@ -169,7 +173,7 @@ public class Movie {
     }
 
     public void setTrailerUrl(String trailerUrl) {
-        this.trailerUrl = trailerUrl;
+        this.trailerUrl = trailerUrl != null ? trailerUrl.trim() : null;
     }
 
     public String getVideoUrl() {
@@ -177,6 +181,6 @@ public class Movie {
     }
 
     public void setVideoUrl(String videoUrl) {
-        this.videoUrl = videoUrl;
+        this.videoUrl = videoUrl != null ? videoUrl.trim() : null;
     }
 }

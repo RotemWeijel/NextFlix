@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">NextFlix</string>
+    <string name="hero_movie_poster">Featured movie poster</string>
+    <string name="movie_poster">Featured movie poster</string>
+    <string name="play_button">Play</string>
+
     <string name="nextflix">NEXTFLIX</string>
     <string name="Landing_Page_Headline">Unlimited movies, TV shows, and more</string>
     <string name="Landing_Page_Secondary_Headline">Watch anywhere. Completely free.</string>

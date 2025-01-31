@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="300dp"
+    android:viewportWidth="200"
+    android:viewportHeight="300">
+
+    <!-- Background -->
+    <path
+        android:fillColor="#1F1F1F"
+        android:pathData="M0,0h200v300h-200z"/>
+
+    <!-- Movie reel icon -->
+    <path
+        android:fillColor="#3F3F3F"
+        android:pathData="M100,120
+        m-40,0
+        a40,40 0 1,0 80,0
+        a40,40 0 1,0 -80,0
+        M100,120
+        m-25,0
+        a25,25 0 1,0 50,0
+        a25,25 0 1,0 -50,0"/>
+
+    <!-- Film strip -->
+    <path
+        android:fillColor="#3F3F3F"
+        android:pathData="M60,180h80v10h-80z
+                         M60,200h80v10h-80z"/>
+
+    <!-- Error text -->
+    <path
+        android:fillColor="#3F3F3F"
+        android:pathData="M70,160h60v5h-60z"/>
+
+</vector>
