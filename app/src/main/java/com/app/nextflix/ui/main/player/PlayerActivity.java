@@ -92,9 +92,11 @@ public class PlayerActivity extends AppCompatActivity {
         String movieId = getIntent().getStringExtra("movie_id");
         String title = getIntent().getStringExtra("name");
 
+
         if (videoResId != 0) {
             String properVideoPath = "android.resource://" + getPackageName() + "/" + videoResId;
             videoView.setVideoURI(Uri.parse(properVideoPath));
+            videoView.setOnPreparedListener(this::onVideoPrepared);
             seriesTitle.setText(title);
             videoView.start();
             viewModel.setPlaying(true);
@@ -157,6 +159,7 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     private void setupSeekButtons() {
+
         findViewById(R.id.forward_button).setOnClickListener(v -> seekForward());
         findViewById(R.id.rewind_button).setOnClickListener(v -> seekBackward());
     }
@@ -179,6 +182,7 @@ public class PlayerActivity extends AppCompatActivity {
                 if (fromUser) {
                     videoView.seekTo(progress);
                     viewModel.updatePosition(progress);
+                    updateTimeDisplay(progress);
                 }
             }
 
