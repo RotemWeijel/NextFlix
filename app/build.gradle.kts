@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+
 }
 
 android {
@@ -32,14 +33,7 @@ android {
 }
 
 dependencies {
-
-    implementation(libs.appcompat)
-    implementation(libs.material)
-    implementation(libs.activity)
-    implementation(libs.constraintlayout)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+    // Core Android dependencies
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -51,6 +45,7 @@ dependencies {
 
     // Room
     implementation(libs.room.runtime)
+    implementation(libs.volley)
     annotationProcessor(libs.room.compiler)
 
     // Retrofit
@@ -63,7 +58,7 @@ dependencies {
 
     // ExoPlayer for video
     implementation(libs.exoplayer)
-
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
     // Testing dependencies
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Background Image with Gradient Overlay -->
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="background Image"
+        android:scaleType="centerCrop"
+        android:src="@drawable/landing_bg"
+        android:foreground="@drawable/gradient_overlay"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Hero Section -->
+            <TextView
+                android:id="@+id/mainTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/nextflix"
+                android:textSize="48sp"
+                android:textColor="@color/netflix_red"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:letterSpacing="0.1"
+                android:shadowColor="#000000"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="4"
+                android:layout_marginTop="48dp"/>
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Landing_Page_Headline"
+                android:textSize="24sp"
+                android:textColor="@android:color/white"
+                android:gravity="center"
+                android:layout_marginTop="16dp"/>
+
+            <TextView
+                android:id="@+id/subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Landing_Page_Secondary_Headline"
+                android:textSize="16sp"
+                android:textColor="@android:color/white"
+                android:gravity="center"
+                android:layout_marginTop="8dp"/>
+
+            <!-- Features Grid -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/featuresRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="16dp"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:scrollbars="none"/>
+
+            <!-- Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="24dp"
+                android:gravity="center"
+                android:paddingHorizontal="40dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/getStartedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Landing_Page_Registration"
+                    android:textSize="16sp"
+                    android:padding="16dp"
+                    android:minWidth="200dp"
+                    android:alpha="0.9"
+                    app:cornerRadius="4dp"
+                    android:layout_marginBottom="12dp"
+                    android:backgroundTint="@color/netflix_red"
+                    style="@style/Widget.MaterialComponents.Button"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/signInButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Landing_Page_Login"
+                    android:textSize="16sp"
+                    android:padding="16dp"
+                    android:minWidth="200dp"
+                    android:alpha="0.8"
+                    app:cornerRadius="4dp"
+                    android:backgroundTint="@color/secondary_button"
+                    android:textColor="@color/white"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
