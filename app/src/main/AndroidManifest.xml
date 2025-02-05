@@ -25,24 +25,33 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.auth.login.LoginActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
         <activity
             android:name=".ui.main.browse.BrowseActivity"
             android:exported="true">
-
         </activity>
+
         <activity
             android:name=".ui.main.details.DetailsMovie"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
+
         <activity
             android:name=".ui.main.player.PlayerActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:exported="true"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true" />
+
     </application>
 
 </manifest>

@@ -9,4 +9,9 @@
     <string name="Landing_Page_Secondary_Headline">Watch anywhere. Completely free.</string>
     <string name="Landing_Page_Registration">Get Started</string>
     <string name="Landing_Page_Login">Sign In</string>
+    <string name="sign_in">Sign In</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="new_to_nextflix">New to NextFlix?</string>
+    <string name="sign_up_now">Sign up now</string>
 </resources>
