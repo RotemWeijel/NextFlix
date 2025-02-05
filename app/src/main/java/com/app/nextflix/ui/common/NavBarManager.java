@@ -13,8 +13,6 @@ import android.widget.ImageButton;
 import android.animation.ArgbEvaluator;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
-
-
 import com.app.nextflix.R;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -22,9 +20,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class NavBarManager {
     private static final String PREFS_NAME = "AppSettings";
     private static final String KEY_IS_DARK_MODE = "isDarkMode";
-    private Activity activity;
+    private final Activity activity;
     private boolean isDarkMode;
-    private SharedPreferences settings;
+    private final SharedPreferences settings;
     private ImageButton themeToggleButton;
 
     public NavBarManager(Activity activity) {

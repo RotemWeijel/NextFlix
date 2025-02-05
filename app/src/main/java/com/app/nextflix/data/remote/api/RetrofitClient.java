@@ -4,22 +4,40 @@ import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 
+import com.app.nextflix.security.TokenManager;
+
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
     private static final String TAG = "RetrofitClient";
     private static Retrofit retrofit = null;
+    private static OkHttpClient client = null;
     private static String baseUrl;
+    private static TokenManager tokenManager;
 
     public static void initialize(Context context) {
         if (context == null) {
             throw new IllegalArgumentException("Context cannot be null");
         }
 
+        tokenManager = TokenManager.getInstance(context);
+
         baseUrl = isEmulator() ?
                 "http://10.0.2.2:4000/" :
                 "http://192.168.7.3:4000/";
+        Log.d(TAG, "Using baseUrl: " + baseUrl);
+
+        client = new OkHttpClient.Builder()
+                .addInterceptor(new AuthInterceptor(tokenManager))
+                .build();
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
     }
 
     private static boolean isEmulator() {
@@ -31,7 +49,7 @@ public class RetrofitClient {
     }
 
     public static Retrofit getClient() {
-        if (baseUrl == null) {
+        if (baseUrl == null || client == null) {
             throw new IllegalStateException("RetrofitClient must be initialized with context first");
         }
 

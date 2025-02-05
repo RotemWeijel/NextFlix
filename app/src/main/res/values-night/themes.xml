@@ -1,8 +1,14 @@
 <resources>
-    <style name="Base.Theme.NextFlix" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:windowBackground">@color/dark_background</item>
+    <style name="Base.Theme.NextFlix" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/netflix_red</item>
+        <item name="colorPrimaryVariant">@color/netflix_red</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorSecondary">@color/netflix_red</item>
+        <item name="colorSecondaryVariant">@color/netflix_red</item>
+        <item name="colorOnSecondary">@color/white</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:textColor">@color/white</item>
+        <item name="android:windowBackground">@color/black</item>
     </style>
+
+    <style name="Theme.NextFlix" parent="Base.Theme.NextFlix" />
 </resources>

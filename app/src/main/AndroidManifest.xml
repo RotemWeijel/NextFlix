@@ -28,8 +28,8 @@
 
         <activity
             android:name=".ui.auth.login.LoginActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+            android:exported="true"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
 
         <activity
             android:name=".ui.main.browse.BrowseActivity"

@@ -47,6 +47,7 @@ public class LoginViewModel extends ViewModel {
                     isLoading.postValue(false);
                     errorMessage.postValue(throwable.getCause() != null ?
                             throwable.getCause().getMessage() : "Login failed");
+                    loginResult.postValue(null);
                     return null;
                 });
     }

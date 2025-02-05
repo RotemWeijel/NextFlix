@@ -7,7 +7,6 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.app.nextflix.data.api.AuthApi;
 import com.app.nextflix.data.repositories.AuthRepository;
 import com.app.nextflix.ui.main.browse.BrowseActivity;
 import com.app.nextflix.ui.auth.register.RegistrationActivity;
@@ -17,13 +16,16 @@ import com.app.nextflix.security.TokenManager;
 public class LoginActivity extends AppCompatActivity {
     private ActivityLoginBinding binding;
     private LoginViewModel viewModel;
+    private TokenManager tokenManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Initialize TokenManager
+        tokenManager = TokenManager.getInstance(this);
+
         // Check for existing authentication before setting up the UI
-        TokenManager tokenManager = TokenManager.getInstance(this);
         if (tokenManager.getStoredToken() != null) {
             // User is already logged in, redirect to BrowseActivity
             Intent intent = new Intent(this, BrowseActivity.class);
@@ -35,13 +37,6 @@ public class LoginActivity extends AppCompatActivity {
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        // Check if user is already logged in
-        if (TokenManager.getInstance(this).getStoredToken() != null) {
-            startActivity(new Intent(this, BrowseActivity.class));
-            finish();
-            return;
-        }
 
         setupViewModel();
         setupViews();
@@ -77,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         viewModel.getLoginResult().observe(this, user -> {
-            if (user != null) {
+            if (user != null && tokenManager.getStoredToken() != null) {
                 startActivity(new Intent(this, BrowseActivity.class));
                 finish();
             }

@@ -1,4 +1,5 @@
-package com.app.nextflix.ui.auth.login;
+// LoginResponse.java
+package com.app.nextflix.data.api;
 
 import com.app.nextflix.models.User;
 
