@@ -17,6 +17,12 @@ public class RegistrationViewModel extends ViewModel {
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private final MutableLiveData<User> registrationResult = new MutableLiveData<>();
     private final MutableLiveData<User> loginResult = new MutableLiveData<>();
+    private final MutableLiveData<String> usernameError = new MutableLiveData<>();
+    private final MutableLiveData<String> passwordError = new MutableLiveData<>();
+    private final MutableLiveData<String> confirmPasswordError = new MutableLiveData<>();
+    private final MutableLiveData<String> displayNameError = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isFormValid = new MutableLiveData<>(false);
+
     private final List<String> avatarUrls = Arrays.asList(
             "drawable/avatar1",
             "drawable/avatar2",
@@ -25,6 +31,7 @@ public class RegistrationViewModel extends ViewModel {
             "drawable/avatar5",
             "drawable/avatar6"
     );
+    private static final String SPECIAL_CHARS = "!@#$%^&*-_";
 
     public RegistrationViewModel(AuthRepository authRepository) {
         this.authRepository = authRepository;
@@ -58,23 +65,12 @@ public class RegistrationViewModel extends ViewModel {
 
     private boolean validateInput(String username, String password,
                                   String confirmPassword, String displayName) {
-        if (username == null || username.trim().isEmpty()) {
-            errorMessage.setValue("Username is required");
-            return false;
-        }
-        if (password == null || password.isEmpty()) {
-            errorMessage.setValue("Password is required");
-            return false;
-        }
-        if (!password.equals(confirmPassword)) {
-            errorMessage.setValue("Passwords do not match");
-            return false;
-        }
-        if (displayName == null || displayName.trim().isEmpty()) {
-            errorMessage.setValue("Display name is required");
-            return false;
-        }
-        return true;
+        validateUsername(username);
+        validatePassword(password);
+        validateConfirmPassword(confirmPassword, password);
+        validateDisplayName(displayName);
+
+        return isFormValid.getValue() != null && isFormValid.getValue();
     }
 
     public LiveData<Boolean> getIsLoading() {
@@ -96,4 +92,78 @@ public class RegistrationViewModel extends ViewModel {
     public List<String> getAvatarUrls() {
         return avatarUrls;
     }
+
+    public void validateUsername(String username) {
+        if (username == null || username.isEmpty()) {
+            usernameError.setValue("Username is required");
+            return;
+        }
+        if (!username.matches("^[a-zA-Z0-9]+$")) {
+            usernameError.setValue("Username can only contain English letters and numbers");
+            return;
+        }
+        if (username.length() < 6 || username.length() > 12) {
+            usernameError.setValue("Username must be 6-12 characters long");
+            return;
+        }
+        usernameError.setValue(null);
+        validateForm();
+    }
+
+    public void validatePassword(String password) {
+        if (password == null || password.isEmpty()) {
+            passwordError.setValue("Password is required");
+            return;
+        }
+        if (!password.matches("^[a-zA-Z0-9" + SPECIAL_CHARS + "]+$")) {
+            passwordError.setValue("Password can only contain English letters, numbers, and special characters (!@#$%^&*-_)");
+            return;
+        }
+        if (password.length() < 8 || password.length() > 20) {
+            passwordError.setValue("Password must be 8-20 characters long");
+            return;
+        }
+        passwordError.setValue(null);
+        validateForm();
+    }
+
+    public void validateConfirmPassword(String confirmPassword, String password) {
+        if (!confirmPassword.equals(password)) {
+            confirmPasswordError.setValue("Passwords do not match");
+            return;
+        }
+        confirmPasswordError.setValue(null);
+        validateForm();
+    }
+
+    public void validateDisplayName(String displayName) {
+        if (displayName == null || displayName.isEmpty()) {
+            displayNameError.setValue("Display name is required");
+            return;
+        }
+        if (!displayName.matches("^[a-zA-Z0-9]+$")) {
+            displayNameError.setValue("Display name can only contain English letters and numbers");
+            return;
+        }
+        if (displayName.length() < 5 || displayName.length() > 12) {
+            displayNameError.setValue("Display name must be 5-12 characters long");
+            return;
+        }
+        displayNameError.setValue(null);
+        validateForm();
+    }
+
+    private void validateForm() {
+        boolean isValid = usernameError.getValue() == null &&
+                passwordError.getValue() == null &&
+                confirmPasswordError.getValue() == null &&
+                displayNameError.getValue() == null;
+        isFormValid.setValue(isValid);
+    }
+
+    public LiveData<String> getUsernameError() { return usernameError; }
+    public LiveData<String> getPasswordError() { return passwordError; }
+    public LiveData<String> getConfirmPasswordError() { return confirmPasswordError; }
+    public LiveData<String> getDisplayNameError() { return displayNameError; }
+    public LiveData<Boolean> getIsFormValid() { return isFormValid; }
 }

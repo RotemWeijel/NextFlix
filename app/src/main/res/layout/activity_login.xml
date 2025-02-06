@@ -25,7 +25,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="48dp"> <!-- Increased padding to match web's 3rem -->
+                android:padding="48dp">
 
                 <TextView
                     android:id="@+id/titleTextView"
@@ -44,8 +44,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:textColorHint="@color/text_secondary"
-                    app:boxStrokeColor="@color/netflix_red"
-                    app:hintTextColor="@color/netflix_red"
+                    app:boxStrokeColor="@color/white"
+                    app:hintTextColor="@color/white"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -64,8 +64,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="24dp"
                     android:textColorHint="@color/text_secondary"
-                    app:boxStrokeColor="@color/netflix_red"
-                    app:hintTextColor="@color/netflix_red"
+                    app:boxStrokeColor="@color/white"
+                    app:hintTextColor="@color/white"
                     app:passwordToggleEnabled="true"
                     app:passwordToggleTint="@color/text_secondary"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
