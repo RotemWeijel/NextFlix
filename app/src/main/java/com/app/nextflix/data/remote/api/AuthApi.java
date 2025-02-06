@@ -1,5 +1,7 @@
-// AuthApi.java
-package com.app.nextflix.data.api;
+package com.app.nextflix.data.remote.api;
+
+import com.app.nextflix.data.api.LoginRequest;
+import com.app.nextflix.data.api.LoginResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

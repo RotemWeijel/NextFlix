@@ -65,17 +65,6 @@
                         android:textStyle="bold"
                         android:layout_marginBottom="8dp"/>
 
-                    <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/categoryChipGroup"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"
-                        app:singleLine="true"
-                        app:chipSpacingHorizontal="8dp"
-                        android:layout_gravity="center"
-                        android:minHeight="48dp"/>
-
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/playButton"
                         android:layout_width="200dp"
@@ -122,6 +111,6 @@
         android:background="@color/black"
         app:itemIconTint="@color/white"
         app:itemTextColor="@color/white"
-        app:menu="@layout/bottom_nav_menu"/>
+        app:menu="@menu/bottom_nav_menu"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

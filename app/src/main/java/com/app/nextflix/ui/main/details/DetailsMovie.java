@@ -23,6 +23,7 @@ import com.app.nextflix.ui.admin.adapters.RecommendedMoviesAdapter;
 import com.app.nextflix.ui.common.MovieViewModel;
 import com.app.nextflix.ui.common.NavBarManager;
 import com.app.nextflix.ui.main.player.PlayerActivity;
+import com.app.nextflix.utils.UrlUtils;
 
 
 public class DetailsMovie extends AppCompatActivity {
@@ -110,43 +111,62 @@ public class DetailsMovie extends AppCompatActivity {
             return;
         }
         try {
+            // Update text fields
             movieTitle.setText(movie.getName());
             releaseYear.setText(String.valueOf(movie.getReleaseYear()));
             ageRating.setText("+" + movie.getAgeAllow());
             duration.setText(movie.getDuration() + "m");
             movieDescription.setText(movie.getDescription());
             directorName.setText(movie.getDirector());
+
+            // Handle actors list
             String actors = movie.getActors().stream()
                     .map(Movie.Actor::getName)
                     .reduce((a, b) -> a + ", " + b)
                     .orElse("");
             castNames.setText(actors);
+
+            // Handle video URL
             String serverVideoUrl = movie.getVideoUrl();
             if (serverVideoUrl == null || serverVideoUrl.isEmpty()) {
                 Log.e("DetailsMovie", "Invalid video URL");
                 Toast.makeText(this, "Video not available", Toast.LENGTH_SHORT).show();
                 return;
             }
-            String videoFileName = serverVideoUrl
-                    .replace("/", "")
-                    .replace(".mp4", "")
-                    .trim();
 
-            currentVideoResId = getResources().getIdentifier(videoFileName, "raw", getPackageName());
-            if (currentVideoResId != 0) {
-                String properVideoPath = "android.resource://" + getPackageName() + "/" + currentVideoResId;
-                videoPath = properVideoPath; // Save for player activity
-                videoView.setVideoURI(Uri.parse(properVideoPath));
+            // Transform and use the server URL directly
+            String transformedVideoUrl = UrlUtils.transformUrl(serverVideoUrl);
+            Log.d("DetailsMovie", "Loading video from transformed URL: " + transformedVideoUrl);
+
+            try {
+                videoPath = transformedVideoUrl; // Save for player activity
+                videoView.setVideoURI(Uri.parse(transformedVideoUrl));
                 videoView.start();
-            } else {
-                Log.e("DetailsMovie", "Video resource not found: " + videoFileName);
-                Toast.makeText(this, "Video content not found", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                Log.e("DetailsMovie", "Error setting video URI: " + transformedVideoUrl, e);
+
+                // Fallback to local resource if available
+                String videoFileName = serverVideoUrl
+                        .substring(serverVideoUrl.lastIndexOf('/') + 1)
+                        .replace(".mp4", "")
+                        .trim();
+
+                currentVideoResId = getResources().getIdentifier(videoFileName, "raw", getPackageName());
+                if (currentVideoResId != 0) {
+                    String properVideoPath = "android.resource://" + getPackageName() + "/" + currentVideoResId;
+                    videoPath = properVideoPath;
+                    videoView.setVideoURI(Uri.parse(properVideoPath));
+                    videoView.start();
+                } else {
+                    Log.e("DetailsMovie", "Video not found in resources: " + videoFileName);
+                    Toast.makeText(this, "Video content not available", Toast.LENGTH_SHORT).show();
+                }
             }
         } catch (Exception e) {
             Log.e("DetailsMovie", "Error updating movie data", e);
             Toast.makeText(this, "Error loading movie content", Toast.LENGTH_SHORT).show();
         }
-}
+    }
 
     private void initializeViews() {
         videoView = findViewById(R.id.movieTrailer);

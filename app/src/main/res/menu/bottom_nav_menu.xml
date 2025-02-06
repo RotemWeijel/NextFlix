@@ -3,10 +3,10 @@
     <item
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_home"
-        android:title="Home"/>
+        android:title="@string/home"/>
 
     <item
         android:id="@+id/navigation_my_nextflix"
         android:icon="@drawable/ic_person"
-        android:title="My NextFlix"/>
+        android:title="@string/my_nextflix"/>
 </menu>
