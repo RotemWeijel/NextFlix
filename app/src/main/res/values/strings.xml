@@ -16,4 +16,9 @@
     <string name="sign_up_now">Sign up now</string>
     <string name="home">Home</string>
     <string name="my_nextflix">My NextFlix</string>
+    <string name="create_account">Create Account</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="display_name">Display Name</string>
+    <string name="choose_avatar">Choose Avatar</string>
+    <string name="already_have_account">Already Have Account?</string>
 </resources>

@@ -8,6 +8,7 @@ public class UrlUtils {
     private static final String API_PORT = "4000";
     private static final String PROFILE_PORT = "3000";
 
+
     public static String transformUrl(String originalUrl) {
         if (originalUrl == null) return null;
 
@@ -31,6 +32,12 @@ public class UrlUtils {
         Log.d(TAG, "Transformed URL: " + transformedUrl);
 
         return transformedUrl;
+    }
+
+    public static String transformAvatarUrl(String drawablePath) {
+        String serverIp = isEmulator() ? "10.0.2.2" : "192.168.7.3";
+        String avatarNumber = drawablePath.replace("drawable/avatar", "");
+        return "http://" + serverIp + ":" + PROFILE_PORT + "/images/Register/avatar" + avatarNumber + ".png";
     }
 
     public static boolean isEmulator() {
