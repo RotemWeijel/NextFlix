@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.nextflix.R;
-import com.app.nextflix.data.local.ImageUtils;
+import com.app.nextflix.utils.ImageUtils;
 import com.app.nextflix.models.Movie;
 import com.google.android.material.imageview.ShapeableImageView;
 

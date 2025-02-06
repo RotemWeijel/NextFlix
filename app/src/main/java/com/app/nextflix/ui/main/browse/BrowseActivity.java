@@ -18,8 +18,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.RequestQueue;
 
 import com.app.nextflix.R;
-import com.app.nextflix.data.local.ImageUtils;
+import com.app.nextflix.utils.ImageUtils;
+import com.app.nextflix.data.repositories.AuthRepository;
+import com.app.nextflix.data.repositories.UserRepository;
 import com.app.nextflix.models.Movie;
+import com.app.nextflix.models.User;
 import com.app.nextflix.ui.admin.adapters.MovieCategoryAdapter;
 import com.app.nextflix.ui.common.CategoryMoviesViewModel;
 import com.app.nextflix.ui.admin.adapters.RecommendedMoviesAdapter;
@@ -44,18 +47,26 @@ public class BrowseActivity extends AppCompatActivity implements RecommendedMovi
     private ChipGroup categoryChipGroup;
     private Button playButton;
     private NavBarManager navBarManager;
+    private UserRepository userRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse);
-        //define color for up navbar
+
+        userRepository = UserRepository.getInstance(this);
+        User currentUser = userRepository.getCurrentUser();
+        Log.d("BrowseActivity", "Current user from repository: " +
+                (currentUser != null ? "Username: " + currentUser.getUsername() +
+                        ", Picture: " + currentUser.getPicture() : "null"));
+
         AppBarLayout appBarLayout = findViewById(R.id.appBarLayout);
         appBarLayout.setBackgroundColor(Color.BLACK);
 
+        // Setup NavBarManager with current user
         navBarManager = new NavBarManager(this);
         navBarManager.setupNavBars();
-
+        navBarManager.setCurrentUser(currentUser);
 
         initViews();
         setupViewModel();
@@ -81,7 +92,6 @@ public class BrowseActivity extends AppCompatActivity implements RecommendedMovi
         contentRecyclerView = findViewById(R.id.contentRecyclerView);
         loadingView = findViewById(R.id.loadingView);
         heroImage = findViewById(R.id.heroImage);
-        categoryChipGroup = findViewById(R.id.categoryChipGroup);
         playButton = findViewById(R.id.playButton);
     }
 
@@ -151,46 +161,10 @@ public class BrowseActivity extends AppCompatActivity implements RecommendedMovi
                 (movie.getCategories() != null ? movie.getCategories().toString() : "null"));
 
         heroTitle.setText(movie.getName());
+        Log.d("BrowseActivity", "Movie image URL: " + movie.getImageUrl());
+
         // class that handle in logics of load image
         ImageUtils.loadMovieImage(this, movie.getImageUrl(), heroImage);
-        //update the category names with chip group
-        categoryChipGroup.removeAllViews();
-        if (movie.getCategories() != null && !movie.getCategories().isEmpty()) {
-            Log.d("BrowseActivity", "Adding " + movie.getCategories().size() + " category chips");
-            categoryChipGroup.setChipSpacing(getResources().getDimensionPixelSize(R.dimen.chip_spacing));
-
-            for (String category : movie.getCategories()) {
-                Chip chip = new Chip(this);
-                chip.setText(category);
-                chip.setTextColor(Color.WHITE);
-                chip.setChipBackgroundColorResource(R.color.chip_background);
-                chip.setEnsureMinTouchTargetSize(false);
-
-                chip.setPadding(8, 4, 8, 4);
-
-                ChipGroup.LayoutParams layoutParams = new ChipGroup.LayoutParams(
-                        ChipGroup.LayoutParams.WRAP_CONTENT,
-                        ChipGroup.LayoutParams.WRAP_CONTENT
-                );
-                layoutParams.setMargins(4, 0, 4, 0);
-
-                categoryChipGroup.addView(chip, layoutParams);
-
-                Log.d("BrowseActivity", "Added chip for category: " + category);
-            }
-
-            categoryChipGroup.setSingleLine(true);
-            categoryChipGroup.setHorizontalScrollBarEnabled(true);
-
-            categoryChipGroup.post(() -> {
-                Log.d("BrowseActivity", "ChipGroup width: " + categoryChipGroup.getWidth() +
-                        ", height: " + categoryChipGroup.getHeight() +
-                        ", visibility: " + categoryChipGroup.getVisibility());
-            });
-        } else {
-            Log.d("BrowseActivity", "No categories found for movie: " + movie.getName());
-        }
-
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.os.Build;
 import android.util.Log;
 
 import com.app.nextflix.security.TokenManager;
+import com.app.nextflix.utils.UrlUtils;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -24,9 +25,7 @@ public class RetrofitClient {
 
         tokenManager = TokenManager.getInstance(context);
 
-        baseUrl = isEmulator() ?
-                "http://10.0.2.2:4000/" :
-                "http://192.168.7.3:4000/";
+        baseUrl = UrlUtils.transformUrl("http://localhost:4000/");
         Log.d(TAG, "Using baseUrl: " + baseUrl);
 
         client = new OkHttpClient.Builder()
