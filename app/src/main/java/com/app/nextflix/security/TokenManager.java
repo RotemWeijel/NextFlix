@@ -1,16 +1,34 @@
 package com.app.nextflix.security;
 
-// Temporary mock for testing
+import android.content.Context;
+import android.content.SharedPreferences;
+
 public class TokenManager {
-    public String getToken() {
-        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzk1Mjk3ZDEyZGE1MmY5NmQ4Y2FkZDUiLCJ1c2VybmFtZSI6InRlaGlsbGEiLCJpc0FkbWluIjp0cnVlLCJmdWxsX25hbWUiOiJSb21lbWEiLCJpYXQiOjE3Mzg5MTE0MjksImV4cCI6MTczODkyNTgyOX0.LdHh9Yr_8HLZKMsbbqihx43p1hUhf1cPSMFy2tXLd3o";
+    private static TokenManager instance;
+    private final SharedPreferences sharedPreferences;
+    private static final String TOKEN_KEY = "token";
+
+    private TokenManager(Context context) {
+        sharedPreferences = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE);
     }
 
-    public String getAuthorizationHeader() {
-        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzk1Mjk3ZDEyZGE1MmY5NmQ4Y2FkZDUiLCJ1c2VybmFtZSI6InRlaGlsbGEiLCJpc0FkbWluIjp0cnVlLCJmdWxsX25hbWUiOiJSb21lbWEiLCJpYXQiOjE3Mzg5MTE0MjksImV4cCI6MTczODkyNTgyOX0.LdHh9Yr_8HLZKMsbbqihx43p1hUhf1cPSMFy2tXLd3o";
+    public static synchronized TokenManager getInstance(Context context) {
+        if (instance == null) {
+            instance = new TokenManager(context.getApplicationContext());
+        }
+        return instance;
     }
 
-    public boolean hasValidToken() {
-        return true; // Always returns true for testing
+    public void setToken(String token) {
+        sharedPreferences.edit().putString(TOKEN_KEY, token).apply();
+    }
+
+    public String getStoredToken() {
+        return sharedPreferences.getString(TOKEN_KEY, null);
+    }
+
+    public void clearToken() {
+        sharedPreferences.edit().remove(TOKEN_KEY).apply();
     }
 }
+

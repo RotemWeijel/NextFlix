@@ -1,36 +1,54 @@
 package com.app.nextflix.ui.common;
 
-import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
-
-import android.content.res.ColorStateList;
-import android.graphics.Color;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
-
-
+import android.widget.PopupWindow;
+import android.widget.TextView;
+import android.widget.ImageView;
+import android.content.Context;
+import android.widget.Button;
+import android.animation.ValueAnimator;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.animation.ArgbEvaluator;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
-
-
-import com.app.nextflix.R;
+import com.app.nextflix.utils.ImageUtils;
+import com.app.nextflix.utils.UrlUtils;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import android.view.ViewGroup;
+
+import com.app.nextflix.R;
+import com.app.nextflix.models.User;
+import com.app.nextflix.security.TokenManager;
+import com.app.nextflix.ui.auth.login.LoginActivity;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 public class NavBarManager {
     private static final String PREFS_NAME = "AppSettings";
     private static final String KEY_IS_DARK_MODE = "isDarkMode";
-    private Activity activity;
+    private final Activity activity;
     private boolean isDarkMode;
-    private SharedPreferences settings;
+    private final SharedPreferences settings;
     private ImageButton themeToggleButton;
+    private ImageButton profileButton;
+    private PopupWindow profileDropdown;
+    private final TokenManager tokenManager;
+    private User currentUser;
 
     public NavBarManager(Activity activity) {
         this.activity = activity;
         this.settings = activity.getSharedPreferences(PREFS_NAME, 0);
         this.isDarkMode = settings.getBoolean(KEY_IS_DARK_MODE, true);
+        this.tokenManager = TokenManager.getInstance(activity);
         initializeTheme();
     }
 
@@ -43,12 +61,10 @@ public class NavBarManager {
     }
 
     private void updateColors(CoordinatorLayout mainLayout) {
-        // Update main background
         mainLayout.setBackgroundColor(isDarkMode ?
                 Color.BLACK :
                 Color.parseColor("#f5eae7"));
 
-        // Update bottom navigation
         BottomNavigationView bottomNav = mainLayout.findViewById(R.id.bottomNav);
         if (bottomNav != null) {
             bottomNav.setBackgroundColor(isDarkMode ?
@@ -60,7 +76,6 @@ public class NavBarManager {
             bottomNav.setItemIconTintList(ColorStateList.valueOf(textColor));
         }
 
-        // Update top AppBarLayout
         AppBarLayout appBarLayout = mainLayout.findViewById(R.id.appBarLayout);
         if (appBarLayout != null) {
             appBarLayout.setBackgroundColor(isDarkMode ?
@@ -72,15 +87,14 @@ public class NavBarManager {
     public void setupNavBars() {
         setupThemeToggle();
         setupBottomNav();
+        setupProfileButton();
     }
 
     private void setupThemeToggle() {
         themeToggleButton = activity.findViewById(R.id.themeToggleButton);
         updateThemeIcon();
 
-        themeToggleButton.setOnClickListener(v -> {
-            toggleTheme();
-        });
+        themeToggleButton.setOnClickListener(v -> toggleTheme());
     }
 
     private void toggleTheme() {
@@ -100,7 +114,6 @@ public class NavBarManager {
                 int color = (int) animator.getAnimatedValue();
                 mainLayout.setBackgroundColor(color);
 
-                // Update navigation colors during animation
                 BottomNavigationView bottomNav = mainLayout.findViewById(R.id.bottomNav);
                 if (bottomNav != null) {
                     bottomNav.setBackgroundColor(color);
@@ -136,8 +149,77 @@ public class NavBarManager {
 
     private void setupBottomNav() {
         BottomNavigationView bottomNav = activity.findViewById(R.id.bottomNav);
-        bottomNav.setOnItemSelectedListener(item -> {
-            return true;
+        if (bottomNav != null) {
+            bottomNav.setOnItemSelectedListener(item -> true);
+        }
+    }
+
+    private void setupProfileButton() {
+        profileButton = activity.findViewById(R.id.profileButton);
+        Log.d("NavBarManager", "Setting up profile button");
+        Log.d("NavBarManager", "Current user: " + (currentUser != null ? currentUser.getUsername() : "null"));
+
+        if (profileButton != null) {
+            Log.d("NavBarManager", "Profile button found");
+
+            if (currentUser != null && currentUser.getPicture() != null) {
+                Log.d("NavBarManager", "Loading profile picture: " + currentUser.getPicture());
+                ImageUtils.loadProfileImage(activity, currentUser.getPicture(), profileButton);
+            } else {
+                profileButton.setImageResource(R.drawable.ic_person);
+            }
+
+            profileButton.setOnClickListener(v -> showProfileDropdown());
+        }
+    }
+
+    private void showProfileDropdown() {
+        View dropdownView = LayoutInflater.from(activity).inflate(R.layout.profile_dropdown_menu, null);
+        profileDropdown = new PopupWindow(
+                dropdownView,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                true
+        );
+
+        ImageView dropdownProfileImage = dropdownView.findViewById(R.id.dropdownProfileImage);
+        TextView usernameText = dropdownView.findViewById(R.id.dropdownUsername);
+        TextView displayNameText = dropdownView.findViewById(R.id.dropdownDisplayName);
+        TextView roleText = dropdownView.findViewById(R.id.dropdownRole);
+        Button logoutButton = dropdownView.findViewById(R.id.logoutButton);
+
+        if (currentUser != null) {
+            usernameText.setText(currentUser.getUsername());
+            displayNameText.setText(currentUser.getFull_name());
+            roleText.setText(currentUser.isAdmin() ? "Administrator" : "User");
+
+            if (currentUser.getPicture() != null) {
+                ImageUtils.loadProfileImage(activity, currentUser.getPicture(), dropdownProfileImage);
+            } else {
+                dropdownProfileImage.setImageResource(R.drawable.ic_person);
+            }
+        }
+
+        logoutButton.setOnClickListener(v -> {
+            handleLogout();
+            profileDropdown.dismiss();
         });
+
+        profileDropdown.showAsDropDown(profileButton, 0, 0, Gravity.END);
+    }
+
+    private void handleLogout() {
+        tokenManager.clearToken();
+        currentUser = null;
+
+        Intent intent = new Intent(activity, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        activity.startActivity(intent);
+        activity.finish();
+    }
+
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
+        setupProfileButton();
     }
 }
