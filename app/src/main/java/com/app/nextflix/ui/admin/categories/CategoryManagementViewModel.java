@@ -31,6 +31,7 @@ public class CategoryManagementViewModel extends ViewModel {
         return isLoading;
     }
 
+
     public void createCategory(CategoryEntity category) {
         isLoading.setValue(true);
         repository.createCategory(category,

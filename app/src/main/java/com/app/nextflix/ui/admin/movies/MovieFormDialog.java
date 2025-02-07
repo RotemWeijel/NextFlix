@@ -50,6 +50,7 @@ import com.app.nextflix.data.remote.api.WebServiceApi;
 import com.app.nextflix.data.repositories.CategoryRepository;
 import com.app.nextflix.models.Movie;
 import com.app.nextflix.security.TokenManager;
+import com.app.nextflix.ui.admin.categories.CategoryManagementViewModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
@@ -80,6 +81,7 @@ public class MovieFormDialog {
     private final View dialogView;
     private AlertDialog dialog;
     private final String initialCategoryId;
+
 
     // Form fields
     private EditText nameInput;
@@ -599,6 +601,13 @@ public class MovieFormDialog {
                 if (response.isSuccessful() && response.body() != null) {
                     Log.d(TAG, "Movie created successfully: " + response.body().getName());
                     Toast.makeText(context, R.string.movie_create_success, Toast.LENGTH_SHORT).show();
+
+
+                    // Refresh categories to update movie counts
+                    CategoryDao categoryDao = AppDatabase.getInstance(context).categoryDao();
+                    CategoryRepository repository = new CategoryRepository(categoryDao, tokenManager);
+                    repository.refreshCategories();
+
                     dialog.dismiss();
                 } else {
                     try {

@@ -88,6 +88,7 @@ public class CategoryEntity {
         this.parentCategoryId = parentCategoryId;
     }
 
+
     public boolean isDisplayInMenu() {
         return displayInMenu;
     }

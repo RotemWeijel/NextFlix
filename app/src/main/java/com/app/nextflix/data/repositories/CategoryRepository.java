@@ -33,7 +33,7 @@ public class CategoryRepository {
         return categoryDao.getAllCategories();
     }
 
-    private void refreshCategories() {
+    public void refreshCategories() {
         executorService.execute(() -> {
             try {
                 String token = tokenManager.getToken();
@@ -113,6 +113,16 @@ public class CategoryRepository {
                         ", parentId=" + category.getParentCategoryId());
 
                 if (token != null) {
+                    // First, fetch the current category to preserve movie count
+                    Response<CategoryResponse> currentCategoryResponse =
+                            categoryApi.getCategoryById("Bearer " + token, category.getId()).execute();
+
+                    if (currentCategoryResponse.isSuccessful() && currentCategoryResponse.body() != null) {
+                        CategoryEntity currentCategory = currentCategoryResponse.body().toCategoryEntity();
+
+                        // Preserve movie count
+                        category.setMovieCount(currentCategory.getMovieCount());
+                    }
                     Response<CategoryResponse> response = categoryApi
                             .updateCategory("Bearer " + token, category.getId(), category)
                             .execute();

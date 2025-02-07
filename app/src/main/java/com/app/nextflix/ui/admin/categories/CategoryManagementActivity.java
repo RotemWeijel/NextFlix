@@ -59,72 +59,72 @@ public class CategoryManagementActivity extends AppCompatActivity implements Cat
     private ActivityResultLauncher<Intent> posterPickerLauncher;
     private ActivityResultLauncher<Intent> trailerPickerLauncher;
     private ActivityResultLauncher<Intent> moviePickerLauncher;
-        private void initializeFilePickers() {
-            posterPickerLauncher = registerForActivityResult(
-                    new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                        Log.d(TAG, "Received result from poster picker");
-                        if (!canHandleFilePicker()) return;
+    private void initializeFilePickers() {
+        posterPickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    Log.d(TAG, "Received result from poster picker");
+                    if (!canHandleFilePicker()) return;
 
-                        if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                            Log.d(TAG, "Result is OK and has data");
-                            Uri selectedFile = result.getData().getData();
-                            if (selectedFile != null) {
-                                Log.d(TAG, "Selected file URI: " + selectedFile.toString());
-                                movieFormDialog.handleFileSelection(selectedFile, "image/*", movieFormDialog::uploadPosterFile);
-                            } else {
-                                Log.e(TAG, "Selected file is null");
-                                Toast.makeText(this, "Could not get selected file", Toast.LENGTH_SHORT).show();
-                            }
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        Log.d(TAG, "Result is OK and has data");
+                        Uri selectedFile = result.getData().getData();
+                        if (selectedFile != null) {
+                            Log.d(TAG, "Selected file URI: " + selectedFile.toString());
+                            movieFormDialog.handleFileSelection(selectedFile, "image/*", movieFormDialog::uploadPosterFile);
                         } else {
-                            Log.e(TAG, "Result not OK or no data. ResultCode: " + result.getResultCode());
+                            Log.e(TAG, "Selected file is null");
+                            Toast.makeText(this, "Could not get selected file", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Log.e(TAG, "Result not OK or no data. ResultCode: " + result.getResultCode());
                     }
-            );
+                }
+        );
 
-            trailerPickerLauncher = registerForActivityResult(
-                    new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                        Log.d(TAG, "Received result from poster picker");
-                        if (!canHandleFilePicker()) return;
+        trailerPickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    Log.d(TAG, "Received result from poster picker");
+                    if (!canHandleFilePicker()) return;
 
-                        if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                            Log.d(TAG, "Result is OK and has data");
-                            Uri selectedFile = result.getData().getData();
-                            if (selectedFile != null) {
-                                Log.d(TAG, "Selected file URI: " + selectedFile.toString());
-                                movieFormDialog.handleFileSelection(selectedFile, "video/*", movieFormDialog::uploadTrailerFile);
-                            } else {
-                                Log.e(TAG, "Selected file is null");
-                                Toast.makeText(this, "Could not get selected file", Toast.LENGTH_SHORT).show();
-                            }
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        Log.d(TAG, "Result is OK and has data");
+                        Uri selectedFile = result.getData().getData();
+                        if (selectedFile != null) {
+                            Log.d(TAG, "Selected file URI: " + selectedFile.toString());
+                            movieFormDialog.handleFileSelection(selectedFile, "video/*", movieFormDialog::uploadTrailerFile);
                         } else {
-                            Log.e(TAG, "Result not OK or no data. ResultCode: " + result.getResultCode());
+                            Log.e(TAG, "Selected file is null");
+                            Toast.makeText(this, "Could not get selected file", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Log.e(TAG, "Result not OK or no data. ResultCode: " + result.getResultCode());
                     }
-            );
+                }
+        );
 
-            moviePickerLauncher = registerForActivityResult(
-                    new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                        Log.d(TAG, "Received result from poster picker");
-                        if (!canHandleFilePicker()) return;
+        moviePickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    Log.d(TAG, "Received result from poster picker");
+                    if (!canHandleFilePicker()) return;
 
-                        if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                            Log.d(TAG, "Result is OK and has data");
-                            Uri selectedFile = result.getData().getData();
-                            if (selectedFile != null) {
-                                Log.d(TAG, "Selected file URI: " + selectedFile.toString());
-                                movieFormDialog.handleFileSelection(selectedFile, "video/*", movieFormDialog::uploadVideoFile);
-                            } else {
-                                Log.e(TAG, "Selected file is null");
-                                Toast.makeText(this, "Could not get selected file", Toast.LENGTH_SHORT).show();
-                            }
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        Log.d(TAG, "Result is OK and has data");
+                        Uri selectedFile = result.getData().getData();
+                        if (selectedFile != null) {
+                            Log.d(TAG, "Selected file URI: " + selectedFile.toString());
+                            movieFormDialog.handleFileSelection(selectedFile, "video/*", movieFormDialog::uploadVideoFile);
                         } else {
-                            Log.e(TAG, "Result not OK or no data. ResultCode: " + result.getResultCode());
+                            Log.e(TAG, "Selected file is null");
+                            Toast.makeText(this, "Could not get selected file", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Log.e(TAG, "Result not OK or no data. ResultCode: " + result.getResultCode());
                     }
-            );
+                }
+        );
     }
 
 
@@ -238,7 +238,7 @@ public class CategoryManagementActivity extends AppCompatActivity implements Cat
             }
 
             try {
-                CategoryEntity formData = formHelper.getCategoryData();
+                CategoryEntity formData = formHelper.getCategoryData(category);
                 if (category != null) {
                     formData.setId(category.getId());
                     viewModel.updateCategory(formData);

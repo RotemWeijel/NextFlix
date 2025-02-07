@@ -78,8 +78,13 @@ public class CategoryFormHelper {
         parentCategorySpinner.setPrompt("Select Parent Category");
     }
 
-    public CategoryEntity getCategoryData() {
+    public CategoryEntity getCategoryData(CategoryEntity existingCategory) {
         CategoryEntity category = new CategoryEntity();
+
+        // If an existing category is provided, copy its movie count
+        if (existingCategory != null) {
+            category.setMovieCount(existingCategory.getMovieCount());
+        }
 
         // Log the data we're collecting
         Log.d(TAG, "Collecting form data:");
