@@ -24,6 +24,8 @@ import android.os.Handler;
 import android.os.Looper;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -109,7 +111,7 @@ public class MovieFormDialog {
     private LinearLayout categoriesContainer;
     private List<EditText> actorEditTexts = new ArrayList<>();
     private List<CategoryEntity> availableCategories = new ArrayList<>();
-    private List<String> selectedCategoryIds = new ArrayList<>();
+    private Set<String> selectedCategoryIds = new HashSet<>();
 
     // URLs for uploaded files
     private String imageUrl;
@@ -420,21 +422,31 @@ public class MovieFormDialog {
 
     private void setupCategoriesSection() {
         categoriesContainer.removeAllViews();
+        Log.d(TAG, "Available categories:");
         for (CategoryEntity category : availableCategories) {
+            Log.d(TAG, String.format("Category: name=%s, id=%s", category.getName(), category.getId()));
+
             CheckBox checkBox = new CheckBox(context);
             checkBox.setText(category.getName());
 
             if (category.getId().equals(initialCategoryId)) {
                 checkBox.setChecked(true);
                 selectedCategoryIds.add(category.getId());
+                Log.d(TAG, "Pre-selected category with ID: " + category.getId());
             }
 
             checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                String categoryId = category.getId();
                 if (isChecked) {
-                    selectedCategoryIds.add(category.getId());
+                    selectedCategoryIds.add(categoryId);
+                    Log.d(TAG, "Added category ID: " + categoryId);
                 } else {
-                    selectedCategoryIds.remove(category.getId());
+                    selectedCategoryIds.remove(categoryId);
+                    Log.d(TAG, "Removed category ID: " + categoryId);
                 }
+
+                // Log all currently selected categories
+                Log.d(TAG, "Currently selected category IDs: " + selectedCategoryIds.toString());
             });
 
             categoriesContainer.addView(checkBox);
@@ -557,19 +569,11 @@ public class MovieFormDialog {
         Log.d(TAG, "Actors: " + actors.size());
         Log.d(TAG, "Categories: " + selectedCategoryIds.size());
 
-        // Log the category IDs
-        Log.d(TAG, "Selected Category IDs:");
+        Log.d(TAG, "About to create movie with these categories:");
         for (String categoryId : selectedCategoryIds) {
-            Log.d(TAG, "Category ID: " + categoryId);
-        }
-
-        // Validate the category IDs before sending
-        boolean validCategories = selectedCategoryIds.stream()
-                .allMatch(id -> id.matches("^[0-9a-fA-F]{24}$")); // MongoDB ObjectId format
-
-        if (!validCategories) {
-            Toast.makeText(context, "Invalid category format detected", Toast.LENGTH_SHORT).show();
-            return;
+            Log.d(TAG, "Category ID format check - ID: " + categoryId +
+                    ", Length: " + categoryId.length() +
+                    ", Matches MongoDB format: " + categoryId.matches("^[0-9a-fA-F]{24}$"));
         }
 
         Movie movie = new Movie(
@@ -579,7 +583,7 @@ public class MovieFormDialog {
                 Integer.parseInt(durationInput.getText().toString().trim()),
                 Integer.parseInt(releaseYearInput.getText().toString().trim()),
                 actors,
-                selectedCategoryIds,
+                new ArrayList<>(selectedCategoryIds),
                 Integer.parseInt(ageAllowInput.getText().toString().trim()),
                 directorInput.getText().toString().trim(),
                 languageInput.getText().toString().trim(),
