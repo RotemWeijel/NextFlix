@@ -137,6 +137,7 @@ public class RegistrationActivity extends AppCompatActivity implements AvatarAda
 
     @Override
     public void onAvatarSelected(int position, String avatarUrl) {
-        selectedAvatarUrl = UrlUtils.transformUrl(avatarUrl);
+        // Transform the drawable path to a server-compatible URL
+        selectedAvatarUrl = UrlUtils.transformAvatarUrl(avatarUrl);
     }
 }

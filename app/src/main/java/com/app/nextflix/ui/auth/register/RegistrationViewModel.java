@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 import com.app.nextflix.data.api.RegistrationRequest;
 import com.app.nextflix.data.repositories.AuthRepository;
 import com.app.nextflix.models.User;
+import com.app.nextflix.utils.UrlUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,7 +47,9 @@ public class RegistrationViewModel extends ViewModel {
         isLoading.setValue(true);
         errorMessage.setValue(null);
 
-        // Use direct parameters instead of RegistrationRequest
+        // Convert relative avatar URL to absolute URL only for local display
+        String displayAvatarUrl = UrlUtils.transformUrl(avatarUrl);
+
         authRepository.register(username, password, displayName, avatarUrl)
                 .thenCompose(user -> {
                     registrationResult.postValue(user);
