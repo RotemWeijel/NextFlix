@@ -72,6 +72,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+//Note! this page required adjustment for your IP
 public class MovieFormDialog {
     private static final String TAG = "MovieFormDialog";
     private static final int MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB limit
