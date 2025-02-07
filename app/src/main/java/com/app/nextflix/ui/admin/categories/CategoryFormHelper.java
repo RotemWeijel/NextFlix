@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -25,6 +26,7 @@ public class CategoryFormHelper {
     private final CheckBox displayInMenuCheckbox;
     private final Spinner parentCategorySpinner;
     private List<CategoryEntity> allCategories;
+    private final Button addMovieButton;
 
     public CategoryFormHelper(Context context, View formView, List<CategoryEntity> categories) {
         nameInput = formView.findViewById(R.id.nameInput);
@@ -33,9 +35,24 @@ public class CategoryFormHelper {
         promotedCheckbox = formView.findViewById(R.id.promotedCheckbox);
         displayInMenuCheckbox = formView.findViewById(R.id.displayInMenuCheckbox);
         parentCategorySpinner = formView.findViewById(R.id.parentCategorySpinner);
+        addMovieButton = formView.findViewById(R.id.addMovieButton);
         this.allCategories = categories != null ? categories : new ArrayList<>();
 
         setupParentCategorySpinner(context);
+
+        Button addMovieButton = formView.findViewById(R.id.addMovieButton);
+        Log.d("CategoryFormHelper", "Initializing Add Movie button: " + (addMovieButton != null));
+        if (addMovieButton != null) {
+            addMovieButton.setVisibility(View.VISIBLE);
+            Log.d("CategoryFormHelper", "Set button visibility to VISIBLE");
+        }
+    }
+
+
+    public void setAddMovieClickListener(View.OnClickListener listener) {
+        if (addMovieButton != null) {
+            addMovieButton.setOnClickListener(listener);
+        }
     }
 
     private void setupParentCategorySpinner(Context context) {

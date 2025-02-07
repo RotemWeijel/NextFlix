@@ -48,6 +48,10 @@ dependencies {
     implementation("com.android.volley:volley:1.2.1")
     annotationProcessor(libs.room.compiler)
 
+    // Glide
+    implementation(libs.glide)
+    annotationProcessor(libs.glide.compiler)
+
     // Retrofit
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
