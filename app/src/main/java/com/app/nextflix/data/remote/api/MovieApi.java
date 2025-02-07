@@ -33,24 +33,8 @@ public class MovieApi {
             throw new IllegalArgumentException("Context cannot be null");
         }
 
-        String base;
-        if (isEmulator()) {
-            base = "http://10.0.2.2:4000/";
-        } else {
-            base = "http://192.168.7.3:4000/";
-        }
-
-        try {
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(base)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-
-            this.api = retrofit.create(WebServiceApi.class);
-        } catch (Exception e) {
-            Log.e(TAG, "Error initializing MovieApi", e);
-            throw new RuntimeException("Failed to initialize MovieApi", e);
-        }
+        RetrofitClient.initialize(context);
+        this.api = RetrofitClient.getClient().create(WebServiceApi.class);
     }
 
     private boolean isEmulator() {

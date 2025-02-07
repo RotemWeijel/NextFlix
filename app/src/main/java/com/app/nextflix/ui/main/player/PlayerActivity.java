@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -25,6 +26,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.app.nextflix.R;
 import com.app.nextflix.ui.common.PlayerViewModel;
+import com.app.nextflix.utils.UrlUtils;
 
 
 public class PlayerActivity extends AppCompatActivity {
@@ -88,21 +90,18 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     private void setupVideo() {
-        int videoResId = getIntent().getIntExtra("video_res_id", 0);
-        String movieId = getIntent().getStringExtra("movie_id");
+        String videoUrl = getIntent().getStringExtra("video_path");
         String title = getIntent().getStringExtra("name");
 
+        if (videoUrl != null) {
+            String transformedUrl = UrlUtils.transformUrl(videoUrl);
+            Log.d("PlayerActivity", "Playing video from transformed URL: " + transformedUrl);
 
-        if (videoResId != 0) {
-            String properVideoPath = "android.resource://" + getPackageName() + "/" + videoResId;
-            videoView.setVideoURI(Uri.parse(properVideoPath));
+            videoView.setVideoURI(Uri.parse(transformedUrl));
             videoView.setOnPreparedListener(this::onVideoPrepared);
             seriesTitle.setText(title);
             videoView.start();
             viewModel.setPlaying(true);
-            if (movieId != null) {
-                viewModel.markMovieAsRecommended(movieId);
-            }
         } else {
             Toast.makeText(this, "No video available for this content", Toast.LENGTH_SHORT).show();
             new Handler().postDelayed(this::finish, 2000);
