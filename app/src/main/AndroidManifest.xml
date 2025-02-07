@@ -32,6 +32,16 @@
             android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
 
         <activity
+            android:name=".ui.auth.register.RegistrationActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
+
+        <activity
+            android:name=".ui.auth.register.RegistrationSuccessActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
+
+        <activity
             android:name=".ui.main.browse.BrowseActivity"
             android:exported="true">
         </activity>

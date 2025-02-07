@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.app.nextflix.data.api.LoginRequest;
 import com.app.nextflix.data.api.LoginResponse;
+import com.app.nextflix.data.api.RegistrationRequest;
 import com.app.nextflix.data.local.UserPreferences;
 import com.app.nextflix.data.remote.api.AuthApi;
 import com.app.nextflix.data.remote.api.RetrofitClient;
@@ -88,5 +89,31 @@ public class AuthRepository {
             user.setPicture(transformedUrl);
         }
         return user;
+    }
+
+    public CompletableFuture<User> register(String username, String password, String displayName, String avatarUrl) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                RegistrationRequest request = new RegistrationRequest(username, password, displayName, avatarUrl);
+                Response<Void> response = authApi.register(request).execute();
+
+                if (!response.isSuccessful()) {
+                    String errorBody = response.errorBody() != null ? response.errorBody().string() : "No error body";
+                    Log.e(TAG, "Registration failed with code: " + response.code() + ", error: " + errorBody);
+                    throw new Exception("Registration failed with code: " + response.code());
+                }
+
+                // Create user object since registration was successful
+                User user = new User();
+                user.setUsername(username);
+                user.setFull_name(displayName);
+                user.setPicture(avatarUrl);
+
+                return user;
+            } catch (Exception e) {
+                Log.e(TAG, "Registration failed", e);
+                throw new CompletionException(e);
+            }
+        });
     }
 }

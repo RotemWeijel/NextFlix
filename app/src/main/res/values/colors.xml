@@ -14,4 +14,5 @@
     <color name="text_secondary">#373737</color>
     <color name="primary">#E50914</color>
     <color name="error">#CF6679</color>
+    <color name="accent">#E50914</color>
 </resources>
