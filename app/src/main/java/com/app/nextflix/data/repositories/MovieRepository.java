@@ -35,11 +35,16 @@ public class MovieRepository {
         void onSuccess(List<Movie> movies);
         void onError(String message);
     }
+
     public interface RecommendCallback {
         void onSuccess();
         void onError(String message);
     }
 
+    public interface SearchMoviesCallback {
+        void onSuccess(List<Movie> movies);
+        void onError(String message);
+    }
 
     public void getMovie(String movieId, MovieCallback callback) {
         new Thread(() -> {
@@ -211,5 +216,34 @@ public class MovieRepository {
     }
     public void markMovieAsRecommended(String movieId, RecommendCallback callback) {
         movieApi.markMovieAsRecommended(movieId, callback);
+    }
+
+    public void searchMovies(String query, SearchMoviesCallback callback) {
+        new Thread(() -> {
+            try {
+                movieApi.searchMovies(query, new SearchMoviesCallback() {
+                    @Override
+                    public void onSuccess(List<Movie> movies) {
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            Log.d(TAG, "Search successful, found " + movies.size() + " movies");
+                            callback.onSuccess(movies);
+                        });
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            Log.e(TAG, "Search error: " + message);
+                            callback.onError(message);
+                        });
+                    }
+                });
+            } catch (Exception e) {
+                Log.e(TAG, "Error in searchMovies", e);
+                new Handler(Looper.getMainLooper()).post(() ->
+                        callback.onError("Error: " + e.getMessage())
+                );
+            }
+        }).start();
     }
 }

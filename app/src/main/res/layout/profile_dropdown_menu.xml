@@ -3,8 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="?attr/colorSurface">
+    android:padding="16dp">
 
     <ImageView
         android:id="@+id/dropdownProfileImage"
@@ -21,6 +20,7 @@
 
         <TableRow>
             <TextView
+                android:id="@+id/usernameLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Username:"
@@ -33,6 +33,7 @@
 
         <TableRow>
             <TextView
+                android:id="@+id/displayNameLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Display Name:"
@@ -45,6 +46,7 @@
 
         <TableRow>
             <TextView
+                android:id="@+id/roleLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Role:"
