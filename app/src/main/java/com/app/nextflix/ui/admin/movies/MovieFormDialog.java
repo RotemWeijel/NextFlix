@@ -46,6 +46,7 @@ import com.app.nextflix.data.local.AppDatabase;
 import com.app.nextflix.data.local.dao.CategoryDao;
 import com.app.nextflix.data.local.entity.CategoryEntity;
 import com.app.nextflix.data.remote.api.MovieApi;
+import com.app.nextflix.data.remote.api.RetrofitClient;
 import com.app.nextflix.data.remote.api.WebServiceApi;
 import com.app.nextflix.data.repositories.CategoryRepository;
 import com.app.nextflix.models.Movie;
@@ -77,11 +78,14 @@ public class MovieFormDialog {
     private static final String TAG = "MovieFormDialog";
     private static final int MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB limit
 
-    private final Context context;
-    private final MaterialAlertDialogBuilder builder;
-    private final View dialogView;
+    private Context context;
+    private MaterialAlertDialogBuilder builder;
+    private View dialogView;
     private AlertDialog dialog;
-    private final String initialCategoryId;
+    private String initialCategoryId;
+
+    private Movie movieToEdit;
+    private boolean isEditMode = false;
 
 
     // Form fields
@@ -100,13 +104,12 @@ public class MovieFormDialog {
     private Button uploadMovieButton;
 
     // Repository and managers
-    private final CategoryRepository categoryRepository;
-    private final TokenManager tokenManager;
+    private CategoryRepository categoryRepository;
 
     // File picker launchers
-    private final ActivityResultLauncher<Intent> posterPickerLauncher;
-    private final ActivityResultLauncher<Intent> trailerPickerLauncher;
-    private final ActivityResultLauncher<Intent> moviePickerLauncher;
+    private ActivityResultLauncher<Intent> posterPickerLauncher;
+    private ActivityResultLauncher<Intent> trailerPickerLauncher;
+    private ActivityResultLauncher<Intent> moviePickerLauncher;
 
     // Actors and Categories
     private LinearLayout actorsContainer;
@@ -132,8 +135,7 @@ public class MovieFormDialog {
         this.moviePickerLauncher = moviePickerLauncher;
 
         CategoryDao categoryDao = AppDatabase.getInstance(context).categoryDao();
-        this.tokenManager = new TokenManager();
-        this.categoryRepository = new CategoryRepository(categoryDao, tokenManager);
+        this.categoryRepository = new CategoryRepository(categoryDao, null);
 
         this.dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_movie_form, null);
         this.builder = new MaterialAlertDialogBuilder(context)
@@ -147,7 +149,41 @@ public class MovieFormDialog {
         setupListeners();
         loadAvailableCategories();
     }
+    // Constructor for edit mode
+    public MovieFormDialog(Context context, Movie movie,
+                           ActivityResultLauncher<Intent> posterPickerLauncher,
+                           ActivityResultLauncher<Intent> trailerPickerLauncher,
+                           ActivityResultLauncher<Intent> moviePickerLauncher) {
+        this.context = context;
+        this.posterPickerLauncher = posterPickerLauncher;
+        this.trailerPickerLauncher = trailerPickerLauncher;
+        this.moviePickerLauncher = moviePickerLauncher;
+        this.movieToEdit = movie;
+        this.isEditMode = (movie != null);
 
+        CategoryDao categoryDao = AppDatabase.getInstance(context).categoryDao();
+        this.categoryRepository = new CategoryRepository(categoryDao, null);
+
+        this.dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_movie_form, null);
+        this.builder = new MaterialAlertDialogBuilder(context)
+                .setTitle(isEditMode ? R.string.edit_movie : R.string.add_new_movie)
+                .setView(dialogView)
+                .setPositiveButton(R.string.save, null)
+                .setNegativeButton(R.string.cancel, null);
+
+        if (isEditMode) {
+            this.builder.setNeutralButton(R.string.delete, null);
+        }
+
+        initializeViews();
+        setupDefaultValues();
+        setupListeners();
+        loadAvailableCategories();
+
+        if (isEditMode && movieToEdit != null) {
+            populateFieldsForEdit();
+        }
+    }
     private void initializeViews() {
         nameInput = dialogView.findViewById(R.id.movieNameInput);
         descriptionInput = dialogView.findViewById(R.id.movieDescriptionInput);
@@ -166,6 +202,52 @@ public class MovieFormDialog {
         addActorButton = dialogView.findViewById(R.id.addActorButton);
         categoriesContainer = dialogView.findViewById(R.id.categoriesContainer);
     }
+    private void populateFieldsForEdit() {
+        nameInput.setText(movieToEdit.getName());
+        descriptionInput.setText(movieToEdit.getDescription());
+        durationInput.setText(String.valueOf(movieToEdit.getDuration()));
+        releaseYearInput.setText(String.valueOf(movieToEdit.getReleaseYear()));
+        ageAllowInput.setText(String.valueOf(movieToEdit.getAgeAllow()));
+        directorInput.setText(movieToEdit.getDirector());
+        languageInput.setText(movieToEdit.getLanguage());
+
+        // Set existing URLs
+        imageUrl = movieToEdit.getImageUrl();
+        trailerUrl = movieToEdit.getTrailerUrl();
+        videoUrl = movieToEdit.getVideoUrl();
+
+        // Show existing URLs in UI
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            String displayUrl = imageUrl.replace("localhost", "10.0.2.2");
+            posterPreview.setVisibility(View.VISIBLE);
+            Glide.with(context)
+                    .load(displayUrl)
+                    .into(posterPreview);
+        }
+
+        if (trailerUrl != null && !trailerUrl.isEmpty()) {
+            trailerUrlText.setText("Trailer: " + trailerUrl);
+            trailerUrlText.setVisibility(View.VISIBLE);
+        }
+
+        if (videoUrl != null && !videoUrl.isEmpty()) {
+            videoUrlText.setText("Video: " + videoUrl);
+            videoUrlText.setVisibility(View.VISIBLE);
+        }
+
+        // Add existing actors
+        actorsContainer.removeAllViews();
+        for (Movie.Actor actor : movieToEdit.getActors()) {
+            EditText actorInput = new EditText(context);
+            actorInput.setText(actor.getName());
+            actorsContainer.addView(actorInput);
+            actorEditTexts.add(actorInput);
+        }
+
+        // Pre-select categories
+        selectedCategoryIds.addAll(movieToEdit.getCategories());
+    }
+
 
     private void setupDefaultValues() {
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
@@ -295,7 +377,7 @@ public class MovieFormDialog {
         RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
         MultipartBody.Part filePart = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
 
-        WebServiceApi webServiceApi = MovieApi.getInstance(context).getWebServiceApi();
+        WebServiceApi webServiceApi = RetrofitClient.getWebServiceApi();
         Log.d(TAG, "Calling upload API");
         webServiceApi.uploadImage(filePart).enqueue(new Callback<UploadResponse>() {
             @Override
@@ -358,7 +440,7 @@ public class MovieFormDialog {
         RequestBody requestFile = RequestBody.create(MediaType.parse("video/*"), file);
         MultipartBody.Part filePart = MultipartBody.Part.createFormData("trailer", file.getName(), requestFile);
 
-        WebServiceApi webServiceApi = MovieApi.getInstance(context).getWebServiceApi();
+        WebServiceApi webServiceApi = RetrofitClient.getWebServiceApi();
         webServiceApi.uploadTrailer(filePart).enqueue(new Callback<UploadResponse>() {
             @Override
             public void onResponse(@NonNull Call<UploadResponse> call, @NonNull Response<UploadResponse> response) {
@@ -386,7 +468,7 @@ public class MovieFormDialog {
         RequestBody requestFile = RequestBody.create(MediaType.parse("video/*"), file);
         MultipartBody.Part filePart = MultipartBody.Part.createFormData("video", file.getName(), requestFile);
 
-        WebServiceApi webServiceApi = MovieApi.getInstance(context).getWebServiceApi();
+        WebServiceApi webServiceApi = RetrofitClient.getWebServiceApi();
         webServiceApi.uploadVideo(filePart).enqueue(new Callback<UploadResponse>() {
             @Override
             public void onResponse(@NonNull Call<UploadResponse> call, @NonNull Response<UploadResponse> response) {
@@ -473,13 +555,22 @@ public class MovieFormDialog {
 
         Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
         Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-
         positiveButton.setTextColor(ContextCompat.getColor(context, R.color.netflix_red));
         negativeButton.setTextColor(ContextCompat.getColor(context, R.color.netflix_red));
 
+        if (isEditMode) {
+            Button neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+            neutralButton.setTextColor(ContextCompat.getColor(context, R.color.netflix_red));
+            neutralButton.setOnClickListener(v -> showDeleteConfirmation());
+        }
+
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
             if (validateForm()) {
-                saveMovie();
+                if (isEditMode) {
+                    updateMovie();
+                } else {
+                    saveMovie();
+                }
             }
         });
     }
@@ -595,7 +686,7 @@ public class MovieFormDialog {
                 videoUrl
         );
 
-        WebServiceApi webServiceApi = MovieApi.getInstance(context).getWebServiceApi();
+        WebServiceApi webServiceApi = RetrofitClient.getWebServiceApi();
         webServiceApi.createMovie(movie).enqueue(new Callback<Movie>() {
             @Override
             public void onResponse(@NonNull Call<Movie> call, @NonNull Response<Movie> response) {
@@ -606,7 +697,7 @@ public class MovieFormDialog {
 
                     // Refresh categories to update movie counts
                     CategoryDao categoryDao = AppDatabase.getInstance(context).categoryDao();
-                    CategoryRepository repository = new CategoryRepository(categoryDao, tokenManager);
+                    CategoryRepository repository = new CategoryRepository(categoryDao, null);
                     repository.refreshCategories();
 
                     dialog.dismiss();
@@ -633,5 +724,81 @@ public class MovieFormDialog {
                 Toast.makeText(context, errorMsg, Toast.LENGTH_LONG).show();
             }
         });
+    }
+    private void updateMovie() {
+        Movie updatedMovie = new Movie(
+                movieToEdit.getId(),
+                nameInput.getText().toString().trim(),
+                descriptionInput.getText().toString().trim(),
+                Integer.parseInt(durationInput.getText().toString().trim()),
+                Integer.parseInt(releaseYearInput.getText().toString().trim()),
+                getActorsFromInputs(),
+                new ArrayList<>(selectedCategoryIds),
+                Integer.parseInt(ageAllowInput.getText().toString().trim()),
+                directorInput.getText().toString().trim(),
+                languageInput.getText().toString().trim(),
+                imageUrl,
+                trailerUrl,
+                videoUrl
+        );
+
+        WebServiceApi webServiceApi = MovieApi.getInstance(context).getWebServiceApi();
+        webServiceApi.updateMovie(movieToEdit.getId(), updatedMovie).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(context, R.string.movie_update_success, Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                } else {
+                    Toast.makeText(context, R.string.movie_update_failed, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void showDeleteConfirmation() {
+        new MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.confirm_delete)
+                .setMessage(R.string.delete_movie_confirmation)
+                .setPositiveButton(R.string.delete, (dialog, which) -> deleteMovie())
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    private void deleteMovie() {
+        WebServiceApi webServiceApi = MovieApi.getInstance(context).getWebServiceApi();
+        webServiceApi.deleteMovie(movieToEdit.getId()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(context, R.string.movie_delete_success, Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                    ((Activity) context).finish();
+                } else {
+                    Toast.makeText(context, R.string.movie_delete_failed, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private List<Movie.Actor> getActorsFromInputs() {
+        List<Movie.Actor> actors = new ArrayList<>();
+        for (EditText actorEditText : actorEditTexts) {
+            String actorName = actorEditText.getText().toString().trim();
+            if (!actorName.isEmpty()) {
+                actors.add(new Movie.Actor(actorName));
+            }
+        }
+        return actors;
     }
 }
