@@ -19,31 +19,24 @@ import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 public interface WebServiceApi {
-
-    @Headers({
-            "Content-Type: application/json",
-            "Authorization: Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzk1Mjk3ZDEyZGE1MmY5NmQ4Y2FkZDUiLCJ1c2VybmFtZSI6InRlaGlsbGEiLCJpc0FkbWluIjp0cnVlLCJmdWxsX25hbWUiOiJSb21lbWEiLCJpYXQiOjE3Mzg4NDA2NjEsImV4cCI6MTczODg1NTA2MX0.pDsiEAt_w2M7lEye77hV8BkMnTde3hIJ54BJymtetkE"
-    })
-    @GET ("/api/movies")
+    @Headers("Content-Type: application/json")
+    @GET("/api/movies")
     Call<List<MovieCategory>> getAllMovies();
-    @Headers({
-            "Content-Type: application/json",
-            "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzk1Mjk3ZDEyZGE1MmY5NmQ4Y2FkZDUiLCJ1c2VybmFtZSI6InRlaGlsbGEiLCJpc0FkbWluIjp0cnVlLCJmdWxsX25hbWUiOiJSb21lbWEiLCJpYXQiOjE3Mzg4NDA2NjEsImV4cCI6MTczODg1NTA2MX0.pDsiEAt_w2M7lEye77hV8BkMnTde3hIJ54BJymtetkE"
-    })
+
+    @Headers("Content-Type: application/json")
     @GET("/api/movies/{id}")
-    Call <Movie> getMovie(@Path("id") String movieId);
-    @Headers({ "Content-Type: application/json",  "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzk1Mjk3ZDEyZGE1MmY5NmQ4Y2FkZDUiLCJ1c2VybmFtZSI6InRlaGlsbGEiLCJpc0FkbWluIjp0cnVlLCJmdWxsX25hbWUiOiJSb21lbWEiLCJpYXQiOjE3Mzg5MTE0MjksImV4cCI6MTczODkyNTgyOX0.LdHh9Yr_8HLZKMsbbqihx43p1hUhf1cPSMFy2tXLd3o"})
+    Call<Movie> getMovie(@Path("id") String movieId);
+
+    @Headers("Content-Type: application/json")
     @POST("/api/movies")
     Call<Movie> createMovie(@Body Movie movie);
-    @Headers({
-            "Content-Type: application/json",
-            "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzk1Mjk3ZDEyZGE1MmY5NmQ4Y2FkZDUiLCJ1c2VybmFtZSI6InRlaGlsbGEiLCJpc0FkbWluIjp0cnVlLCJmdWxsX25hbWUiOiJSb21lbWEiLCJpYXQiOjE3Mzg5MTE0MjksImV4cCI6MTczODkyNTgyOX0.LdHh9Yr_8HLZKMsbbqihx43p1hUhf1cPSMFy2tXLd3o"    })
 
+    @Headers("Content-Type: application/json")
     @PATCH("/api/movies/{id}")
-    Call<Void> UpdateMovie(@Path("id") String movieId, @Body Movie movie);
+    Call<Void> updateMovie(@Path("id") String movieId, @Body Movie movie);
 
     @DELETE("/api/movies/{id}")
-    Call<Void> DeleteMovie(@Path("id") String movieId);
+    Call<Void> deleteMovie(@Path("id") String movieId);
 
     @GET("/api/movies/{id}/recommend")
     Call<List<Movie>> getRecommendedMovies(@Path("id") String movieId);
@@ -54,23 +47,15 @@ public interface WebServiceApi {
     @GET("/api/movies/search/{query}")
     Call<List<Movie>> searchMovies(@Path("query") String query);
 
-    @Headers({
-            "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzk1Mjk3ZDEyZGE1MmY5NmQ4Y2FkZDUiLCJ1c2VybmFtZSI6InRlaGlsbGEiLCJpc0FkbWluIjp0cnVlLCJmdWxsX25hbWUiOiJSb21lbWEiLCJpYXQiOjE3Mzg5MTE0MjksImV4cCI6MTczODkyNTgyOX0.LdHh9Yr_8HLZKMsbbqihx43p1hUhf1cPSMFy2tXLd3o"    })
     @Multipart
     @POST("/api/upload/image")
     Call<UploadResponse> uploadImage(@Part MultipartBody.Part image);
 
-    @Headers({
-            "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzk1Mjk3ZDEyZGE1MmY5NmQ4Y2FkZDUiLCJ1c2VybmFtZSI6InRlaGlsbGEiLCJpc0FkbWluIjp0cnVlLCJmdWxsX25hbWUiOiJSb21lbWEiLCJpYXQiOjE3Mzg5MTE0MjksImV4cCI6MTczODkyNTgyOX0.LdHh9Yr_8HLZKMsbbqihx43p1hUhf1cPSMFy2tXLd3o"    })
     @Multipart
     @POST("/api/upload/trailer")
     Call<UploadResponse> uploadTrailer(@Part MultipartBody.Part trailer);
 
-    @Headers({
-            "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzk1Mjk3ZDEyZGE1MmY5NmQ4Y2FkZDUiLCJ1c2VybmFtZSI6InRlaGlsbGEiLCJpc0FkbWluIjp0cnVlLCJmdWxsX25hbWUiOiJSb21lbWEiLCJpYXQiOjE3Mzg5MTE0MjksImV4cCI6MTczODkyNTgyOX0.LdHh9Yr_8HLZKMsbbqihx43p1hUhf1cPSMFy2tXLd3o"
-    })
     @Multipart
     @POST("/api/upload/video")
     Call<UploadResponse> uploadVideo(@Part MultipartBody.Part video);
 }
-

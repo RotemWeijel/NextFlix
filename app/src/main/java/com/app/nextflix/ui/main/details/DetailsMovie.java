@@ -1,6 +1,7 @@
 package com.app.nextflix.ui.main.details;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -12,6 +13,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -20,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.app.nextflix.R;
 import com.app.nextflix.models.Movie;
 import com.app.nextflix.ui.admin.adapters.RecommendedMoviesAdapter;
+import com.app.nextflix.ui.admin.movies.MovieFormDialog;
 import com.app.nextflix.ui.common.MovieViewModel;
 import com.app.nextflix.ui.common.NavBarManager;
 import com.app.nextflix.ui.main.player.PlayerActivity;
@@ -38,6 +43,8 @@ public class DetailsMovie extends AppCompatActivity {
     private TextView castNames;
     private TextView directorName;
     private Button playButton;
+    private ImageButton editButton;
+    private Movie currentMovie;
     private ImageButton muteButton;
     private boolean isMuted = false;
     private ImageButton backButton;
@@ -54,7 +61,7 @@ public class DetailsMovie extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details_movie);
 
-         navBarManager= new NavBarManager(this);
+        navBarManager= new NavBarManager(this);
         navBarManager.setupNavBars();
 
         movieId = getIntent().getStringExtra("movie_id");
@@ -92,6 +99,36 @@ public class DetailsMovie extends AppCompatActivity {
         recyclerView.setAdapter(recommendedAdapter);
     }
 
+    private final ActivityResultLauncher<Intent> posterPickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    Uri uri = result.getData().getData();
+                    // Handle poster file selection
+                }
+            }
+    );
+
+    private final ActivityResultLauncher<Intent> trailerPickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    Uri uri = result.getData().getData();
+                    // Handle trailer file selection
+                }
+            }
+    );
+
+    private final ActivityResultLauncher<Intent> moviePickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    Uri uri = result.getData().getData();
+                    // Handle movie file selection
+                }
+            }
+    );
+
     private void setupObservers(){
         viewModel.getMovieData().observe(this, this::updateMovieData);
         viewModel.getError().observe(this, error ->
@@ -111,6 +148,7 @@ public class DetailsMovie extends AppCompatActivity {
             return;
         }
         try {
+            currentMovie = movie;
             // Update text fields
             movieTitle.setText(movie.getName());
             releaseYear.setText(String.valueOf(movie.getReleaseYear()));
@@ -162,6 +200,7 @@ public class DetailsMovie extends AppCompatActivity {
                     Toast.makeText(this, "Video content not available", Toast.LENGTH_SHORT).show();
                 }
             }
+
         } catch (Exception e) {
             Log.e("DetailsMovie", "Error updating movie data", e);
             Toast.makeText(this, "Error loading movie content", Toast.LENGTH_SHORT).show();
@@ -181,6 +220,7 @@ public class DetailsMovie extends AppCompatActivity {
         backButton = findViewById(R.id.backButton);
         loadingView = findViewById(R.id.loadingView);
         muteButton=findViewById(R.id.muteButton);
+        editButton = findViewById(R.id.editButton);
     }
 
 
@@ -194,6 +234,18 @@ public class DetailsMovie extends AppCompatActivity {
             String name=movieTitle.getText().toString();
             intent.putExtra("name", name);
             startActivity(intent);
+        });
+        editButton.setOnClickListener(v -> {
+            if (currentMovie != null) {
+                MovieFormDialog dialog = new MovieFormDialog(
+                        this,
+                        currentMovie,
+                        posterPickerLauncher,
+                        trailerPickerLauncher,
+                        moviePickerLauncher
+                );
+                dialog.show();
+            }
         });
 
 

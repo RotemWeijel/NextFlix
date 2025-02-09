@@ -186,7 +186,7 @@ public class CategoryManagementActivity extends AppCompatActivity implements Cat
 
     private void setupViewModel() {
         CategoryDao categoryDao = AppDatabase.getInstance(this).categoryDao();
-        TokenManager tokenManager = new TokenManager();
+        TokenManager tokenManager = TokenManager.getInstance(this);
         CategoryRepository repository = new CategoryRepository(categoryDao, tokenManager);
         CategoryViewModelFactory factory = new CategoryViewModelFactory(repository);
         viewModel = new ViewModelProvider(this, factory).get(CategoryManagementViewModel.class);

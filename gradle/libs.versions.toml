@@ -14,7 +14,7 @@ retrofit = "2.9.0"
 navigation = "2.7.6"
 exoplayer = "2.19.1"
 volley = "1.2.1"
-glide = "4.16.0"
+
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
