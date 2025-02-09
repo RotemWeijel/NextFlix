@@ -32,6 +32,7 @@ import com.app.nextflix.utils.UrlUtils;
 
 
 public class DetailsMovie extends AppCompatActivity {
+    private static final String TAG = "DetailsMovie";
 
     private VideoView videoView;
     private TextView movieTitle;
@@ -105,17 +106,32 @@ public class DetailsMovie extends AppCompatActivity {
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                     Uri uri = result.getData().getData();
-                    // Handle poster file selection
+                    Log.d(TAG, "Poster picked: " + uri);
+                    MovieFormDialog dialog = MovieFormDialog.getCurrentDialog();
+                    if (dialog != null) {
+                        dialog.handleFileSelection(uri, "image/*", dialog::uploadPosterFile);
+                    } else {
+                        Log.e(TAG, "Dialog was null when trying to handle file selection");
+                    }
+                } else {
+                    Log.d(TAG, "No image selected or selection cancelled");
                 }
             }
     );
-
     private final ActivityResultLauncher<Intent> trailerPickerLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                     Uri uri = result.getData().getData();
-                    // Handle trailer file selection
+                    Log.d(TAG, "Trailer picked: " + uri);
+                    MovieFormDialog dialog = MovieFormDialog.getCurrentDialog();
+                    if (dialog != null) {
+                        dialog.handleFileSelection(uri, "video/*", dialog::uploadTrailerFile);
+                    } else {
+                        Log.e(TAG, "Dialog was null when trying to handle trailer selection");
+                    }
+                } else {
+                    Log.d(TAG, "No trailer selected or selection cancelled");
                 }
             }
     );
@@ -125,7 +141,15 @@ public class DetailsMovie extends AppCompatActivity {
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                     Uri uri = result.getData().getData();
-                    // Handle movie file selection
+                    Log.d(TAG, "Video picked: " + uri);
+                    MovieFormDialog dialog = MovieFormDialog.getCurrentDialog();
+                    if (dialog != null) {
+                        dialog.handleFileSelection(uri, "video/*", dialog::uploadVideoFile);
+                    } else {
+                        Log.e(TAG, "Dialog was null when trying to handle video selection");
+                    }
+                } else {
+                    Log.d(TAG, "No video selected or selection cancelled");
                 }
             }
     );
@@ -250,12 +274,11 @@ public class DetailsMovie extends AppCompatActivity {
                         trailerPickerLauncher,
                         moviePickerLauncher
                 );
-                // Add dialog dismiss listener to refresh
                 dialog.setOnMovieUpdatedListener(() -> {
-                    // Refresh movie data
                     viewModel.loadMovie(movieId);
                 });
-                dialog.show();
+                // Add tag when showing dialog
+                dialog.show("movieFormDialog");  // Make sure you're using a tag
             }
         });
 

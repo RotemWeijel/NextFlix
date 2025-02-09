@@ -59,9 +59,9 @@ public class MovieEntity {
         entity.setAgeAllow(movie.getAgeAllow());
         entity.setDirector(movie.getDirector());
         entity.setLanguage(movie.getLanguage());
-        entity.setImageUrl(movie.getImageUrl());
-        entity.setTrailerUrl(movie.getTrailerUrl());
-        entity.setVideoUrl(movie.getVideoUrl());
+        entity.setImageUrl(movie.getImageUrl() != null ? movie.getImageUrl().trim() : null);
+        entity.setTrailerUrl(movie.getTrailerUrl() != null ? movie.getTrailerUrl().trim() : null);
+        entity.setVideoUrl(movie.getVideoUrl() != null ? movie.getVideoUrl().trim() : null);
         return entity;
     }
 
@@ -84,9 +84,9 @@ public class MovieEntity {
         movie.setAgeAllow(this.ageAllow);
         movie.setDirector(this.director);
         movie.setLanguage(this.language);
-        movie.setImageUrl(this.imageUrl);
-        movie.setTrailerUrl(this.trailerUrl);
-        movie.setVideoUrl(this.videoUrl);
+        movie.setImageUrl(this.imageUrl != null ? this.imageUrl.trim() : null);
+        movie.setTrailerUrl(this.trailerUrl != null ? this.trailerUrl.trim() : null);
+        movie.setVideoUrl(this.videoUrl != null ? this.videoUrl.trim() : null);
         return movie;
     }
 

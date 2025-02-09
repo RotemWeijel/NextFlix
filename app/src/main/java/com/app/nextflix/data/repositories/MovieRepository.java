@@ -47,10 +47,14 @@ public class MovieRepository {
                 // First try local cache
                 MovieEntity cachedMovie = movieDao.getMovie(movieId);
                 if (cachedMovie != null) {
-                    new Handler(Looper.getMainLooper()).post(() -> {
-                        Log.d(TAG, "Returning cached movie: " + cachedMovie.getName());
-                        callback.onSuccess(cachedMovie.toMovie());
-                    });
+                    Movie movie = cachedMovie.toMovie();
+                    // Ensure URLs are valid before returning cached data
+                    if (movie.getImageUrl() != null || movie.getTrailerUrl() != null || movie.getVideoUrl() != null) {
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            Log.d(TAG, "Returning cached movie: " + movie.getName());
+                            callback.onSuccess(movie);
+                        });
+                    }
                 }
 
                 // Then get fresh data
@@ -59,9 +63,15 @@ public class MovieRepository {
                     public void onSuccess(Movie movie) {
                         new Thread(() -> {
                             try {
-                                movieDao.insert(MovieEntity.fromMovie(movie));
+                                // Update cache with fresh data
+                                MovieEntity updatedEntity = MovieEntity.fromMovie(movie);
+                                movieDao.insert(updatedEntity);
+
                                 new Handler(Looper.getMainLooper()).post(() -> {
-                                    Log.d(TAG, "Success getting movie: " + movie.getName());
+                                    Log.d(TAG, "Success getting fresh movie data: " + movie.getName());
+                                    Log.d(TAG, "Image URL: " + movie.getImageUrl());
+                                    Log.d(TAG, "Trailer URL: " + movie.getTrailerUrl());
+                                    Log.d(TAG, "Video URL: " + movie.getVideoUrl());
                                     callback.onSuccess(movie);
                                 });
                             } catch (Exception e) {
@@ -75,13 +85,13 @@ public class MovieRepository {
                     public void onError(String message) {
                         if (cachedMovie == null) {
                             Log.e(TAG, "Error getting movie: " + message);
-                            callback.onError(message);
+                            new Handler(Looper.getMainLooper()).post(() -> callback.onError(message));
                         }
                     }
                 });
             } catch (Exception e) {
                 Log.e(TAG, "Error in getMovie", e);
-                callback.onError("Error: " + e.getMessage());
+                new Handler(Looper.getMainLooper()).post(() -> callback.onError("Error: " + e.getMessage()));
             }
         }).start();
     }
