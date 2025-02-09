@@ -19,8 +19,11 @@ Docker will build and start the server.
 ---
 
 ## Viewing the Database   
+
 Once the server is running, open MongoDB Compass to view the database. Initially, it will be empty.
+
 ![alt text](<צילום מסך 2025-02-06 162821.png>)   
+
 ---
 
 ## Running the Web Client
@@ -210,25 +213,25 @@ The application's landing page will open.
 ---
 
 ## User Registration
-1. Click **Sign Up** on the landing page.
+1. Click **Get Startes** on the landing page.
 2. Fill in your details and choose an avatar.
 3. After submitting, a success screen will confirm registration.
-4. The main screen will now appear, but it will be empty until movies are added.
+4. The main screen will now appear.
 
 To add movies, the user must be granted admin privileges.
 
 ---
 
 ## Granting Admin Privileges
-1. Click on the avatar icon and select **Logout**.
+1. Click on the avatar icon and select **Sign Out**.
 2. Open MongoDB Compass and find the newly created user.
 3. Modify the `isAdmin` field to `true`.
-4. Log back into the application. The **Admin** button will now be visible in the top menu.
+4. Log back into the application.
 
 ---
 
 ## Managing Categories
-1. Click the **Admin** button.
+1. Click the **Admin** button in the buttom.
 2. In the **Category Management** screen, click **Add New Category**.
 3. Enter category details and click **Create Category**.
 4. Verify that the category has been successfully added.
