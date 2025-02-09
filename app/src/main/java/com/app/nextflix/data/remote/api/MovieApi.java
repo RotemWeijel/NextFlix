@@ -2,6 +2,7 @@ package com.app.nextflix.data.remote.api;
 
 import android.content.Context;
 import android.os.Build;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -140,6 +141,38 @@ public class MovieApi {
 
     public WebServiceApi getWebServiceApi() {
         return api;
+    }
+
+    public interface SearchMoviesCallback {
+        void onSuccess(List<Movie> movies);
+        void onError(String message);
+    }
+
+    // Add this method to your MovieApi class
+    public void searchMovies(String query, MovieRepository.SearchMoviesCallback callback) {
+        if (query == null || query.trim().isEmpty()) {
+            callback.onError("Search query cannot be empty");
+            return;
+        }
+
+        api.searchMovies(query).enqueue(new Callback<List<Movie>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<Movie>> call, @NonNull Response<List<Movie>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG, "Search successful, found " + response.body().size() + " movies");
+                    callback.onSuccess(response.body());
+                } else {
+                    Log.e(TAG, "Search failed with code: " + response.code());
+                    callback.onError("Search failed: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<Movie>> call, @NonNull Throwable t) {
+                Log.e(TAG, "Search network error", t);
+                callback.onError("Network error: " + t.getMessage());
+            }
+        });
     }
 
 
