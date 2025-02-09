@@ -28,6 +28,10 @@ public class Movie {
     public static class Actor {
         private String name;
 
+        public Actor(String name) {
+            this.name = name;
+        }
+
         public String getName() {
             return name;
         }
@@ -58,9 +62,27 @@ public class Movie {
         }
     }
 
+
     // Constructors
     public Movie() {
         this.addedAt = new Date(); // Initialize with current date
+    }
+
+    public Movie(String id, String name, String description, int duration, int releaseYear, List<Actor> actors, List<String> categories, int ageAllow, String director, String language, String imageUrl, String trailerUrl, String videoUrl) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.duration = duration;
+        this.releaseYear = releaseYear;
+        this.addedAt = new Date();
+        this.actors = actors;
+        this.categories = categories;
+        this.ageAllow = ageAllow;
+        this.director = director;
+        this.language = language;
+        this.imageUrl = imageUrl;
+        this.trailerUrl = trailerUrl;
+        this.videoUrl = videoUrl;
     }
 
     // Getters and Setters

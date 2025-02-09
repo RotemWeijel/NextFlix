@@ -54,8 +54,12 @@ dependencies {
 
     // Room
     implementation(libs.room.runtime)
-    implementation(libs.volley)
+    implementation("com.android.volley:volley:1.2.1")
     annotationProcessor(libs.room.compiler)
+
+    // Glide
+    implementation(libs.glide)
+    annotationProcessor(libs.glide.compiler)
 
     // Retrofit
     implementation(libs.retrofit)
