@@ -15,6 +15,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 
@@ -32,7 +33,7 @@ public interface WebServiceApi {
     Call<Movie> createMovie(@Body Movie movie);
 
     @Headers("Content-Type: application/json")
-    @PATCH("/api/movies/{id}")
+    @PUT("/api/movies/{id}")
     Call<Void> updateMovie(@Path("id") String movieId, @Body Movie movie);
 
     @DELETE("/api/movies/{id}")

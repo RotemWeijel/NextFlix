@@ -119,8 +119,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/actors"
-                android:textStyle="bold"/>
-
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"/>
             <LinearLayout
                 android:id="@+id/actorsContainer"
                 android:layout_width="match_parent"
@@ -146,7 +148,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/categories"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"/>
 
             <LinearLayout
                 android:id="@+id/categoriesContainer"
@@ -167,6 +172,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/uploads"
                 android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"/>
 
             <Button

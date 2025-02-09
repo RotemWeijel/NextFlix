@@ -244,6 +244,11 @@ public class DetailsMovie extends AppCompatActivity {
                         trailerPickerLauncher,
                         moviePickerLauncher
                 );
+                // Add dialog dismiss listener to refresh
+                dialog.setOnMovieUpdatedListener(() -> {
+                    // Refresh movie data
+                    viewModel.loadMovie(movieId);
+                });
                 dialog.show();
             }
         });
