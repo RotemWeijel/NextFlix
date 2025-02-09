@@ -265,8 +265,7 @@ public class NavBarManager {
         activity.finish();
     }
 
-    public void setCurrentUser(User user) {
-        this.currentUser = user;
-        setupProfileButton();
+    public User getCurrentUser() {
+        return this.currentUser;
     }
 }

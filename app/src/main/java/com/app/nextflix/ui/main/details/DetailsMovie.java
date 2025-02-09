@@ -64,6 +64,7 @@ public class DetailsMovie extends AppCompatActivity {
         navBarManager= new NavBarManager(this);
         navBarManager.setupNavBars();
 
+
         movieId = getIntent().getStringExtra("movie_id");
         if (movieId == null) {
             Toast.makeText(this, "Error: Movie ID not found", Toast.LENGTH_SHORT).show();
@@ -221,6 +222,11 @@ public class DetailsMovie extends AppCompatActivity {
         loadingView = findViewById(R.id.loadingView);
         muteButton=findViewById(R.id.muteButton);
         editButton = findViewById(R.id.editButton);
+
+        if (editButton != null) {
+            editButton.setVisibility(navBarManager.getCurrentUser().isAdmin() ?
+                    View.VISIBLE : View.GONE);
+        }
     }
 
 
