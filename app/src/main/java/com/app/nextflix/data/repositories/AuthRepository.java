@@ -100,7 +100,7 @@ public class AuthRepository {
                 if (!response.isSuccessful()) {
                     String errorBody = response.errorBody() != null ? response.errorBody().string() : "No error body";
                     Log.e(TAG, "Registration failed with code: " + response.code() + ", error: " + errorBody);
-                    throw new Exception("Registration failed with code: " + response.code());
+                    throw new Exception("Username: " + username + " is already taken");
                 }
 
                 // Create user object since registration was successful
