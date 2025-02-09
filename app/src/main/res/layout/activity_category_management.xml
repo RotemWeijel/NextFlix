@@ -92,6 +92,6 @@
         android:background="@color/black"
         app:itemIconTint="@color/white"
         app:itemTextColor="@color/white"
-        app:menu="@layout/bottom_nav_menu"/>
+        app:menu="@menu/bottom_nav_menu"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

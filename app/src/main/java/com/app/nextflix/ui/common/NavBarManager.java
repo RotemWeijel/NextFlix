@@ -147,12 +147,12 @@ public class NavBarManager {
                 R.drawable.ic_light_mode : R.drawable.ic_dark_mode);
     }
 
-//    private void setupBottomNav() {
-//        BottomNavigationView bottomNav = activity.findViewById(R.id.bottomNav);
-//        if (bottomNav != null) {
-//            bottomNav.setOnItemSelectedListener(item -> true);
-//        }
-//    }
+    private void setupBottomNav() {
+        BottomNavigationView bottomNav = activity.findViewById(R.id.bottomNav);
+        if (bottomNav != null) {
+            bottomNav.setOnItemSelectedListener(item -> true);
+        }
+    }
 
     private void setupProfileButton() {
         profileButton = activity.findViewById(R.id.profileButton);
