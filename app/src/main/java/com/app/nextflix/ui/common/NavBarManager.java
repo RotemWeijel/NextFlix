@@ -19,6 +19,7 @@ import android.graphics.Color;
 import android.animation.ArgbEvaluator;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
+import com.app.nextflix.data.repositories.UserRepository;
 import com.app.nextflix.utils.ImageUtils;
 import com.app.nextflix.utils.UrlUtils;
 import com.google.android.material.appbar.AppBarLayout;
@@ -49,6 +50,8 @@ public class NavBarManager {
         this.settings = activity.getSharedPreferences(PREFS_NAME, 0);
         this.isDarkMode = settings.getBoolean(KEY_IS_DARK_MODE, true);
         this.tokenManager = TokenManager.getInstance(activity);
+        UserRepository userRepository = UserRepository.getInstance(activity);
+        this.currentUser = userRepository.getCurrentUser();
         initializeTheme();
     }
 
@@ -87,7 +90,9 @@ public class NavBarManager {
     public void setupNavBars() {
         setupThemeToggle();
         setupBottomNav();
-        setupProfileButton();
+        if (currentUser != null) {
+            setupProfileButton();
+        }
     }
 
     private void setupThemeToggle() {

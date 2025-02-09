@@ -29,7 +29,6 @@ import com.app.nextflix.utils.UrlUtils;
 public class DetailsMovie extends AppCompatActivity {
 
     private VideoView videoView;
-
     private TextView movieTitle;
     private TextView releaseYear;
     private TextView ageRating;
@@ -48,13 +47,14 @@ public class DetailsMovie extends AppCompatActivity {
     private MediaPlayer mediaPlayer;
     private String movieId;
     private int currentVideoResId;
- private NavBarManager navBarManager;
+    private NavBarManager navBarManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details_movie);
 
-         navBarManager= new NavBarManager(this);
+        navBarManager= new NavBarManager(this);
         navBarManager.setupNavBars();
 
         movieId = getIntent().getStringExtra("movie_id");

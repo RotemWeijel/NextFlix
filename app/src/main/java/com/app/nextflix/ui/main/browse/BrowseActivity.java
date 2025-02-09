@@ -54,19 +54,12 @@ public class BrowseActivity extends AppCompatActivity implements RecommendedMovi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse);
 
-        userRepository = UserRepository.getInstance(this);
-        User currentUser = userRepository.getCurrentUser();
-        Log.d("BrowseActivity", "Current user from repository: " +
-                (currentUser != null ? "Username: " + currentUser.getUsername() +
-                        ", Picture: " + currentUser.getPicture() : "null"));
-
         AppBarLayout appBarLayout = findViewById(R.id.appBarLayout);
         appBarLayout.setBackgroundColor(Color.BLACK);
 
         // Setup NavBarManager with current user
         navBarManager = new NavBarManager(this);
         navBarManager.setupNavBars();
-        navBarManager.setCurrentUser(currentUser);
 
         initViews();
         setupViewModel();
