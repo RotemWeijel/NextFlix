@@ -31,3 +31,4 @@ public class TokenManager {
         sharedPreferences.edit().remove(TOKEN_KEY).apply();
     }
 }
+

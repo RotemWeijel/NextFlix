@@ -22,6 +22,7 @@ import retrofit2.Response;
 
 public class MovieApi {
     private final WebServiceApi api;
+    private static MovieApi instance;
     private static final String TAG = "MovieApi";
 
     public interface MoviesCallback {
@@ -129,6 +130,16 @@ public class MovieApi {
                 callback.onError("Error: " + e.getMessage());
             }
         }).start();
+    }
+    public static synchronized MovieApi getInstance(Context context) {
+        if (instance == null) {
+            instance = new MovieApi(context);
+        }
+        return instance;
+    }
+
+    public WebServiceApi getWebServiceApi() {
+        return api;
     }
 
 

@@ -1,42 +1,18 @@
-package com.app.nextflix.data.local.entity;
+package com.app.nextflix.models;
 
-import androidx.annotation.NonNull;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-import androidx.room.ForeignKey;
-import androidx.room.ColumnInfo;
+import com.app.nextflix.data.local.entity.CategoryEntity;
+import com.google.gson.annotations.SerializedName;
 
-@Entity(tableName = "categories",
-        foreignKeys = @ForeignKey(
-                entity = CategoryEntity.class,
-                parentColumns = "id",
-                childColumns = "parentCategoryId",
-                onDelete = ForeignKey.SET_NULL
-        ))
-public class CategoryEntity {
-    @PrimaryKey
-    @NonNull
+public class CategoryResponse {
+    @SerializedName("_id")
     private String id;
 
-    @ColumnInfo(name = "name")
     private String name;
-
-    @ColumnInfo(name = "description")
     private String description;
-
-    @ColumnInfo(name = "promoted")
     private boolean promoted;
-
-    @ColumnInfo(name = "sortOrder")
     private int sortOrder;
-
-    @ColumnInfo(name = "parentCategoryId")
     private String parentCategoryId;
-
-    @ColumnInfo(name = "displayInMenu")
     private boolean displayInMenu;
-
-    @ColumnInfo(name = "movieCount")
     private int movieCount;
 
     // Getters and Setters
@@ -88,7 +64,6 @@ public class CategoryEntity {
         this.parentCategoryId = parentCategoryId;
     }
 
-
     public boolean isDisplayInMenu() {
         return displayInMenu;
     }
@@ -103,5 +78,18 @@ public class CategoryEntity {
 
     public void setMovieCount(int movieCount) {
         this.movieCount = movieCount;
+    }
+
+    public CategoryEntity toCategoryEntity() {
+        CategoryEntity entity = new CategoryEntity();
+        entity.setId(this.id);
+        entity.setName(this.name);
+        entity.setDescription(this.description);
+        entity.setPromoted(this.promoted);
+        entity.setSortOrder(this.sortOrder);
+        entity.setParentCategoryId(this.parentCategoryId);
+        entity.setDisplayInMenu(this.displayInMenu);
+        entity.setMovieCount(this.movieCount);
+        return entity;
     }
 }
