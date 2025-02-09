@@ -101,13 +101,296 @@ This project implements a fully-functional streaming platform simulation with:
 - Code review process
 - Proper error handling
 
-### Setup & Installation
+### Project Structure
 
-The setup instructions have been moved to the project wiki for detailed steps on:
-- Environment setup
-- Building the project
-- Running the applications
-- Testing procedures
+```
+Ex4/
+├── server/          # Backend server files
+├── web-client/      # React web application
+├── android-client/  # Android application
+└── wiki/            # Project documentation
+```
+   
+```
+server/
+├── .env
+├── CMakeLists.txt
+├── Dockerfile
+├── docker-compose.yml
+├── run.sh
+├── .vscode/
+│   └── settings.json
+├── src/
+│   ├── recommend-client/
+│   │   └── client.py
+│   ├── recommend-server/
+│   │   ├── IO_handling/
+│   │   │   ├── ConsoleInput.cpp
+│   │   │   ├── ConsoleInput.h
+│   │   │   ├── ConsoleOutput.cpp
+│   │   │   ├── ConsoleOutput.h
+│   │   │   ├── IInputHandler.h
+│   │   │   ├── IOutputHandler.h
+│   │   │   ├── SocketInput.cpp
+│   │   │   ├── SocketInput.h
+│   │   │   ├── SocketOutput.cpp
+│   │   │   └── SocketOutput.h
+│   │   ├── commands/
+│   │   │   ├── DeleteCommand.cpp
+│   │   │   ├── DeleteCommand.h
+│   │   │   ├── GetCommand.cpp
+│   │   │   ├── GetCommand.h
+│   │   │   ├── HelpCommand.cpp
+│   │   │   ├── HelpCommand.h
+│   │   │   ├── ICommand.h
+│   │   │   ├── PatchCommand.cpp
+│   │   │   ├── PatchCommand.h
+│   │   │   ├── PostCommand.cpp
+│   │   │   └── PostCommand.h
+│   │   ├── data_handling/
+│   │   │   ├── FileDataExporter.cpp
+│   │   │   ├── FileDataExporter.h
+│   │   │   ├── FileDataLoader.cpp
+│   │   │   ├── FileDataLoader.h
+│   │   │   ├── IDataExporter.h
+│   │   │   └── IDataLoader.h
+│   │   ├── main_body/
+│   │   │   ├── Application.cpp
+│   │   │   ├── Application.h
+│   │   │   ├── ClientHandler.cpp
+│   │   │   ├── ClientHandler.h
+│   │   │   ├── MovieDatabase.cpp
+│   │   │   ├── MovieDatabase.h
+│   │   │   └── Server.cpp
+│   │   └── thread_handling/
+│   │       ├── DetachedThreadHandler.cpp
+│   │       ├── DetachedThreadHandler.h
+│   │       ├── IThreadHandler.h
+│   │       ├── ThreadPool.cpp
+│   │       └── ThreadPool.h
+│   └── web-server/
+│       ├── app.js
+│       ├── .gitignore
+│       ├── package.json
+│       ├── server.js
+│       ├── controllers/
+│       │   ├── categories.js
+│       │   ├── movies.js
+│       │   ├── tokens.js
+│       │   └── users.js
+│       ├── middleware/
+│       │   ├── authMiddleware.js
+│       │   └── errorHandler.js
+│       ├── models/
+│       │   ├── categories.js
+│       │   ├── idMapping.js
+│       │   ├── movies.js
+│       │   ├── token.js
+│       │   └── user.js
+│       ├── routes/
+│       │   ├── categories.js
+│       │   ├── movies.js
+│       │   ├── tokens.js
+│       │   └── users.js
+│       └── services/
+│           ├── categories.js
+│           ├── idMapping.js
+│           ├── movies.js
+│           ├── password.js
+│           ├── recommend.js
+│           ├── token.js
+│           └── user.js
+```
+   
+```
+web-client/
+├── public/
+│   ├── images/
+│   ├── NextFlix_icon.png
+│   ├── NextFlix_logo.png
+│   ├── favicon.ico
+│   ├── index.html
+│   ├── logo192.png
+│   ├── logo512.png
+│   ├── manifest.json
+│   ├── netflix-logo.png
+│   ├── netflix.png
+│   ├── profile.png
+│   └── robots.txt
+└── src/
+    ├── components/
+    │   ├── admin/
+    │   │   ├── categories/
+    │   │   │   ├── CategoryForm.css
+    │   │   │   ├── CategoryForm.js
+    │   │   │   ├── CategoryList.css
+    │   │   │   └── CategoryList.js
+    │   │   └── movies/
+    │   │       ├── MovieForm.css
+    │   │       └── MovieForm.js
+    │   ├── common/
+    │   │   ├── Button/
+    │   │   │   ├── Button.js
+    │   │   │   └── Button.module.css
+    │   │   ├── Footer/
+    │   │   │   ├── Footer.js
+    │   │   │   └── Footer.module.css
+    │   │   ├── Input/
+    │   │   │   ├── Input.js
+    │   │   │   └── Input.module.css
+    │   │   ├── LoadingSpinner/
+    │   │   │   ├── LoadingSpinner.js
+    │   │   │   └── LoadingSpinner.module.css
+    │   │   ├── MovieCard/
+    │   │   │   ├── MovieCard.css
+    │   │   │   └── MovieCard.js
+    │   │   ├── MovieList/
+    │   │   │   ├── MovieList.css
+    │   │   │   └── MovieList.js
+    │   │   ├── Navbar/
+    │   │   │   ├── Navbar.js
+    │   │   │   └── Navbar.module.css
+    │   │   └── player/
+    │   │       ├── VideoPlayer.css
+    │   │       └── VideoPlayer.js
+    │   └── features/
+    │       ├── DetailsMovie/
+    │       │   ├── DetailsMovie.css
+    │       │   └── DetailsMovie.js
+    │       ├── FooterDetailsMovie/
+    │       │   ├── MovieFooter.css
+    │       │   └── MovieFooter.js
+    │       ├── MoviesByCategory/
+    │       │   ├── MoviesPage.css
+    │       │   └── MoviesPage.js
+    │       ├── RecommendSeries/
+    │       │   ├── MovieWrap.css
+    │       │   ├── MovieWrap.js
+    │       │   ├── RecommendSeries.css
+    │       │   └── RecommendSeries.js
+    │       ├── VideoPlayerDetails/
+    │       │   ├── VideoPlayerDetails.css
+    │       │   └── VideoPlayerDetails.js
+    │       ├── VideoPlayerHome/
+    │       │   ├── PlayerHome.css
+    │       │   └── PlayerHome.js
+    │       └── searchBar/
+    │           └── SearchResults.js
+    ├── contexts/
+    │   └── AuthContext.js
+    ├── hooks/
+    │   ├── useAuthFetch.js
+    │   └── useTheme.js
+    ├── routing/
+    │   └── ProtectedRoutes.js
+    ├── screens/
+    │   ├── admin/
+    │   │   ├── CategoryManagement.css
+    │   │   ├── CategoryManagement.js
+    │   │   ├── MovieManagement.css
+    │   │   └── MovieManagement.js
+    │   ├── auth/
+    │   │   ├── Landing/
+    │   │   │   ├── Landing.js
+    │   │   │   └── Landing.module.css
+    │   │   ├── Login/
+    │   │   │   ├── Login.js
+    │   │   │   └── Login.module.css
+    │   │   └── Register/
+    │   │       ├── AvatarSelector.js
+    │   │       ├── AvatarSelector.module.css
+    │   │       ├── CharacterDisplay.js
+    │   │       ├── CharacterDisplay.module.css
+    │   │       ├── Register.js
+    │   │       ├── Register.module.css
+    │   │       ├── RegistrationSuccess.js
+    │   │       └── RegistrationSuccess.module.css
+    │   └── main/
+    │       ├── BrowseScreen.css
+    │       ├── BrowseScreen.js
+    │       ├── MovieDetailsScreen.js
+    │       ├── PlayerScreen.css
+    │       └── PlayerScreen.js
+    ├── styles/theme/
+    │   ├── colors.js
+    │   └── theme.js
+    ├── utils/
+    │   └── auth.js
+    ├── App.css
+    ├── App.js
+    ├── App.test.js
+    ├── TestComponents.js
+    ├── index.css
+    ├── index.js
+    ├── reportWebVitals.js
+    └── setupTests.js
+```
+   
+```
+android-client/
+```
+
+---   
+
+### Running the Project
+
+Follow these steps to run each component of the project. Make sure to start the server first, then run the clients.
+
+#### 1. Running the Server
+
+1. Open a terminal in the `server` directory:
+   ```bash
+   cd server
+   ```
+
+2. Run the server using Docker Compose:
+   ```powershell
+   # On Windows PowerShell
+   $env:WEB_PORT="4000"; $env:RECOMMEND_PORT="7000"; docker-compose up --build
+   ```
+   ```bash
+   # On Linux/Mac
+   export WEB_PORT=4000 export RECOMMEND_PORT=7000 docker-compose up --build
+   ```
+
+The server will start on:
+- Web server: http://localhost:4000
+- Recommendation server: http://localhost:7000
+
+#### 2. Running the Web Client
+
+1. Open a new terminal in the `web-client` directory:
+   ```bash
+   cd web-client
+   ```
+
+2. Install dependencies (first time only):
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm start
+   ```
+
+The web client will automatically open in your default browser at http://localhost:3000
+
+#### 3. Running the Android Client
+
+1. Open Android Studio
+2. Select "Open an existing Android Studio project"
+3. Navigate to and select the `android-client` folder
+4. Wait for Gradle sync to complete
+5. Run the application by clicking the "Run" button (green play icon) or pressing Shift + F10
+6. Select a deployment target:
+   - Choose an existing Android Virtual Device (AVD)
+   - Or connect a physical Android device with USB debugging enabled
+
+### Running Order
+1. Always start the server first
+2. Then run either or both clients
+3. Ensure the server is accessible from your Android emulator/device
 
 ### Contributing
 
