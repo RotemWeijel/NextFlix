@@ -173,5 +173,13 @@ public class BrowseActivity extends AppCompatActivity implements RecommendedMovi
             requestQueue.cancelAll(this);
         }
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh categorized movies and hero movie
+        if (viewModel != null) {
+            viewModel.init(this);
+        }
+    }
 }
 

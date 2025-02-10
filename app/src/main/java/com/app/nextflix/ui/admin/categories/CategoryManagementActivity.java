@@ -211,7 +211,7 @@ public class CategoryManagementActivity extends AppCompatActivity implements Cat
                     );
                     // Store the reference
                     this.movieFormDialog = dialog;
-                    dialog.show();
+                    dialog.show("categotyManagement");
                 });
             }
         }

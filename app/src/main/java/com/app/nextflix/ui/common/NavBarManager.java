@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -23,10 +25,16 @@ import android.animation.ArgbEvaluator;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.app.nextflix.data.repositories.UserRepository;
+
+import com.app.nextflix.ui.admin.categories.CategoryManagementActivity;
+import com.app.nextflix.ui.main.browse.BrowseActivity;
 import com.app.nextflix.ui.main.search.SearchResultsActivity;
+
 import com.app.nextflix.utils.ImageUtils;
 import com.app.nextflix.utils.UrlUtils;
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.view.ViewGroup;
 
@@ -178,10 +186,46 @@ public class NavBarManager {
 
     private void setupBottomNav() {
         BottomNavigationView bottomNav = activity.findViewById(R.id.bottomNav);
-        if (bottomNav != null) {
-            bottomNav.setOnItemSelectedListener(item -> true);
+        Menu menu = bottomNav.getMenu();
+
+        // Clear existing menu items
+        menu.clear();
+
+        // Add home menu item
+        MenuItem homeItem = menu.add(Menu.NONE, R.id.navigation_home, Menu.NONE, R.string.home);
+        homeItem.setIcon(R.drawable.ic_home);
+
+        // Check if user has admin privileges
+        if (currentUser.isAdmin()) {
+            MenuItem adminItem = menu.add(Menu.NONE, R.id.navigation_my_nextflix, Menu.NONE, R.string.admin);
+            adminItem.setIcon(R.drawable.ic_person);
         }
+
+        // Centering the single item when not admin
+        if (!currentUser.isAdmin()) {
+            CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(
+                    CoordinatorLayout.LayoutParams.WRAP_CONTENT,
+                    CoordinatorLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
+            bottomNav.setLayoutParams(params);
+        }
+
+        bottomNav.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_home) {
+                Intent homeIntent = new Intent(activity, BrowseActivity.class);
+                activity.startActivity(homeIntent);
+                return true;
+            } else if (itemId == R.id.navigation_my_nextflix) {
+                Intent adminIntent = new Intent(activity, CategoryManagementActivity.class);
+                activity.startActivity(adminIntent);
+                return true;
+            }
+            return false;
+        });
     }
+    
 
     private void setupProfileButton() {
         profileButton = activity.findViewById(R.id.profileButton);
@@ -276,9 +320,8 @@ public class NavBarManager {
         activity.finish();
     }
 
-    public void setCurrentUser(User user) {
-        this.currentUser = user;
-        setupProfileButton();
+    public User getCurrentUser() {
+        return this.currentUser;
     }
 
     private void setupSearchButton() {

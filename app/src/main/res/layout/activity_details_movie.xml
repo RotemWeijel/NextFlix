@@ -54,26 +54,31 @@
                     android:src="@drawable/ic_arrow_back"
                     android:contentDescription="Back" />
 
-                <ImageButton
-                    android:id="@+id/editButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_margin="16dp"
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="end|top"
-                    android:layout_marginEnd="72dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_edit"
-                    android:contentDescription="@string/edit_movie" />
+                    android:layout_margin="16dp"
+                    android:orientation="horizontal">
 
-                <ImageButton
-                    android:id="@+id/muteButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_gravity="end|top"
-                    android:layout_margin="16dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_volume_off"
-                    android:contentDescription="Mute" />
+                    <ImageButton
+                        android:id="@+id/editButton"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_edit"
+                        android:contentDescription="Edit Movie" />
+
+                    <ImageButton
+                        android:id="@+id/muteButton"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="8dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_volume_off"
+                        android:contentDescription="Mute" />
+
+                </LinearLayout>
 
             </FrameLayout>
 

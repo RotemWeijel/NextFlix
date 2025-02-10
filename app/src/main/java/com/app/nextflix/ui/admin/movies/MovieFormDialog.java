@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -79,7 +80,8 @@ public class MovieFormDialog {
     private static final int MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB limit
 
     private Context context;
-    private MaterialAlertDialogBuilder builder;
+    private static MovieFormDialog currentDialog;
+    private final AlertDialog.Builder builder;
     private View dialogView;
     private AlertDialog dialog;
     private String initialCategoryId;
@@ -138,16 +140,18 @@ public class MovieFormDialog {
         this.categoryRepository = new CategoryRepository(categoryDao, null);
 
         this.dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_movie_form, null);
-        this.builder = new MaterialAlertDialogBuilder(context)
-                .setTitle(R.string.add_new_movie)
+        this.builder = new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.AlertDialogCustom))
+                .setTitle(isEditMode ? R.string.edit_movie : R.string.add_new_movie)
                 .setView(dialogView)
                 .setPositiveButton(R.string.save, null)
                 .setNegativeButton(R.string.cancel, null);
+
 
         initializeViews();
         setupDefaultValues();
         setupListeners();
         loadAvailableCategories();
+        currentDialog = this;
     }
     // Constructor for edit mode
     public MovieFormDialog(Context context, Movie movie,
@@ -159,30 +163,35 @@ public class MovieFormDialog {
         this.trailerPickerLauncher = trailerPickerLauncher;
         this.moviePickerLauncher = moviePickerLauncher;
         this.movieToEdit = movie;
-        this.isEditMode = (movie != null);
+        this.isEditMode = true;
 
         CategoryDao categoryDao = AppDatabase.getInstance(context).categoryDao();
         this.categoryRepository = new CategoryRepository(categoryDao, null);
 
-        this.dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_movie_form, null);
-        this.builder = new MaterialAlertDialogBuilder(context)
-                .setTitle(isEditMode ? R.string.edit_movie : R.string.add_new_movie)
+        // Ensure we're using LayoutInflater with the correct context
+        Context dialogContext = new ContextThemeWrapper(context, com.google.android.material.R.style.Theme_MaterialComponents_Light_Dialog_Alert);
+        this.dialogView = LayoutInflater.from(dialogContext).inflate(R.layout.dialog_movie_form, null);
+
+        this.builder = new MaterialAlertDialogBuilder(dialogContext)
+                .setTitle(R.string.edit_movie)
                 .setView(dialogView)
                 .setPositiveButton(R.string.save, null)
-                .setNegativeButton(R.string.cancel, null);
-
-        if (isEditMode) {
-            this.builder.setNeutralButton(R.string.delete, null);
-        }
+                .setNegativeButton(R.string.cancel, null)
+                .setNeutralButton(R.string.delete, null);
 
         initializeViews();
         setupDefaultValues();
         setupListeners();
         loadAvailableCategories();
+        currentDialog = this;
 
-        if (isEditMode && movieToEdit != null) {
+
+        if (movieToEdit != null) {
             populateFieldsForEdit();
         }
+    }
+    public static MovieFormDialog getCurrentDialog() {
+        return currentDialog;
     }
     private void initializeViews() {
         nameInput = dialogView.findViewById(R.id.movieNameInput);
@@ -203,6 +212,15 @@ public class MovieFormDialog {
         categoriesContainer = dialogView.findViewById(R.id.categoriesContainer);
     }
     private void populateFieldsForEdit() {
+        if (movieToEdit == null) {
+            Log.e(TAG, "movieToEdit is null in populateFieldsForEdit");
+            return;
+        }
+
+        Log.d(TAG, "Populating edit fields for movie: " + movieToEdit.getName());
+        Log.d(TAG, "Image URL: " + movieToEdit.getImageUrl());
+        Log.d(TAG, "Trailer URL: " + movieToEdit.getTrailerUrl());
+        Log.d(TAG, "Video URL: " + movieToEdit.getVideoUrl());
         nameInput.setText(movieToEdit.getName());
         descriptionInput.setText(movieToEdit.getDescription());
         durationInput.setText(String.valueOf(movieToEdit.getDuration()));
@@ -211,7 +229,7 @@ public class MovieFormDialog {
         directorInput.setText(movieToEdit.getDirector());
         languageInput.setText(movieToEdit.getLanguage());
 
-        // Set existing URLs
+        // Update the internal URL states
         imageUrl = movieToEdit.getImageUrl();
         trailerUrl = movieToEdit.getTrailerUrl();
         videoUrl = movieToEdit.getVideoUrl();
@@ -222,32 +240,62 @@ public class MovieFormDialog {
             posterPreview.setVisibility(View.VISIBLE);
             Glide.with(context)
                     .load(displayUrl)
+                    .placeholder(R.drawable.placeholder_image)
+                    .error(R.drawable.error_image)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model,
+                                                    Target<Drawable> target, boolean isFirstResource) {
+                            Log.e(TAG, "Failed to load image: " + displayUrl, e);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model,
+                                                       Target<Drawable> target, DataSource dataSource,
+                                                       boolean isFirstResource) {
+                            Log.d(TAG, "Successfully loaded image: " + displayUrl);
+                            return false;
+                        }
+                    })
                     .into(posterPreview);
         }
 
         if (trailerUrl != null && !trailerUrl.isEmpty()) {
-            trailerUrlText.setText("Trailer: " + trailerUrl);
+            String displayUrl = trailerUrl.replace("localhost", "10.0.2.2");
+            trailerUrlText.setText("Trailer: " + displayUrl);
             trailerUrlText.setVisibility(View.VISIBLE);
         }
 
         if (videoUrl != null && !videoUrl.isEmpty()) {
-            videoUrlText.setText("Video: " + videoUrl);
+            String displayUrl = videoUrl.replace("localhost", "10.0.2.2");
+            videoUrlText.setText("Video: " + displayUrl);
             videoUrlText.setVisibility(View.VISIBLE);
         }
 
         // Add existing actors
         actorsContainer.removeAllViews();
-        for (Movie.Actor actor : movieToEdit.getActors()) {
-            EditText actorInput = new EditText(context);
-            actorInput.setText(actor.getName());
-            actorsContainer.addView(actorInput);
-            actorEditTexts.add(actorInput);
+        actorEditTexts.clear();
+
+        if (movieToEdit.getActors() != null && !movieToEdit.getActors().isEmpty()) {
+            for (Movie.Actor actor : movieToEdit.getActors()) {
+                EditText actorInput = new EditText(context);
+                actorInput.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT));
+                actorInput.setText(actor.getName());
+                actorInput.setTextColor(ContextCompat.getColor(context, android.R.color.black));
+                actorInput.setHintTextColor(ContextCompat.getColor(context, android.R.color.darker_gray));
+                actorsContainer.addView(actorInput);
+                actorEditTexts.add(actorInput);
+            }
         }
 
         // Pre-select categories
-        selectedCategoryIds.addAll(movieToEdit.getCategories());
+        if (movieToEdit.getCategories() != null) {
+            selectedCategoryIds.addAll(movieToEdit.getCategories());
+        }
     }
-
 
     private void setupDefaultValues() {
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
@@ -264,8 +312,10 @@ public class MovieFormDialog {
     }
 
     private void handlePosterUpload() {
+        Log.d(TAG, "handlePosterUpload called");
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
+        Log.d(TAG, "Launching image picker");
         posterPickerLauncher.launch(intent);
     }
 
@@ -283,7 +333,14 @@ public class MovieFormDialog {
 
 
     public void handleFileSelection(Uri uri, String mimeType, FileUploadCallback callback) {
-        Log.d(TAG, "Starting file selection handling for: " + mimeType);
+        Log.d(TAG, "handleFileSelection - URI: " + uri + ", mimeType: " + mimeType);
+
+        if (uri == null) {
+            Log.e(TAG, "Received null URI in handleFileSelection");
+            Toast.makeText(context, R.string.error_processing_file, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         ProgressDialog progressDialog = new ProgressDialog(context);
         progressDialog.setMessage("Processing file...");
         progressDialog.setCancelable(false);
@@ -294,25 +351,25 @@ public class MovieFormDialog {
 
         executor.execute(() -> {
             try {
-                Log.d(TAG, "Opening input stream");
+                Log.d(TAG, "Opening input stream for URI: " + uri);
                 InputStream inputStream = context.getContentResolver().openInputStream(uri);
                 if (inputStream == null) {
-                    Log.e(TAG, "Failed to open input stream");
+                    Log.e(TAG, "Failed to open input stream for URI: " + uri);
                     mainHandler.post(() -> {
-                        Toast.makeText(context, R.string.error_opening_file, Toast.LENGTH_SHORT).show();
                         progressDialog.dismiss();
+                        Toast.makeText(context, R.string.error_opening_file, Toast.LENGTH_SHORT).show();
                     });
                     return;
                 }
 
-                Log.d(TAG, "Checking file size");
                 long fileSize = inputStream.available();
-                Log.d(TAG, "File size: " + fileSize);
+                Log.d(TAG, "File size: " + fileSize + " bytes");
+
                 if (fileSize > MAX_FILE_SIZE) {
-                    Log.e(TAG, "File too large: " + fileSize);
+                    Log.e(TAG, "File too large: " + fileSize + " bytes (max: " + MAX_FILE_SIZE + " bytes)");
                     mainHandler.post(() -> {
-                        Toast.makeText(context, R.string.error_file_too_large, Toast.LENGTH_SHORT).show();
                         progressDialog.dismiss();
+                        Toast.makeText(context, R.string.error_file_too_large, Toast.LENGTH_SHORT).show();
                     });
                     inputStream.close();
                     return;
@@ -321,34 +378,37 @@ public class MovieFormDialog {
                 Log.d(TAG, "Creating temp file");
                 File tempFile = createTempFile(uri);
                 FileOutputStream fos = new FileOutputStream(tempFile);
+
                 byte[] buffer = new byte[8192];
                 int length;
-                int totalRead = 0;
+                long totalWritten = 0;
                 while ((length = inputStream.read(buffer)) > 0) {
                     fos.write(buffer, 0, length);
-                    totalRead += length;
+                    totalWritten += length;
                 }
-                Log.d(TAG, "Total bytes written to temp file: " + totalRead);
+
+                Log.d(TAG, "Successfully wrote " + totalWritten + " bytes to temp file");
                 fos.close();
                 inputStream.close();
 
-                Log.d(TAG, "File processing complete, calling callback");
                 mainHandler.post(() -> {
                     progressDialog.dismiss();
+                    Log.d(TAG, "Calling callback with temp file: " + tempFile.getAbsolutePath());
                     callback.onFileReady(tempFile);
                 });
 
             } catch (Exception e) {
                 Log.e(TAG, "Error handling file selection", e);
                 mainHandler.post(() -> {
-                    Toast.makeText(context, R.string.error_processing_file, Toast.LENGTH_SHORT).show();
                     progressDialog.dismiss();
+                    Toast.makeText(context, R.string.error_processing_file, Toast.LENGTH_SHORT).show();
                 });
             } finally {
                 executor.shutdown();
             }
         });
     }
+
 
     private File createTempFile(Uri uri) throws Exception {
         String fileName = getFileName(uri);
@@ -373,70 +433,87 @@ public class MovieFormDialog {
     }
 
     public void uploadPosterFile(File file) {
-        Log.d(TAG, "Starting poster file upload");
+        Log.d(TAG, "Starting poster file upload: " + file.getAbsolutePath());
+
+        if (file == null || !file.exists()) {
+            Log.e(TAG, "Invalid file for upload: " + (file == null ? "null" : "doesn't exist"));
+            Toast.makeText(context, R.string.error_opening_file, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
         MultipartBody.Part filePart = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
 
+        Log.d(TAG, "Created MultipartBody.Part for upload");
+        Log.d(TAG, "File name: " + file.getName());
+        Log.d(TAG, "File size: " + file.length() + " bytes");
+
         WebServiceApi webServiceApi = RetrofitClient.getWebServiceApi();
-        Log.d(TAG, "Calling upload API");
         webServiceApi.uploadImage(filePart).enqueue(new Callback<UploadResponse>() {
             @Override
             public void onResponse(@NonNull Call<UploadResponse> call, @NonNull Response<UploadResponse> response) {
-                Log.d(TAG, "Got upload response. Success: " + response.isSuccessful());
+                Log.d(TAG, "Upload response received - successful: " + response.isSuccessful());
                 if (response.isSuccessful() && response.body() != null) {
                     imageUrl = response.body().getUrl();
+                    Log.d(TAG, "Upload successful, received URL: " + imageUrl);
+
                     String displayUrl = imageUrl.replace("localhost", "10.0.2.2");
-                    Log.d(TAG, "Upload successful. Display URL: " + displayUrl);
+                    Log.d(TAG, "Transformed URL for display: " + displayUrl);
 
-                    if (posterPreview != null) {
+                    new Handler(Looper.getMainLooper()).post(() -> {
                         posterPreview.setVisibility(View.VISIBLE);
-
                         Glide.with(context)
                                 .load(displayUrl)
-                                .placeholder(R.drawable.placeholder_image)
                                 .error(R.drawable.error_image)
                                 .listener(new RequestListener<Drawable>() {
                                     @Override
-                                    public boolean onLoadFailed(@Nullable GlideException e,
-                                                                Object model, Target<Drawable> target,
-                                                                boolean isFirstResource) {
-                                        Log.e(TAG, "Failed to load image", e);
+                                    public boolean onLoadFailed(@Nullable GlideException e, Object model,
+                                                                Target<Drawable> target, boolean isFirstResource) {
+                                        Log.e(TAG, "Failed to load uploaded image: " + displayUrl, e);
                                         return false;
                                     }
 
                                     @Override
-                                    public boolean onResourceReady(Drawable resource,
-                                                                   Object model, Target<Drawable> target,
-                                                                   DataSource dataSource, boolean isFirstResource) {
-                                        Log.d(TAG, "Image loaded successfully");
-                                        posterPreview.setVisibility(View.VISIBLE);
-                                        // Make sure the ImageView has the correct dimensions
-                                        posterPreview.setLayoutParams(new LinearLayout.LayoutParams(
-                                                LinearLayout.LayoutParams.MATCH_PARENT,
-                                                context.getResources().getDimensionPixelSize(R.dimen.poster_preview_height)
-                                        ));
+                                    public boolean onResourceReady(Drawable resource, Object model,
+                                                                   Target<Drawable> target, DataSource dataSource,
+                                                                   boolean isFirstResource) {
+                                        Log.d(TAG, "Successfully loaded uploaded image: " + displayUrl);
                                         return false;
                                     }
                                 })
                                 .into(posterPreview);
-                    } else {
-                        Log.e(TAG, "posterPreview ImageView is null!");
-                    }
+                        Toast.makeText(context, R.string.upload_success, Toast.LENGTH_SHORT).show();
+                    });
                 } else {
-                    Log.e(TAG, "Upload failed. Code: " + response.code());
-                    Toast.makeText(context, R.string.upload_failed, Toast.LENGTH_SHORT).show();
+                    try {
+                        String errorBody = response.errorBody() != null ? response.errorBody().string() : "No error body";
+                        Log.e(TAG, "Upload failed. Response code: " + response.code() + ", Error: " + errorBody);
+                    } catch (IOException e) {
+                        Log.e(TAG, "Error reading error body", e);
+                    }
+                    new Handler(Looper.getMainLooper()).post(() ->
+                            Toast.makeText(context, R.string.upload_failed, Toast.LENGTH_SHORT).show()
+                    );
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<UploadResponse> call, @NonNull Throwable t) {
-                Log.e(TAG, "Upload network failure", t);
-                Toast.makeText(context, R.string.network_error_upload, Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Upload network error", t);
+                new Handler(Looper.getMainLooper()).post(() ->
+                        Toast.makeText(context, R.string.network_error_upload, Toast.LENGTH_SHORT).show()
+                );
             }
         });
     }
 
+    // Similarly update the uploadTrailerFile method:
     public void uploadTrailerFile(File file) {
+        ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("Uploading trailer...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
         RequestBody requestFile = RequestBody.create(MediaType.parse("video/*"), file);
         MultipartBody.Part filePart = MultipartBody.Part.createFormData("trailer", file.getName(), requestFile);
 
@@ -444,22 +521,43 @@ public class MovieFormDialog {
         webServiceApi.uploadTrailer(filePart).enqueue(new Callback<UploadResponse>() {
             @Override
             public void onResponse(@NonNull Call<UploadResponse> call, @NonNull Response<UploadResponse> response) {
+                progressDialog.dismiss();
+
                 if (response.isSuccessful() && response.body() != null) {
+                    // Update the trailerUrl with the new URL
                     trailerUrl = response.body().getUrl();
-                    String displayUrl = trailerUrl.replace("localhost", "10.0.2.2");
-                    trailerUrlText.setText("Trailer: " + displayUrl);
-                    trailerUrlText.setVisibility(View.VISIBLE);
-                    Toast.makeText(context, R.string.upload_success, Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "New trailer URL: " + trailerUrl);
+
+                    // Update the UI
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        if (trailerUrlText != null) {
+                            String displayUrl = trailerUrl.replace("localhost", "10.0.2.2");
+                            trailerUrlText.setText("Trailer: " + displayUrl);
+                            trailerUrlText.setVisibility(View.VISIBLE);
+                        }
+                        Toast.makeText(context, R.string.upload_success, Toast.LENGTH_SHORT).show();
+                    });
                 } else {
-                    Toast.makeText(context, R.string.upload_failed, Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Upload failed with code: " + response.code());
+                    // If upload fails, retain the existing URL if in edit mode
+                    if (isEditMode && movieToEdit != null) {
+                        trailerUrl = movieToEdit.getTrailerUrl();
+                    }
+                    new Handler(Looper.getMainLooper()).post(() ->
+                            Toast.makeText(context, R.string.upload_failed, Toast.LENGTH_SHORT).show()
+                    );
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<UploadResponse> call, @NonNull Throwable t) {
-                Toast.makeText(context, R.string.network_error_upload, Toast.LENGTH_SHORT).show();
-                Log.e(TAG, "Upload failure: " + t.getMessage(), t);
+                progressDialog.dismiss();
+                // If upload fails, retain the existing URL if in edit mode
+                if (isEditMode && movieToEdit != null) {
+                    trailerUrl = movieToEdit.getTrailerUrl();
+                }
+                new Handler(Looper.getMainLooper()).post(() ->
+                        Toast.makeText(context, R.string.network_error_upload, Toast.LENGTH_SHORT).show()
+                );
             }
         });
     }
@@ -475,19 +573,22 @@ public class MovieFormDialog {
                 if (response.isSuccessful() && response.body() != null) {
                     videoUrl = response.body().getUrl();
                     String displayUrl = videoUrl.replace("localhost", "10.0.2.2");
-                    videoUrlText.setText("Video: " + displayUrl);
-                    videoUrlText.setVisibility(View.VISIBLE);
+
+                    // Show video URL
+                    if (videoUrlText != null) {
+                        videoUrlText.setText("Video: " + displayUrl);
+                        videoUrlText.setVisibility(View.VISIBLE);
+                    }
+
                     Toast.makeText(context, R.string.upload_success, Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(context, R.string.upload_failed, Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Upload failed with code: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<UploadResponse> call, @NonNull Throwable t) {
                 Toast.makeText(context, R.string.network_error_upload, Toast.LENGTH_SHORT).show();
-                Log.e(TAG, "Upload failure: " + t.getMessage(), t);
             }
         });
     }
@@ -507,31 +608,26 @@ public class MovieFormDialog {
 
     private void setupCategoriesSection() {
         categoriesContainer.removeAllViews();
-        Log.d(TAG, "Available categories:");
-        for (CategoryEntity category : availableCategories) {
-            Log.d(TAG, String.format("Category: name=%s, id=%s", category.getName(), category.getId()));
 
+        for (CategoryEntity category : availableCategories) {
             CheckBox checkBox = new CheckBox(context);
             checkBox.setText(category.getName());
+            checkBox.setTextColor(ContextCompat.getColor(context, android.R.color.black));
 
-            if (category.getId().equals(initialCategoryId)) {
+            // Check if this category is selected for the movie being edited
+            if (isEditMode && movieToEdit != null &&
+                    movieToEdit.getCategories() != null &&
+                    movieToEdit.getCategories().contains(category.getId())) {
                 checkBox.setChecked(true);
                 selectedCategoryIds.add(category.getId());
-                Log.d(TAG, "Pre-selected category with ID: " + category.getId());
             }
 
             checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                String categoryId = category.getId();
                 if (isChecked) {
-                    selectedCategoryIds.add(categoryId);
-                    Log.d(TAG, "Added category ID: " + categoryId);
+                    selectedCategoryIds.add(category.getId());
                 } else {
-                    selectedCategoryIds.remove(categoryId);
-                    Log.d(TAG, "Removed category ID: " + categoryId);
+                    selectedCategoryIds.remove(category.getId());
                 }
-
-                // Log all currently selected categories
-                Log.d(TAG, "Currently selected category IDs: " + selectedCategoryIds.toString());
             });
 
             categoriesContainer.addView(checkBox);
@@ -549,7 +645,8 @@ public class MovieFormDialog {
         actorEditTexts.add(actorEditText);
     }
 
-    public void show() {
+    public void show(String tag) {
+        currentDialog = this;
         dialog = builder.create();
         dialog.show();
 
@@ -726,6 +823,8 @@ public class MovieFormDialog {
         });
     }
     private void updateMovie() {
+        Log.d(TAG, "Starting updateMovie...");
+
         Movie updatedMovie = new Movie(
                 movieToEdit.getId(),
                 nameInput.getText().toString().trim(),
@@ -742,27 +841,41 @@ public class MovieFormDialog {
                 videoUrl
         );
 
+        Log.d(TAG, "Updating movie with ID: " + movieToEdit.getId());
+        Log.d(TAG, "API endpoint: api/movies/" + movieToEdit.getId());  // Add this log
+
         WebServiceApi webServiceApi = MovieApi.getInstance(context).getWebServiceApi();
         webServiceApi.updateMovie(movieToEdit.getId(), updatedMovie).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(context, R.string.movie_update_success, Toast.LENGTH_SHORT).show();
+                    if (movieUpdatedListener != null) {
+                        movieUpdatedListener.onMovieUpdated();
+                    }
                     dialog.dismiss();
                 } else {
-                    Toast.makeText(context, R.string.movie_update_failed, Toast.LENGTH_SHORT).show();
+                    try {
+                        String errorBody = response.errorBody() != null ?
+                                response.errorBody().string() : "No error body";
+                        Log.e(TAG, "Error response body: " + errorBody);  // Add this log
+                        Toast.makeText(context, R.string.movie_update_failed, Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        Log.e(TAG, "Error reading error body", e);
+                    }
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                Log.e(TAG, "Update network failure", t);
                 Toast.makeText(context, R.string.network_error, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void showDeleteConfirmation() {
-        new MaterialAlertDialogBuilder(context)
+        new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.AlertDialogCustom))
                 .setTitle(R.string.confirm_delete)
                 .setMessage(R.string.delete_movie_confirmation)
                 .setPositiveButton(R.string.delete, (dialog, which) -> deleteMovie())
@@ -800,5 +913,15 @@ public class MovieFormDialog {
             }
         }
         return actors;
+    }
+
+    public interface OnMovieUpdatedListener {
+        void onMovieUpdated();
+    }
+
+    private OnMovieUpdatedListener movieUpdatedListener;
+
+    public void setOnMovieUpdatedListener(OnMovieUpdatedListener listener) {
+        this.movieUpdatedListener = listener;
     }
 }
