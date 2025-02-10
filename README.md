@@ -4,6 +4,13 @@ https://github.com/RotemWeijel/Ex4.git
 
 NextFlix is an educational project that simulates the Netflix streaming platform, demonstrating modern software architecture and best practices across web and mobile platforms.
 
+## Quick Start
+```bash
+# Clone the repository
+git clone https://github.com/RotemWeijel/Ex4.git
+cd Ex4
+```
+
 ## Project Overview
 
 This project implements a fully-functional streaming platform simulation with:
@@ -327,7 +334,104 @@ web-client/
 ```
    
 ```
-android-client/
+android-client/app/src/main/java/com/app/nextflix
+├── MainActivity.java
+├── MyAppGlideModule.java
+├── data
+│   ├── api
+│   │   ├── AuthApi.java
+│   │   ├── LoginRequest.java
+│   │   ├── LoginResponse.java
+│   │   └── RegistrationRequest.java
+│   ├── local
+│   │   ├── AppDatabase.java
+│   │   ├── ImageUtils.java
+│   │   ├── UserPreferences.java
+│   │   ├── converter
+│   │   │   └── Converters.java
+│   │   ├── dao
+│   │   │   ├── CategoryDao.java
+│   │   │   ├── MovieDao.java
+│   │   │   ├── TokenDao.java
+│   │   │   └── UserDao.java
+│   │   └── entity
+│   │       ├── CategoryEntity.java
+│   │       ├── MovieEntity.java
+│   │       ├── TokenEntity.java
+│   │       └── UserEntity.java
+│   ├── remote
+│   │   └── api
+│   │       ├── AuthApi.java
+│   │       ├── AuthInterceptor.java
+│   │       ├── CategoryApi.java
+│   │       ├── MovieApi.java
+│   │       ├── RetrofitClient.java
+│   │       └── WebServiceApi.java
+│   └── repositories
+│       ├── AuthRepository.java
+│       ├── CategoryRepository.java
+│       ├── MovieRepository.java
+│       └── UserRepository.java
+├── models
+│   ├── Category.java
+│   ├── CategoryResponse.java
+│   ├── Movie.java
+│   ├── MovieCategory.java
+│   ├── Token.java
+│   └── User.java
+├── security
+│   ├── SecurityConfig.java
+│   └── TokenManager.java
+├── ui
+│   ├── admin
+│   │   ├── adapters
+│   │   │   ├── CategoryAdapter.java
+│   │   │   ├── MovieCategoryAdapter.java
+│   │   │   └── RecommendedMoviesAdapter.java
+│   │   ├── categories
+│   │   │   ├── CategoryFormHelper.java
+│   │   │   ├── CategoryManagementActivity.java
+│   │   │   ├── CategoryManagementViewModel.java
+│   │   │   └── CategoryViewModelFactory.java
+│   │   └── movies
+│   │       ├── MovieFormDialog.java
+│   │       └── UploadResponse.java
+│   ├── auth
+│   │   ├── landing
+│   │   │   ├── FeatureAdapter.java
+│   │   │   ├── GridSpaceItemDecoration.java
+│   │   │   ├── LandingActivity.java
+│   │   │   └── LandingViewModel.java
+│   │   ├── login
+│   │   │   ├── LoginActivity.java
+│   │   │   ├── LoginViewModel.java
+│   │   │   └── LoginViewModelFactory.java
+│   │   └── register
+│   │       ├── AvatarAdapter.java
+│   │       ├── RegistrationActivity.java
+│   │       ├── RegistrationSuccessActivity.java
+│   │       ├── RegistrationViewModel.java
+│   │       └── RegistrationViewModelFactory.java
+│   ├── common
+│   │   ├── CategoryMoviesViewModel.java
+│   │   ├── MovieViewModel.java
+│   │   ├── NavBarManager.java
+│   │   └── PlayerViewModel.java
+│   └── main
+│       ├── browse
+│       │   └── BrowseActivity.java
+│       ├── details
+│       │   └── DetailsMovie.java
+│       ├── player
+│       │   └── PlayerActivity.java
+│       └── search
+│           ├── SearchResultsActivity.java
+│           ├── SearchViewModel.java
+│           └── SearchViewModelFactory.java
+└── utils
+    ├── ImageUtils.java
+    ├── SecurityUtils.java
+    └── UrlUtils.java
 ```
 
 ---   
@@ -391,6 +495,30 @@ The web client will automatically open in your default browser at http://localho
 1. Always start the server first
 2. Then run either or both clients
 3. Ensure the server is accessible from your Android emulator/device
+
+## Troubleshooting
+
+### Common Issues
+1. Docker Container Won't Start
+   - Ensure no other services are using ports 4000 and 7000
+   - Check Docker daemon is running
+   - Try `docker-compose down` then retry
+
+2. Web Client Build Fails
+   - Clear npm cache: `npm cache clean --force`
+   - Delete node_modules and run `npm install` again
+
+3. Android Build Issues
+   - Sync Gradle project
+   - Check Android SDK installation
+   - Ensure correct JDK version
+
+### Network Configuration
+- Required open ports:
+  - 4000 (Web Server)
+  - 7000 (Recommendation Server)
+  - 3000 (React Development Server)
+
 
 ### Contributing
 
