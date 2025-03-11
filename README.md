@@ -7,8 +7,8 @@ NextFlix is an educational project that simulates the Netflix streaming platform
 ## Quick Start
 ```bash
 # Clone the repository
-git clone https://github.com/RotemWeijel/Ex4.git
-cd Ex4
+git clone https://github.com/RotemWeijel/NextFlix.git
+cd NextFlix
 ```
 
 ## Project Overview
