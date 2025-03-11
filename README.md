@@ -36,7 +36,7 @@ This project implements a fully-functional streaming platform simulation with:
 #### Core Features
 
 ##### Web Client (React)
-- Built with React, JavaScript, HTML5, CSS3, and Bootstrap
+- Built with React, JavaScript, HTML5 and CSS3
 - Component-based architecture following React best practices
 - Responsive design with platform-specific UI/UX considerations
 - Theme switching capability (dark/light mode)
