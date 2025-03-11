@@ -1,7 +1,10 @@
 const jwt = require('jsonwebtoken');
 const Token = require('../models/token');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error('JWT_SECRET environment variable not set!');
+}
 const TOKEN_EXPIRY = '4h';
 
 /**
