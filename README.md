@@ -440,7 +440,25 @@ android-client/app/src/main/java/com/app/nextflix
 
 Follow these steps to run each component of the project. Make sure to start the server first, then run the clients.
 
-#### 1. Running the Server
+#### 1. Environment Configuration
+
+Before running the server, you must set up environment variables:
+
+1. Create a `.env` file in the `server/src/web-server/` directory:
+   ```bash
+   # Navigate to the web-server directory
+   cd server/src/web-server/
+   
+   # Create .env file
+   touch .env   # On Windows use: echo.> .env
+   ```
+   
+2. Add the following variables to your `.env` file:   
+   ```JWT_SECRET=your_secure_random_string_here```
+
+3. Make sure the `.env` file is included in your `.gitignore` to prevent exposing sensitive information.
+
+#### 2. Running the Server
 
 1. Open a terminal in the `server` directory:
    ```bash
@@ -461,7 +479,7 @@ The server will start on:
 - Web server: http://localhost:4000
 - Recommendation server: http://localhost:7000
 
-#### 2. Running the Web Client
+#### 3. Running the Web Client
 
 1. Open a new terminal in the `web-client` directory:
    ```bash
@@ -480,7 +498,7 @@ The server will start on:
 
 The web client will automatically open in your default browser at http://localhost:3000
 
-#### 3. Running the Android Client
+#### 4. Running the Android Client
 
 1. Open Android Studio
 2. Select "Open an existing Android Studio project"
