@@ -1,6 +1,6 @@
 # NextFlix
 
-https://github.com/RotemWeijel/Ex4.git
+https://github.com/RotemWeijel/NextFlix.git
 
 NextFlix is an educational project that simulates the Netflix streaming platform, demonstrating modern software architecture and best practices across web and mobile platforms.
 
